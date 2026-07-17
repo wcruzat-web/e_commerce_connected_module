@@ -1,0 +1,264 @@
+================================================================================
+  E-COMMERCE FINAL SYSTEM — FILE MANIFEST
+  Developer tags: [CRUZAT] = original code · [AGNER] = new auth integration
+================================================================================
+
+
+################################################################################
+#  CONFIG & ENVIRONMENT
+################################################################################
+[CRUZAT]  .env.example
+[AGNER]   .env                              # Created from .env.example (MySQL)
+[AGNER]   FILE_MANIFEST.txt                  # This file
+[CRUZAT]  composer.json
+[CRUZAT]  package.json
+[CRUZAT]  vite.config.js
+
+
+################################################################################
+#  app/Http/Controllers/  —  22 files
+################################################################################
+
+# -- Base controller --
+[CRUZAT]  Controllers/Controller.php
+
+# -- Auth (all replaced/added by AGNER) --
+[AGNER]   Controllers/Auth/DevLoginController.php
+[AGNER]   Controllers/Auth/GoogleController.php
+[AGNER]   Controllers/Auth/LoginController.php          # Replaced original
+[AGNER]   Controllers/Auth/RegisterController.php        # Replaced original
+
+# -- Admin (untouched) --
+[CRUZAT]  Controllers/Admin/DashboardController.php
+[CRUZAT]  Controllers/Admin/OrderController.php
+[CRUZAT]  Controllers/Admin/UserController.php
+
+# -- Customer portal (all new from AGNER) --
+[AGNER]   Controllers/Customer/AddressController.php
+[AGNER]   Controllers/Customer/ChangePasswordController.php
+[AGNER]   Controllers/Customer/DashboardController.php
+[AGNER]   Controllers/Customer/NotificationController.php
+[AGNER]   Controllers/Customer/OrderController.php
+[AGNER]   Controllers/Customer/PaymentMethodController.php
+[AGNER]   Controllers/Customer/ProfileController.php
+[AGNER]   Controllers/Customer/SettingController.php
+[AGNER]   Controllers/Customer/WishlistController.php
+
+# -- Existing modules (untouched) --
+[CRUZAT]  Controllers/CartController.php
+[CRUZAT]  Controllers/CheckoutController.php
+[CRUZAT]  Controllers/PaymentController.php
+[AGNER]   Controllers/StoreController.php                # Dummy storefront placeholder
+[CRUZAT]  Controllers/SuccessController.php
+[CRUZAT]  Controllers/TrackingController.php
+
+
+################################################################################
+#  app/Http/Middleware/  —  2 files
+################################################################################
+[CRUZAT]  Middleware/CheckRole.php
+[CRUZAT]  Middleware/CustomerAccess.php
+
+
+################################################################################
+#  app/Models/  —  16 files
+################################################################################
+[CRUZAT]  Models/Cart.php
+[CRUZAT]  Models/CartItem.php
+[CRUZAT]  Models/Category.php
+[MERGED]  Models/Customer.php              # CRUZAT base + AGNER relationships & traits
+[MERGED]  Models/CustomerAddress.php        # CRUZAT base + AGNER accessor
+[AGNER]   Models/Notification.php
+[MERGED]  Models/Order.php                  # CRUZAT base + AGNER scopes/method
+[MERGED]  Models/OrderItem.php              # CRUZAT base + AGNER fields
+[CRUZAT]  Models/OrderTracking.php
+[CRUZAT]  Models/Product.php
+[CRUZAT]  Models/ProductImage.php
+[CRUZAT]  Models/ProductSpecification.php
+[AGNER]   Models/SavedPaymentMethod.php
+[AGNER]   Models/UserSetting.php
+[AGNER]   Models/Wishlist.php
+[AGNER]   Models/WishlistItem.php
+
+
+################################################################################
+#  app/Providers/  —  1 file
+################################################################################
+[MERGED]  Providers/AppServiceProvider.php  # CRUZAT (empty) + AGNER View composers
+
+
+################################################################################
+#  app/Repositories/  —  4 files  (all untouched, now orphaned by AGNER auth)
+################################################################################
+[CRUZAT]  Repositories/CartRepository.php
+[CRUZAT]  Repositories/CustomerAddressRepository.php
+[CRUZAT]  Repositories/CustomerRepository.php
+[CRUZAT]  Repositories/OrderRepository.php
+
+
+################################################################################
+#  app/Rules/  —  1 file
+################################################################################
+[CRUZAT]  Rules/ValidCard.php
+
+
+################################################################################
+#  app/Services/  —  7 files
+################################################################################
+[CRUZAT]  Services/AddressService.php
+[CRUZAT]  Services/CartService.php
+[CRUZAT]  Services/CustomerService.php      # Orphaned — AGNER auth uses direct Eloquent
+[CRUZAT]  Services/PaymentService.php
+[AGNER]   Services/ProductSource.php         # Dummy catalog placeholder
+[CRUZAT]  Services/TrackingService.php
+[CRUZAT]  Services/Admin/DashboardService.php
+
+
+################################################################################
+#  app/DTOs/  —  2 files
+################################################################################
+[CRUZAT]  DTOs/CartSummaryDTO.php
+[CRUZAT]  DTOs/PaymentDataDTO.php
+
+
+################################################################################
+#  resources/views/  —  111 blade files
+################################################################################
+
+# ---- auth (all AGNER) ----
+[AGNER]   auth/forgot-password.blade.php
+[AGNER]   auth/login.blade.php
+[AGNER]   auth/register.blade.php
+
+# ---- components ----
+[AGNER]   components/auth-card.blade.php
+[AGNER]   components/sidebar.blade.php
+[AGNER]   components/stat-card.blade.php
+[AGNER]   components/toast.blade.php
+[AGNER]   components/topbar.blade.php
+[CRUZAT]  components/admin/sidebar.blade.php
+[CRUZAT]  components/header/header.blade.php
+
+# ---- customer (all AGNER) ----
+[AGNER]   customer/add-address.blade.php
+[AGNER]   customer/add-payment.blade.php
+[AGNER]   customer/addresses.blade.php
+[AGNER]   customer/change-password.blade.php
+[AGNER]   customer/dashboard.blade.php
+[AGNER]   customer/edit-address.blade.php
+[AGNER]   customer/edit-payment.blade.php
+[AGNER]   customer/history.blade.php
+[AGNER]   customer/notifications.blade.php
+[AGNER]   customer/orders.blade.php
+[AGNER]   customer/payment-methods.blade.php
+[AGNER]   customer/profile.blade.php
+[AGNER]   customer/settings.blade.php
+[AGNER]   customer/wishlist.blade.php
+
+# ---- errors (all CRUZAT) ----
+[CRUZAT]  errors/401.blade.php  through  errors/503.blade.php  (10 files)
+
+# ---- layouts ----
+[AGNER]   layouts/app.blade.php              # Replaced original
+[CRUZAT]  layouts/admin.blade.php
+[AGNER]   layouts/blanks.blade.php
+[AGNER]   layouts/customer.blade.php
+[AGNER]   layouts/guest.blade.php             # Replaced original
+[AGNER]   layouts/store.blade.php
+
+# ---- pages/admin (all CRUZAT) ----
+[CRUZAT]  pages/admin/**/*  (22 files)
+
+# ---- pages/customer (CRUZAT originals, only layout changed) ----
+[MERGED]  pages/customer/cart/cart.blade.php                   # @extends changed from app → store
+[CRUZAT]  pages/customer/cart/components/*  (5 files)
+[MERGED]  pages/customer/checkout/checkout.blade.php            # @extends changed from app → store
+[CRUZAT]  pages/customer/checkout/components/*  (6 files)
+[MERGED]  pages/customer/payment/payment.blade.php              # @extends changed from app → store
+[CRUZAT]  pages/customer/payment/components/*  (3 files)
+[MERGED]  pages/customer/success/success.blade.php              # @extends changed from app → store
+[CRUZAT]  pages/customer/success/components/*  (3 files)
+[MERGED]  pages/customer/order-tracking/tracking.blade.php     # @extends changed from app → store
+[CRUZAT]  pages/customer/order-tracking/components/*  (10 files)
+[CRUZAT]  pages/customer/settings/settings.blade.php
+[CRUZAT]  pages/customer/shop/**/*  (9 files)
+
+# ---- pages/dummy (all CRUZAT) ----
+[CRUZAT]  pages/dummy/account.blade.php
+[CRUZAT]  pages/dummy/address-preview.blade.php
+[CRUZAT]  pages/dummy/shop/index.blade.php
+[CRUZAT]  pages/dummy/shop/show.blade.php
+
+# ---- store (all AGNER) ----
+[AGNER]   store/cart.blade.php              # Orphaned — cart uses CartController instead
+[AGNER]   store/help.blade.php
+[AGNER]   store/home.blade.php
+[AGNER]   store/product.blade.php
+[AGNER]   store/products.blade.php
+
+
+################################################################################
+#  resources/css/  —  1 file
+################################################################################
+[MERGED]  app.css  # CRUZAT (base Tailwind import) + AGNER (dark mode, animations, etc.)
+
+
+################################################################################
+#  resources/js/  —  1 file
+################################################################################
+[AGNER]   app.js  # Original was empty; replaced entirely by AGNER
+
+
+################################################################################
+#  routes/  —  1 file
+################################################################################
+[MERGED]  web.php  # CRUZAT (admin, cart, checkout, payment, success, tracking)
+                   # AGNER  (auth, customer portal, storefront)
+
+
+################################################################################
+#  database/migrations/  —  20 files
+################################################################################
+[CRUZAT]  2026_07_09_112153_create_categories_table.php
+[CRUZAT]  2026_07_09_112154_create_products_table.php
+[CRUZAT]  2026_07_09_112155_create_product_images_table.php
+[CRUZAT]  2026_07_09_112156_create_product_specifications_table.php
+[CRUZAT]  2026_07_09_115225_create_customers_table.php
+[CRUZAT]  2026_07_09_115226_create_carts_table.php
+[CRUZAT]  2026_07_09_115227_create_cart_items_table.php
+[CRUZAT]  2026_07_10_132723_create_orders_table.php
+[CRUZAT]  2026_07_10_132724_create_order_items_table.php
+[MERGED]  2026_07_10_134110_create_customer_addresses_table.php  # CRUZAT + AGNER added columns + softDeletes
+[CRUZAT]  2026_07_11_065100_create_sessions_table.php
+[CRUZAT]  2026_07_11_191706_create_order_tracking_table.php
+[CRUZAT]  2026_07_12_173227_add_role_to_customers_table.php
+[AGNER]   2026_07_15_184108_create_wishlists_table.php
+[AGNER]   2026_07_15_184153_create_wishlist_items_table.php
+[AGNER]   2026_07_15_184154_create_notifications_table.php
+[AGNER]   2026_07_15_184154_create_saved_payment_methods_table.php
+[AGNER]   2026_07_15_184154_create_user_settings_table.php
+[AGNER]   2026_07_15_184436_add_remember_token_and_soft_deletes_to_customers_table.php
+[AGNER]   2026_07_15_184505_add_missing_columns_to_order_items_table.php
+
+# Deleted (CRUZAT — conflict with fresh schema):
+# [CRUZAT]  2026_07_11_080433_remove_recipient_phone_from_customer_addresses_table.php
+
+
+################################################################################
+#  DELETED — old auth views (replaced by AGNER auth/)
+################################################################################
+# [CRUZAT]  resources/views/pages/customer/auth/* (10 files — deleted)
+
+# ---- Responsive fixes applied 2026-07-15 ----
+# All auth views converted from fixed-pixel absolute layouts to responsive flex/grid
+#   auth/login.blade.php          w-[1180px] → w-full max-w-[1180px], absolute → flex-col lg:flex-row
+#   auth/register.blade.php       w-[1120px] → w-full max-w-[1120px], absolute → flex-col lg:flex-row
+#   auth/forgot-password.blade.php  w-[1120px] h-[720px] → w-full max-w-[500px]
+# layouts/store.blade.php         Added hamburger mobile nav toggle
+# layouts/customer.blade.php      Sidebar made slide-in on mobile with overlay
+# components/sidebar.blade.php    Added translate-x toggle, overlay, close button
+# components/topbar.blade.php     Added hamburger toggle, reduced padding on mobile, initials fallback
+# customer/dashboard.blade.php    grid-cols-4 → grid-cols-2 sm:grid-cols-4; lower grid-cols-2 → grid-cols-1 lg:grid-cols-2
+# customer/profile.blade.php      grid-cols-3 → flex-col lg:flex-row; responsive sections
+# customer/change-password.blade.php  removed min-h-[80vh]
+# customer/add-address.blade.php      removed min-h-[80vh]
