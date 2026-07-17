@@ -35,11 +35,12 @@ class PaymentMethodController extends Controller
         $customer = $request->user();
 
         $data = $request->validate([
-            'payment_type' => ['required', 'in:Credit Card,Debit Card,GCash,Maya,Bank Transfer'],
-            'provider' => ['nullable', 'string', 'max:255'],
-            'account_name' => ['required', 'string', 'max:255'],
-            'masked_account_number' => ['required', 'string', 'max:255'],
-            'expiry_date' => ['nullable', 'date'],
+            'payment_type' => ['required', 'in:Visa,Mastercard,GCash'],
+            'account_name' => ['nullable', 'string', 'max:255'],
+            'masked_account_number' => ['nullable', 'string', 'max:255'],
+            'expiry_date' => ['nullable', 'string', 'max:10'],
+            'gcash_name' => ['nullable', 'string', 'max:255'],
+            'gcash_number' => ['nullable', 'string', 'max:10'],
             'is_default' => ['nullable', 'boolean'],
         ]);
 
@@ -48,6 +49,13 @@ class PaymentMethodController extends Controller
         if ($isDefault) {
             $customer->paymentMethods()->update(['is_default' => false]);
         }
+
+        if (($data['payment_type'] ?? '') === 'GCash') {
+            $data['account_name'] = $data['gcash_name'];
+            $data['masked_account_number'] = '+63' . $data['gcash_number'];
+        }
+
+        unset($data['gcash_name'], $data['gcash_number'], $data['cvv']);
 
         $customer->paymentMethods()->create(array_merge($data, [
             'is_default' => $isDefault,
@@ -74,11 +82,12 @@ class PaymentMethodController extends Controller
         $method = $customer->paymentMethods()->findOrFail($paymentMethod);
 
         $data = $request->validate([
-            'payment_type' => ['required', 'in:Credit Card,Debit Card,GCash,Maya,Bank Transfer'],
-            'provider' => ['nullable', 'string', 'max:255'],
-            'account_name' => ['required', 'string', 'max:255'],
-            'masked_account_number' => ['required', 'string', 'max:255'],
-            'expiry_date' => ['nullable', 'date'],
+            'payment_type' => ['required', 'in:Visa,Mastercard,GCash'],
+            'account_name' => ['nullable', 'string', 'max:255'],
+            'masked_account_number' => ['nullable', 'string', 'max:255'],
+            'expiry_date' => ['nullable', 'string', 'max:10'],
+            'gcash_name' => ['nullable', 'string', 'max:255'],
+            'gcash_number' => ['nullable', 'string', 'max:10'],
             'is_default' => ['nullable', 'boolean'],
         ]);
 
@@ -88,6 +97,13 @@ class PaymentMethodController extends Controller
             $customer->paymentMethods()->where('payment_method_id', '<>', $method->payment_method_id)
                 ->update(['is_default' => false]);
         }
+
+        if (($data['payment_type'] ?? '') === 'GCash') {
+            $data['account_name'] = $data['gcash_name'];
+            $data['masked_account_number'] = '+63' . $data['gcash_number'];
+        }
+
+        unset($data['gcash_name'], $data['gcash_number'], $data['cvv']);
 
         $method->update(array_merge($data, ['is_default' => $isDefault]));
 

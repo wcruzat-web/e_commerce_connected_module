@@ -5,7 +5,7 @@
 --}}
 
 <script>
-    function selectPaymentMethod(method) {
+    function selectPaymentMethod(method, fillData) {
         document.querySelectorAll('.payment-method-btn').forEach(btn => {
             if (btn.dataset.method === method) {
                 btn.classList.remove('border-gray-200', 'text-gray-500');
@@ -20,6 +20,40 @@
 
         document.getElementById('cardFields').classList.toggle('hidden', method === 'gcash');
         document.getElementById('gcashFields').classList.toggle('hidden', method !== 'gcash');
+
+        if (fillData) {
+            if (method === 'gcash') {
+                document.getElementById('gcashName').value = fillData.account || '';
+                document.getElementById('gcashNumber').value = fillData.number || '';
+            } else {
+                document.getElementById('cardholderName').value = fillData.account || '';
+                document.getElementById('cardNumber').value = fillData.number || '';
+                document.getElementById('expiryDate').value = fillData.expiry || '';
+                document.getElementById('cvv').value = fillData.cvv || '';
+            }
+        }
+    }
+
+    function selectSavedPayment(card) {
+        document.querySelectorAll('.payment-method-card').forEach(function (c) {
+            c.classList.remove('border-cyan-500', 'bg-cyan-50/40');
+            c.classList.add('border-gray-200');
+            var radio = c.querySelector('input[type="radio"]');
+            if (radio) radio.checked = false;
+        });
+        card.classList.remove('border-gray-200');
+        card.classList.add('border-cyan-500', 'bg-cyan-50/40');
+        var radio = card.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+
+        var type = card.dataset.type;
+        var fillData = {
+            account: card.dataset.account,
+            number: card.dataset.number,
+            expiry: card.dataset.expiry,
+            cvv: card.dataset.cvv,
+        };
+        selectPaymentMethod(type, fillData);
     }
 
     function luhnCheck(cardNumber) {
@@ -51,6 +85,24 @@
         @if(session('payment_error'))
             toastNotify('error', '{{ session('payment_error') }}');
         @endif
+
+        document.querySelectorAll('.payment-method-card').forEach(function (card) {
+            card.addEventListener('click', function () { selectSavedPayment(this); });
+        });
+
+        var addBtn = document.getElementById('addPaymentBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', function () {
+                document.getElementById('manualPaymentSection').classList.remove('hidden');
+                this.classList.add('hidden');
+                document.getElementById('cardholderName').value = '';
+                document.getElementById('cardNumber').value = '';
+                document.getElementById('expiryDate').value = '';
+                document.getElementById('cvv').value = '';
+                document.getElementById('gcashName').value = '';
+                document.getElementById('gcashNumber').value = '';
+            });
+        }
     });
 
     document.getElementById('placeOrderBtn').addEventListener('click', function () {

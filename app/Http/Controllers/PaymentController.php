@@ -33,7 +33,14 @@ class PaymentController extends Controller
 
         $summary = $this->cartService->getSummary($cart);
 
-        return view('pages.customer.payment.payment', compact('cart', 'summary', 'checkoutData'));
+        $paymentMethods = $customer->paymentMethods()
+            ->orderByDesc('is_default')
+            ->orderBy('payment_method_id')
+            ->get();
+
+        $defaultMethod = $paymentMethods->firstWhere('is_default', true);
+
+        return view('pages.customer.payment.payment', compact('cart', 'summary', 'checkoutData', 'defaultMethod', 'paymentMethods'));
     }
 
     public function process(Request $request)

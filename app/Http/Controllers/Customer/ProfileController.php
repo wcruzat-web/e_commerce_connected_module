@@ -1,4 +1,5 @@
 <?php
+// [AGNER] Profile management
 
 namespace App\Http\Controllers\Customer;
 
@@ -16,8 +17,12 @@ class ProfileController extends Controller
         $customer = $request->user();
 
         $isGoogle = session('auth_via') === 'google';
+        $addresses = $customer->addresses()
+            ->orderByDesc('is_default')
+            ->orderBy('address_id')
+            ->get();
 
-        return view('customer.profile', compact('customer', 'isGoogle'));
+        return view('customer.profile', compact('customer', 'isGoogle', 'addresses'));
     }
 
     public function update(Request $request): RedirectResponse

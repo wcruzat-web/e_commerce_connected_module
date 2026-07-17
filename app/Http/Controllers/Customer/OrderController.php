@@ -17,8 +17,8 @@ class OrderController extends Controller
         $customer = $request->user();
 
         $orders = $customer->orders()
-            ->active()
             ->with('items')
+            ->orderByRaw("FIELD(status, 'pending','processing','shipped','in_transit','out_for_delivery','delivered','cancelled')")
             ->latest('order_id')
             ->get();
 
@@ -84,7 +84,7 @@ class OrderController extends Controller
         $customer = $request->user();
         abort_unless($order->customer_id === $customer->customer_id, 403);
 
-        $order->update(['status' => 'Delivered']);
+        $order->update(['customer_received' => true]);
 
         return redirect()->route('orders')
             ->with('success', 'Order marked as received.');

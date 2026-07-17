@@ -44,6 +44,10 @@
                         <p class="text-xs text-gray-400 mb-0.5">Payment</p>
                         <p class="text-sm font-medium text-gray-900" id="modalPaymentInfo"></p>
                     </div>
+                    <div>
+                        <p class="text-xs text-gray-400 mb-0.5">Customer Received</p>
+                        <span id="modalReceivedBadge" class="text-[11px] font-medium px-2.5 py-1 rounded-full"></span>
+                    </div>
                 </div>
 
                 <div class="mb-6">
@@ -167,6 +171,16 @@
 
                 document.getElementById('modalTotal').textContent = '₱' + parseFloat(order.grand_total).toLocaleString('en', {minimumFractionDigits: 2});
 
+                var receivedBadge = document.getElementById('modalReceivedBadge');
+                var customerReceived = order.customer_received;
+                if (customerReceived) {
+                    receivedBadge.className = 'text-[11px] font-medium px-2.5 py-1 rounded-full bg-green-100 text-green-700';
+                    receivedBadge.textContent = 'Received';
+                } else {
+                    receivedBadge.className = 'text-[11px] font-medium px-2.5 py-1 rounded-full bg-gray-100 text-gray-500';
+                    receivedBadge.textContent = 'Awaiting';
+                }
+
                 var isPaid = order.payment_status === 'paid';
                 var markBtn = document.getElementById('markPaidBtn');
                 var paidBadge = document.getElementById('paidBadge');
@@ -179,9 +193,9 @@
                 }
 
                 var fulfillmentSelect = document.getElementById('fulfillmentSelect');
-                fulfillmentSelect.disabled = !isPaid;
-                fulfillmentSelect.classList.toggle('opacity-50', !isPaid);
-                fulfillmentSelect.classList.toggle('cursor-not-allowed', !isPaid);
+                fulfillmentSelect.disabled = !isPaid || customerReceived;
+                fulfillmentSelect.classList.toggle('opacity-50', !isPaid || customerReceived);
+                fulfillmentSelect.classList.toggle('cursor-not-allowed', !isPaid || customerReceived);
                 fulfillmentSelect.value = status;
             })
             .catch(function () {

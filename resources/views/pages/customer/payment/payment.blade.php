@@ -29,6 +29,14 @@
 
 @extends('layouts.store')
 
+@php
+    $defaultType = $defaultMethod?->payment_type ? strtolower($defaultMethod->payment_type) : 'visa';
+    $defaultCardNumber = $defaultMethod && $defaultMethod->payment_type !== 'GCash' ? $defaultMethod->masked_account_number : '';
+    $defaultExpiry = $defaultMethod && $defaultMethod->payment_type !== 'GCash' && $defaultMethod->expiry_date ? $defaultMethod->expiry_date->format('m/y') : '';
+    $defaultGcashNumber = $defaultMethod && $defaultMethod->payment_type === 'GCash' ? preg_replace('/^\+63/', '', $defaultMethod->masked_account_number) : '';
+    $defaultCvv = $defaultMethod && $defaultMethod->payment_type !== 'GCash' ? $defaultMethod->cvv : '';
+@endphp
+
 @section('content')
 
 <div class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8" style="font-family: 'Outfit', sans-serif;">

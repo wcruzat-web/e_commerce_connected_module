@@ -141,6 +141,8 @@ Route::middleware('auth')->group(function () {
     // Checkout / Payment / Success / Tracking  [CRUZAT — original untouched]
     Route::get('/tracking', [TrackingController::class, 'index'])->name('tracking');
     Route::match(['get', 'post'], '/track', [TrackingController::class, 'track'])->name('orders.track');
+    Route::get('/tracking/{order}/poll', [TrackingController::class, 'poll'])->name('tracking.poll');  // [AGNER]
+    Route::get('/tracking/{order}', [TrackingController::class, 'show'])->name('tracking.show');
 
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');

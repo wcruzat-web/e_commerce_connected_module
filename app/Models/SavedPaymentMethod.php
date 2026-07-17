@@ -16,7 +16,7 @@ class SavedPaymentMethod extends Model
 
     protected $fillable = [
         'customer_id', 'payment_type', 'provider', 'account_name',
-        'masked_account_number', 'expiry_date', 'is_default', 'status',
+        'masked_account_number', 'expiry_date', 'cvv', 'is_default', 'status',
     ];
 
     protected $casts = [

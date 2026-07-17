@@ -30,7 +30,7 @@
             <!-- top row -->
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
-                    <span class="text-sm font-semibold text-gray-900">#{{ str_pad($order->order_id, 5, '0', STR_PAD_LEFT) }}</span>
+                    <span class="text-sm font-semibold text-gray-900">{{ $order->order_number ?? '#'.str_pad($order->order_id, 5, '0', STR_PAD_LEFT) }}</span>
                     <span class="text-sm text-gray-400">Placed {{ $order->created_at->format('M d, Y') }}</span>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">

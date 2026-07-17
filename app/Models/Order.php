@@ -26,6 +26,7 @@ class Order extends Model
         'payment_status',
         'payment_method',
         'paid_at',
+        'customer_received',
     ];
 
     protected function casts(): array

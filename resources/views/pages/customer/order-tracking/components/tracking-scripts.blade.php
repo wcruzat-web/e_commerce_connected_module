@@ -49,4 +49,49 @@
     function toggleChatWidget() {
         console.log('Support chat toggled');
     }
+
+    @if(isset($order))
+    // [AGNER] Live polling — fetches timeline/banner/meta every 3s
+    (function () {
+        var orderId = {{ $order->order_id }};
+        var pollInterval = 3000;
+
+        setInterval(function () {
+            fetch('/tracking/' + orderId + '/poll')
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var timelineContainer = document.getElementById('timelineContainer');
+                    var bannerContainer = document.getElementById('statusBannerContainer');
+                    var metaContainer = document.getElementById('shipmentMetaContainer');
+                    var receivedContainer = document.getElementById('receivedContainer');
+                    if (!timelineContainer || !bannerContainer || !metaContainer) return;
+
+                    var wasExpanded = false;
+                    var expandedEl = document.getElementById('timelineExpanded');
+                    if (expandedEl) {
+                        wasExpanded = !expandedEl.classList.contains('hidden');
+                    }
+
+                    timelineContainer.innerHTML = data.timeline_html;
+                    bannerContainer.innerHTML = data.banner_html;
+                    metaContainer.innerHTML = data.meta_html;
+                    if (receivedContainer) receivedContainer.innerHTML = data.received_html;
+
+                    if (wasExpanded) {
+                        var newExpanded = document.getElementById('timelineExpanded');
+                        var newCollapsed = document.getElementById('timelineCollapsed');
+                        var label = document.getElementById('timelineToggleLabel');
+                        var icon = document.getElementById('timelineToggleIcon');
+                        if (newExpanded && newCollapsed) {
+                            newCollapsed.classList.add('hidden');
+                            newExpanded.classList.remove('hidden');
+                            if (label) label.textContent = 'Show less details';
+                            if (icon) icon.classList.add('rotate-180');
+                        }
+                    }
+                })
+                .catch(function () {});
+        }, pollInterval);
+    })();
+    @endif
 </script>

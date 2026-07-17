@@ -1,3 +1,5 @@
+{{-- [CRUZAT] Tracking page layout --}}
+
 @extends('layouts.store')
 
 @section('content')
@@ -13,10 +15,22 @@
         @include('pages.customer.order-tracking.components.track-another-order')
 
         @if(isset($order))
-            @include('pages.customer.order-tracking.components.order-status-banner')
-            @include('pages.customer.order-tracking.components.shipment-meta')
-            @include('pages.customer.order-tracking.components.timeline')
+            {{-- [AGNER] Container divs for live polling DOM swap --}}
+            <div id="statusBannerContainer">
+                @include('pages.customer.order-tracking.components.order-status-banner')
+            </div>
+            <div id="shipmentMetaContainer">
+                @include('pages.customer.order-tracking.components.shipment-meta')
+            </div>
+            <div id="timelineContainer">
+                @include('pages.customer.order-tracking.components.timeline')
+            </div>
             @include('pages.customer.order-tracking.components.shipment-items')
+
+            {{-- [AGNER] Mark as Received — same logic as orders page --}}
+            <div id="receivedContainer">
+                @include('pages.customer.order-tracking.components.received-action')
+            </div>
         @endif
 
         @include('pages.customer.order-tracking.components.support-shortcuts')

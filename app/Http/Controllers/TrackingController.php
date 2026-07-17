@@ -1,4 +1,5 @@
 <?php
+// [CRUZAT] Tracking pages (index, track)
 
 namespace App\Http\Controllers;
 
@@ -51,5 +52,37 @@ class TrackingController extends Controller
         $timelineSteps = $this->trackingService->buildTimeline($order);
 
         return view('pages.customer.order-tracking.tracking', compact('order', 'timelineSteps'));
+    }
+
+    public function show(int $orderId)
+    {
+        $order = $this->trackingService->findById($orderId);
+
+        if (!$order || $order->customer_id !== Auth::user()->customer_id) {
+            return redirect()->route('tracking')->with('error', 'Order not found.');
+        }
+
+        session()->put('order_id', $orderId);
+
+        return redirect()->route('tracking');
+    }
+
+    // [AGNER] AJAX poll endpoint for live timeline updates
+    public function poll(int $orderId)
+    {
+        $order = $this->trackingService->findById($orderId);
+
+        if (!$order || $order->customer_id !== Auth::user()->customer_id) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        $timelineSteps = $this->trackingService->buildTimeline($order);
+
+        return response()->json([
+            'timeline_html'  => view('pages.customer.order-tracking.components.timeline', compact('timelineSteps'))->render(),
+            'banner_html'    => view('pages.customer.order-tracking.components.order-status-banner', compact('order'))->render(),
+            'meta_html'      => view('pages.customer.order-tracking.components.shipment-meta', compact('order'))->render(),
+            'received_html'  => view('pages.customer.order-tracking.components.received-action', compact('order'))->render(),
+        ]);
     }
 }
