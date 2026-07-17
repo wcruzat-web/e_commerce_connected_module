@@ -87,6 +87,6 @@ class CartService
             tax: $tax,
             grandTotal: round($subtotal + $shippingFee + $tax, 2),
         );
-    }
+    } 
 
 }

@@ -18,9 +18,9 @@
 <body class="bg-gray-50 text-slate-900" x-data="storeState()">
 
     @include('components.header.header')
-    @include('pages.customer.shop.Components.nexa-hero')
-    @include('pages.customer.shop.Components.nexa-main-content')
-    @include('pages.customer.shop.Components.nexa-footer')
+    @include('pages.customer.shop.components.nexa-hero')
+    @include('pages.customer.shop.components.nexa-main-content')
+    @include('pages.customer.shop.components.nexa-footer')
 
     <script>
         function storeState() {

@@ -23,7 +23,7 @@ class WishlistController extends Controller
             ->orderByDesc('wishlist_item_id')
             ->get();
 
-        return view('customer.wishlist', compact('items'));
+        return view('pages.customer.wishlist.wishlist', compact('items'));
     }
 
     public function store(Request $request): RedirectResponse|JsonResponse

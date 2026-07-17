@@ -18,7 +18,7 @@ class ChangePasswordController extends Controller
 
         $isGoogle = session('auth_via') === 'google';
 
-        return view('customer.change-password', compact('isGoogle'));
+        return view('pages.customer.change-password.change-password', compact('isGoogle'));
     }
 
     public function update(Request $request): RedirectResponse

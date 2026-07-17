@@ -43,7 +43,7 @@ class SettingController extends Controller
             ['key' => 'notify_product_updates', 'title' => 'Product Updates', 'description' => 'Get notified when there is something new with your order'],
         ];
 
-        return view('customer.settings', compact('settings', 'toggles'));
+        return view('pages.customer.settings.settings', compact('settings', 'toggles'));
     }
 
     public function update(Request $request): RedirectResponse

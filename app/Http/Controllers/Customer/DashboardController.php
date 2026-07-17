@@ -24,6 +24,6 @@ class DashboardController extends Controller
         $notifications = $customer->notifications()->latest()->take(5)->get();
         $paymentMethods = $customer->paymentMethods()->latest()->get();
 
-        return view('customer.dashboard', compact('customer', 'stats', 'notifications', 'paymentMethods'));
+        return view('pages.customer.dashboard.dashboard', compact('customer', 'stats', 'notifications', 'paymentMethods'));
     }
 }

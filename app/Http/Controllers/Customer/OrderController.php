@@ -22,7 +22,7 @@ class OrderController extends Controller
             ->latest('order_id')
             ->get();
 
-        return view('customer.orders', compact('orders'));
+        return view('pages.customer.orders.orders', compact('orders'));
     }
 
     public function history(Request $request): View
@@ -36,7 +36,7 @@ class OrderController extends Controller
             ->latest('order_id')
             ->get();
 
-        return view('customer.history', compact('orders'));
+        return view('pages.customer.history.history', compact('orders'));
     }
 
     public function checkout(Request $request): RedirectResponse

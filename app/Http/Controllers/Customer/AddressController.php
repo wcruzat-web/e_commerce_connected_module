@@ -21,7 +21,7 @@ class AddressController extends Controller
             ->orderBy('address_id')
             ->get();
 
-        return view('customer.addresses', compact('addresses'));
+        return view('pages.customer.addresses.addresses', compact('addresses'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -74,7 +74,7 @@ class AddressController extends Controller
         $customer = $request->user();
         $addressModel = $customer->addresses()->findOrFail($address);
 
-        return view('customer.edit-address', compact('addressModel'));
+        return view('pages.customer.addresses.edit-address', compact('addressModel'));
     }
 
     public function update(Request $request, int $address): RedirectResponse

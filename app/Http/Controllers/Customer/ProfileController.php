@@ -22,7 +22,7 @@ class ProfileController extends Controller
             ->orderBy('address_id')
             ->get();
 
-        return view('customer.profile', compact('customer', 'isGoogle', 'addresses'));
+        return view('pages.customer.profile.profile', compact('customer', 'isGoogle', 'addresses'));
     }
 
     public function update(Request $request): RedirectResponse

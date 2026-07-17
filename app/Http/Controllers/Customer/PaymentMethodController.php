@@ -22,12 +22,12 @@ class PaymentMethodController extends Controller
             ->orderBy('payment_method_id')
             ->get();
 
-        return view('customer.payment-methods', compact('paymentMethods'));
+        return view('pages.customer.payment-methods.payment-methods', compact('paymentMethods'));
     }
 
     public function create(): View
     {
-        return view('customer.add-payment');
+        return view('pages.customer.payment-methods.add-payment');
     }
 
     public function store(Request $request): RedirectResponse
@@ -65,7 +65,7 @@ class PaymentMethodController extends Controller
         $customer = $request->user();
         $method = $customer->paymentMethods()->findOrFail($paymentMethod);
 
-        return view('customer.add-payment', compact('method'));
+        return view('pages.customer.payment-methods.add-payment', compact('method'));
     }
 
     public function update(Request $request, int $paymentMethod): RedirectResponse

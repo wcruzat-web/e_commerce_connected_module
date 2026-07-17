@@ -1,1 +1,1 @@
-@include('pages.customer.shop.Components.nexa-layout')
+@include('pages.customer.shop.components.nexa-layout')

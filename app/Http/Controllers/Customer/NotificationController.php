@@ -22,7 +22,7 @@ class NotificationController extends Controller
 
         $unreadCount = $notifications->where('is_read', false)->count();
 
-        return view('customer.notifications', compact('notifications', 'unreadCount'));
+        return view('pages.customer.notifications.notifications', compact('notifications', 'unreadCount'));
     }
 
     public function markAllRead(Request $request): RedirectResponse
