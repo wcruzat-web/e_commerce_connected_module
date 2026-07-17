@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 | Landing
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => redirect(auth()->check() ? route('home') : route('login')));
+Route::get('/', fn () => view('auth.login'));
 
 /*
 |--------------------------------------------------------------------------

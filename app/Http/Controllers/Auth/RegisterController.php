@@ -12,10 +12,12 @@ class RegisterController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
+        // CHANGES HERE: added phone field, last_login
         $data = $request->validate([
             'first_name' => ['required', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'unique:customers,email'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'password' => [
                 'required', 'string', 'min:8',
                 'regex:/[A-Z]/',
@@ -31,9 +33,11 @@ class RegisterController extends Controller
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
+            'phone_number' => $data['phone'] ?? '',
             'password' => Hash::make($data['password']),
             'status' => 'Active',
             'email_verified_at' => now(),
+            'last_login' => now(),
         ]);
 
         return redirect()->route('login')

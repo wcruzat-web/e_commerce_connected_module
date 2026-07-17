@@ -28,8 +28,10 @@
             <div>
                 <label class="text-sm text-gray-600">Address Type</label>
                 <select name="address_type" class="border rounded-lg p-3 w-full mt-2 bg-white">
-                    <option value="Shipping">Shipping</option>
-                    <option value="Billing">Billing</option>
+                    {{-- CHANGES HERE: replaced Shipping/Billing with Home/Work/Other --}}
+                    <option value="Home">Home</option>
+                    <option value="Work">Work</option>
+                    <option value="Other">Other</option>
                 </select>
             </div>
             <div>

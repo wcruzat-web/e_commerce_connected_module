@@ -48,9 +48,12 @@ class AddressService
 
         $hasExisting = $this->addressRepository->countByCustomer($customer->customer_id) > 0;
 
+        // CHANGES HERE: added recipient_name and phone_number (NOT NULL columns)
         return $this->addressRepository->create([
             'customer_id' => $customer->customer_id,
             'address_type' => $data['address_type'],
+            'recipient_name' => $data['recipient_name'] ?? ($customer->first_name.' '.$customer->last_name),
+            'phone_number' => $data['phone_number'] ?? $customer->phone_number ?? '',
             'street' => $data['street'],
             'barangay' => $data['barangay'],
             'city' => $data['city'],
@@ -71,9 +74,12 @@ class AddressService
 
         $hasExisting = $this->addressRepository->countByCustomer($customer->customer_id) > 0;
 
+        // CHANGES HERE: added recipient_name and phone_number (NOT NULL columns)
         $this->addressRepository->create([
             'customer_id' => $customer->customer_id,
             'address_type' => $data['address_type'] ?? 'Home',
+            'recipient_name' => $data['recipient_name'] ?? ($customer->first_name.' '.$customer->last_name),
+            'phone_number' => $data['phone_number'] ?? $customer->phone_number ?? '',
             'street' => $data['street'],
             'barangay' => $data['barangay'],
             'city' => $data['city'],

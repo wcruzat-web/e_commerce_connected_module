@@ -29,8 +29,10 @@
             <div>
                 <label class="text-sm text-gray-600">Address Type</label>
                 <select name="address_type" class="border rounded-lg p-3 w-full mt-2 bg-white">
-                    <option value="Shipping" {{ $addressModel->address_type === 'Shipping' ? 'selected' : '' }}>Shipping</option>
-                    <option value="Billing" {{ $addressModel->address_type === 'Billing' ? 'selected' : '' }}>Billing</option>
+                    {{-- CHANGES HERE: replaced Shipping/Billing with Home/Work/Other --}}
+                    <option value="Home" {{ $addressModel->address_type === 'Home' ? 'selected' : '' }}>Home</option>
+                    <option value="Work" {{ $addressModel->address_type === 'Work' ? 'selected' : '' }}>Work</option>
+                    <option value="Other" {{ $addressModel->address_type === 'Other' ? 'selected' : '' }}>Other</option>
                 </select>
             </div>
             <div>

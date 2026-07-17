@@ -4,4 +4,5 @@
 </script>
 @endif
 
-<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+{{-- CHANGES HERE: renamed id to toastContainer to match JS references --}}
+<div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>

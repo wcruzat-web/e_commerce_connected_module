@@ -18,6 +18,8 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            // CHANGES HERE: update last_login
+            Auth::user()->update(['last_login' => now()]);
             $request->session()->regenerate();
             $request->session()->forget('auth_via');
 
@@ -27,6 +29,12 @@ class LoginController extends Controller
             } else {
                 Cookie::queue(Cookie::forget('remember_login_email'));
                 Cookie::queue(Cookie::forget('remember_login_password'));
+            }
+
+            // CHANGES HERE: role-based redirect
+            $role = Auth::user()->role;
+            if (in_array($role, ['super_admin', 'admin'])) {
+                return redirect()->route('admin.dashboard');
             }
 
             return redirect()->intended(route('home'));

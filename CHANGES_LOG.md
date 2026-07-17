@@ -142,4 +142,54 @@ Required for `CartService::findOrFail()` and `exists:products,id` validation.
 
 ---
 
+---
+
+## ERPV0.2 — Bug Fixes & Connection Improvements
+
+### Checkout Address Save
+- **File:** `app/Services/AddressService.php`
+  - `saveOrUpdate()` — added `recipient_name` and `phone_number` to `create()` array (were missing, causing SQL NOT NULL failure)
+  - `saveFromOrder()` — same fix: added `recipient_name` and `phone_number` to `create()` array
+- **File:** `resources/views/components/toast.blade.php`
+  - Renamed `toast-container` to `toastContainer` (mismatch with JS `getElementById('toastContainer')`)
+
+### Register Page — Phone & Last Login
+- **File:** `app/Http/Controllers/Auth/RegisterController.php`
+  - Added `phone` to validation rules (`nullable|string|max:20`)
+  - Added `phone_number` to `create()` array (maps from `phone` input)
+  - Added `last_login` to `create()` array
+
+### Login — Last Login
+- **File:** `app/Http/Controllers/Auth/LoginController.php`
+  - Added `Auth::user()->update(['last_login' => now()])` on successful login
+
+### Checkout — Pre-fill Contact Fields
+- **File:** `resources/views/pages/customer/checkout/components/contact-fields.blade.php`
+  - Added `value="{{ old('field', auth()->user()->field) }}"` to:
+    - `first_name` input (from `auth()->user()->first_name`)
+    - `last_name` input (from `auth()->user()->last_name`)
+    - `shipping_email` input (from `auth()->user()->email`)
+    - `shipping_phone` input (from `auth()->user()->phone_number`)
+
+### Index Page
+- **File:** `routes/web.php`
+  - Changed `/` route from `redirect(auth()->check() ? route('home') : route('login'))` to `view('auth.login')`
+
+---
+
+## ERPV0.2.1 — Dead Code Cleanup & Typo Fix
+
+### Removed (unreferenced in current flow)
+- `resources/views/components/auth-card.blade.php` — 3-line component, never included by any view
+- `resources/views/pages/customer/shop/Components/nexa-header.blade.php` — exists on disk but shop uses `components.header.header` instead
+- `app/Providers/AppServiceProvider.php` lines 22–31 — View composer computing `$cartCount` and `$wishlistCount` that no view references anymore (header was swapped to CRUZAT)
+
+### Fixed
+- `resources/views/pages/customer/cart/components/cart-items-list.blade.php` line 97 — `hover:zbg-gray-50` → `hover:bg-gray-50` (CSS typo)
+
+### Note
+- `console.log` statements (3 total) kept as placeholders for future voucher feature
+
+---
+
 *End of changes log*

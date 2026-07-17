@@ -51,7 +51,8 @@
                         <div
                             class="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center">
 
-                            <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/{{ $address->address_type === 'Billing' ? 'building' : 'home' }}.svg"
+                            {{-- CHANGES HERE: updated icon mapping for Home/Work/Other --}}
+                            <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/{{ $address->address_type === 'Work' ? 'building' : ($address->address_type === 'Other' ? 'map-pin' : 'home') }}.svg"
                                 class="w-6 h-6" alt="">
 
                         </div>
