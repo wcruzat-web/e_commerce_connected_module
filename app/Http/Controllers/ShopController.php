@@ -18,6 +18,11 @@ class ShopController extends Controller
 
         $products = $dbProducts->map(fn ($p) => $this->mapProduct($p))->values();
 
+        $wishlistIds = auth()->check()
+            ? auth()->user()->wishlists()->first()?->items()->pluck('product_id')->toArray() ?? []
+            : [];
+        $products = $products->map(fn ($p) => array_merge($p, ['in_wishlist' => in_array((int)$p['id'], $wishlistIds)]));
+
         $category = $request->input('category');
         $brands = $request->input('brands', []);
         $chipsets = $request->input('chipsets', []);
@@ -173,7 +178,9 @@ class ShopController extends Controller
             'price' => (float) ($p->sale_price ?: $p->price),
             'sku' => $p->sku,
             'category' => $p->category->name ?? 'Uncategorized',
-            'image' => $p->featured_image ?? 'https://placehold.co/200x200?text=No+Image',
+            'image' => $p->featured_image
+                ? (str_starts_with($p->featured_image, 'http') ? $p->featured_image : asset($p->featured_image))
+                : 'https://placehold.co/200x200?text=No+Image',
             'badge' => $p->badge ?? '',
             'badgeClass' => $p->badge === 'Sale' ? 'bg-red-500' : ($p->badge === 'Best Seller' ? 'bg-amber-500' : 'bg-blue-900'),
             'stock' => (int) $p->stock,
@@ -194,10 +201,15 @@ class ShopController extends Controller
             'compatibleCases' => [],
             'platformSupport' => [],
             'userReviews' => $reviews->map(function ($r) {
+                $pic = $r->user->profile_picture ?? '';
+                if ($pic && !str_starts_with($pic, 'http')) {
+                    $pic = asset($pic);
+                }
                 return [
                     'id' => $r->review_id,
                     'name' => ($r->user->first_name ?? '') . ' ' . ($r->user->last_name ?? ''),
                     'initials' => strtoupper(substr($r->user->first_name ?? 'A', 0, 1) . substr($r->user->last_name ?? 'U', 0, 1)),
+                    'profile_picture' => $pic,
                     'comment' => $r->comment ?? '',
                     'rating' => $r->rating ?? 0,
                     'createdAt' => $r->created_at ? $r->created_at->diffForHumans() : '',

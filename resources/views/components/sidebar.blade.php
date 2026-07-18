@@ -25,7 +25,7 @@
             Home
         </a>
 
-        <a href="{{ route('products') }}"
+        <a href="{{ route('products.index') }}"
             class="block rounded-full px-5 py-2 hover:bg-sky-500 transition" data-i18n="nav.products">
             Products
         </a>

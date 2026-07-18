@@ -49,7 +49,7 @@
             </div>
             <h3 class="text-xl font-bold text-gray-900">No order history yet</h3>
             <p class="text-gray-500 mt-2 max-w-sm">Delivered orders will be archived here so you can look back on what you've bought.</p>
-            <a href="{{ route('products') }}"
+            <a href="{{ route('products.index') }}"
                class="mt-6 inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold transition hover:-translate-y-0.5">
                 Browse products
             </a>

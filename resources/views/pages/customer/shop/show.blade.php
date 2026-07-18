@@ -137,9 +137,13 @@
                     <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-5">Comments</h4>
 
                     @forelse ($product['userReviews'] as $review)
-                        <div class="bg-blue-50 rounded-xl p-5 border border-blue-200 mb-4">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">{{ $review['initials'] }}</div>
+                        <div class="border-b border-gray-100 pb-5 mb-5">
+                            <div class="flex items-center space-x-3 mb-2.5">
+                                @if ($review['profile_picture'])
+                                    <img src="{{ $review['profile_picture'] }}" class="w-8 h-8 rounded-full object-cover">
+                                @else
+                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">{{ $review['initials'] }}</div>
+                                @endif
                                 <div>
                                     <p class="text-xs font-bold text-slate-800">{{ $review['name'] }}</p>
                                     <p class="text-[9px] text-gray-400">{{ $review['createdAt'] }}</p>

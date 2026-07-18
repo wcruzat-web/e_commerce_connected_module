@@ -151,17 +151,26 @@
                             <div>
                                 <span class="text-sm font-black text-slate-900">₱{{ number_format($product['price']) }}</span>
                             </div>
-                            <form method="POST" action="{{ route('cart.add') }}">
-                                @csrf
-                                <input type="hidden" name="product_id" value="{{ $product['id'] }}">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit"
-                                    {{ $product['inStock'] ? '' : 'disabled' }}
-                                    class="font-extrabold text-[10px] px-3 py-2 rounded-lg transition tracking-wide
-                                    {{ $product['inStock'] ? 'bg-sky-400 hover:bg-sky-500 text-blue-950 shadow-sm' : 'bg-gray-200 text-gray-400 cursor-not-allowed' }}">
-                                    Add to Cart
-                                </button>
-                            </form>
+                            <div class="flex items-center gap-2">
+                                <form method="POST" action="{{ route('wishlist.toggle') }}" class="js-wish-form">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                                    <button type="submit" class="p-2 rounded-lg transition hover:bg-red-50 js-wish-btn {{ $product['in_wishlist'] ? 'text-red-500' : 'text-gray-400 hover:text-red-500' }}" title="{{ $product['in_wishlist'] ? 'Remove from Wishlist' : 'Add to Wishlist' }}">
+                                        <svg class="w-4 h-4 js-wish-svg" fill="{{ $product['in_wishlist'] ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ route('cart.add') }}" class="js-cart-form">
+                                    @csrf
+                                    <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit"
+                                        {{ $product['inStock'] ? '' : 'disabled' }}
+                                        class="font-extrabold text-[10px] px-3 py-2 rounded-lg transition tracking-wide
+                                        {{ $product['inStock'] ? 'bg-sky-400 hover:bg-sky-500 text-blue-950 shadow-sm' : 'bg-gray-200 text-gray-400 cursor-not-allowed' }}">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -169,6 +178,44 @@
         </div>
     </div>
 </main>
+
+<script>
+document.querySelectorAll('.js-wish-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = form.querySelector('.js-wish-btn');
+        var svg = form.querySelector('.js-wish-svg');
+        var formData = new FormData(form);
+        fetch(form.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.added) {
+                btn.classList.remove('text-gray-400', 'hover:text-red-500');
+                btn.classList.add('text-red-500');
+                svg.setAttribute('fill', 'currentColor');
+                btn.setAttribute('title', 'Remove from Wishlist');
+            } else {
+                btn.classList.remove('text-red-500');
+                btn.classList.add('text-gray-400', 'hover:text-red-500');
+                svg.setAttribute('fill', 'none');
+                btn.setAttribute('title', 'Add to Wishlist');
+            }
+        });
+    });
+});
+document.querySelectorAll('.js-cart-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(form);
+        fetch(form.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var badge = document.querySelector('.js-cart-badge');
+            if (badge) { badge.textContent = data.cartCount; badge.classList.remove('hidden'); }
+        });
+    });
+});
+</script>
 
 <footer class="bg-white border-t border-gray-200 mt-20 text-xs text-gray-500">
     <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">

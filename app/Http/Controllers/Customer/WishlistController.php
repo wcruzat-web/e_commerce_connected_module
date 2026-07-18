@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Product;
 use App\Models\WishlistItem;
 use App\Services\ProductSource;
 use Illuminate\Http\JsonResponse;
@@ -75,11 +76,16 @@ class WishlistController extends Controller
         $customer = $request->user();
 
         $validated = $request->validate(['product_id' => ['required', 'integer']]);
-        $product = ProductSource::find($validated['product_id']);
+        $product = Product::find($validated['product_id']);
         abort_unless($product, 404);
 
+        $pic = $product->featured_image ?? '';
+        if ($pic && !str_starts_with($pic, 'http')) {
+            $pic = asset($pic);
+        }
+
         $wishlist = $customer->wishlists()->firstOrCreate(['name' => 'Default Wishlist']);
-        $item = $wishlist->items()->where('product_id', $product['id'])->first();
+        $item = $wishlist->items()->where('product_id', $product->id)->first();
 
         if ($item) {
             $item->delete();
@@ -88,13 +94,13 @@ class WishlistController extends Controller
         } else {
             $wishlist->items()->create([
                 'customer_id' => $customer->customer_id,
-                'product_id' => $product['id'],
-                'product_name' => $product['name'],
-                'product_description' => $product['description'],
-                'product_image' => $product['image'],
-                'unit_price' => $product['price'],
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'product_description' => $product->description,
+                'product_image' => $pic,
+                'unit_price' => $product->sale_price ?? $product->price,
                 'quantity' => 1,
-                'in_stock' => true,
+                'in_stock' => $product->stock > 0,
             ]);
             $added = true;
             $message = 'Added to wishlist.';

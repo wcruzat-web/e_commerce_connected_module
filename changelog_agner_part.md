@@ -444,4 +444,18 @@ All 12 flat customer pages under `resources/views/customer/` were moved to `reso
 ### JavaScript Extraction
 - `checkout-details.blade.php`: extracted inline `<script>` block (lines 36-282) into `checkout-scripts.blade.php`
 
+---
+
+## WishlistController — Use Product Model Instead of ProductSource
+
+### File: `app/Http/Controllers/Customer/WishlistController.php`
+- `toggle()` method changed from `ProductSource::find()` to `Product::find()` — now uses real DB product data
+- `product_image` now pulled from `$product->featured_image` (with `asset()` for local paths)
+- `product_name` from `$product->name`
+- `unit_price` from `$product->sale_price ?? $product->price`
+- `in_stock` from `$product->stock > 0`
+- **Why**: Shop catalog uses Product model. Wishlist was still using old static ProductSource array, so IDs didn't match and images were LoremFlickr URLs.
+
+---
+
 *End of changes log*

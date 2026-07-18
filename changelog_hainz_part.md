@@ -119,4 +119,15 @@ This file documents the integration of Hainz's real product/shop system into the
 - [x] Added "Reset" link next to Filters heading — clears all query params via plain `route('products.index')`
 - **Why**: Quick way to reset filter selections without manual unchecking.
 
+### Wishlist Button in Catalog
+- [x] Added heart icon wishlist button beside each "Add to Cart" in shop index
+- [x] POSTs to `wishlist.toggle` route
+- **Why**: Customers can add products to wishlist directly from the catalog.
+
+### AJAX — Wishlist & Cart (no page refresh)
+- [x] Wishlist heart toggle via `fetch()` AJAX — updates fill/color instantly, no reload
+- [x] Add to Cart via `fetch()` AJAX — updates cart badge count silently
+- [x] Prevents default form submit (no scroll to top)
+- **Why**: Form POSTs caused full page reload and scroll-to-top on every click.
+
 ---
