@@ -4,6 +4,7 @@
 // ROUTES — Developer attribution
 // [CRUZAT] = original routes (admin, cart, checkout, payment, success, tracking)
 // [AGNER]  = new auth, customer portal, storefront (from _new_auth integration)
+// [HAINZ]  = real product shop, reviews, stock management
 // ============================================================================
 
 use App\Http\Controllers\Auth\DevLoginController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\SettingController;
 use App\Http\Controllers\Customer\WishlistController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SuccessController;
 use App\Http\Controllers\TrackingController;
@@ -120,11 +122,16 @@ Route::middleware('auth')->group(function () {
     // Help  [AGNER]
     Route::get('/help', fn () => view('store.help'))->name('help');
 
-    // Storefront  [AGNER → CRUZAT shop restored]
-    Route::get('/home', [StoreController::class, 'home'])->name('home');
-    Route::get('/products', fn () => redirect()->route('home'))->name('products');
-    Route::get('/products/{product}', fn () => redirect()->route('home'))->name('product.show');
-    Route::get('/shop', fn () => redirect()->route('home'))->name('products.index');
+    // Real Shop  [HAINZ — ShopController]
+    Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+    Route::post('/shop/review', [ShopController::class, 'review'])->name('shop.review');
+    Route::post('/shop/decrement-stock', [ShopController::class, 'decrementStock'])->name('shop.decrement-stock');
+    Route::post('/shop/restore-stock', [ShopController::class, 'restoreStock'])->name('shop.restore-stock');
+
+    // /home redirects to /shop for backward compat  [HAINZ]
+    Route::get('/home', fn () => redirect()->route('shop'))->name('home');
+    Route::get('/products', fn () => redirect()->route('shop'))->name('products');
+    Route::get('/products/{product}', fn () => redirect()->route('shop'))->name('product.show');
 
     // Cart  [CRUZAT — restored original CartController]
     Route::get('/cart', [CartController::class, 'index'])->name('cart');

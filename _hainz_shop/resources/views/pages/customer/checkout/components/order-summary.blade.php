@@ -1,0 +1,50 @@
+{{--
+    ERP MODULE: Checkout — Shipping & Contact Details (Checkout Page)
+    COMPONENT: Order Summary
+    DESCRIPTION: Sidebar card showing items count, subtotal, shipping, tax, grand total.
+    DATA SOURCE: $summary (CartSummaryDTO)
+--}}
+
+<div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+    <h2 class="text-sm font-semibold text-gray-900 mb-4">Order Summary</h2>
+
+    <div class="space-y-2.5 text-sm">
+        <div class="flex items-center justify-between">
+            <span class="text-gray-500">Items ({{ $summary->itemsCount }})</span>
+            <span class="font-medium text-gray-900">${{ number_format($summary->subtotal, 2) }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="flex items-center gap-1.5 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"></rect>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+                Shipping
+            </span>
+            <span class="font-medium text-green-600">FREE</span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-500">Tax (8%)</span>
+            <span class="font-medium text-gray-900">${{ number_format($summary->tax, 2) }}</span>
+        </div>
+    </div>
+
+    <div class="border-t border-gray-100 my-4"></div>
+
+    <div class="flex items-center justify-between mb-5">
+        <span class="text-sm font-semibold text-gray-900">Grand Total</span>
+        <span class="text-lg font-bold text-gray-900">${{ number_format($summary->grandTotal, 2) }}</span>
+    </div>
+
+    <p class="flex items-center gap-1.5 text-xs text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+        Free shipping on this order
+    </p>
+</div>

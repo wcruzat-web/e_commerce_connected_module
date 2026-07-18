@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#1a1a2e"/>
+  <circle cx="200" cy="200" r="120" fill="#16213e" stroke="#06b6d4" stroke-width="2"/>
+  <text x="200" y="170" text-anchor="middle" fill="#06b6d4" font-family="Arial" font-size="14" font-weight="bold">NVIDIA</text>
+  <text x="200" y="200" text-anchor="middle" fill="#fff" font-family="Arial" font-size="18" font-weight="bold">RTX 4090</text>
+  <text x="200" y="230" text-anchor="middle" fill="#888" font-family="Arial" font-size="12">Founders Edition</text>
+</svg>

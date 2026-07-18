@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#1a0a00"/>
+  <circle cx="200" cy="200" r="120" fill="#2a0a00" stroke="#d4a762" stroke-width="2"/>
+  <text x="200" y="170" text-anchor="middle" fill="#d4a762" font-family="Arial" font-size="14" font-weight="bold">ASUS</text>
+  <text x="200" y="200" text-anchor="middle" fill="#fff" font-family="Arial" font-size="16" font-weight="bold">ROG Maximus</text>
+  <text x="200" y="225" text-anchor="middle" fill="#888" font-family="Arial" font-size="12">Z790 Hero</text>
+</svg>

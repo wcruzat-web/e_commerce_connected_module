@@ -1,4 +1,4 @@
-{{--
+    {{--
     ERP MODULE: Shopping Cart (Cart Page)
     COMPONENT: Order Summary
     DESCRIPTION: Sidebar card showing items count, subtotal, shipping, tax, grand total, and checkout button.
