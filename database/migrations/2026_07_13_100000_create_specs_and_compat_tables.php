@@ -14,8 +14,8 @@ return new class extends Migration
             $table->id('spec_id');
             $table->foreignId('product_id')->constrained('products', 'id')->cascadeOnDelete();
             $table->string('category_name', 100);
-            $table->string('attribute_name', 100);
-            $table->string('attribute_value', 100)->nullable();
+            $table->string('label', 100);
+            $table->string('value', 100)->nullable();
             $table->timestamps();
         });
 

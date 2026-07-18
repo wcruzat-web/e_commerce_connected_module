@@ -8,7 +8,7 @@ class ProductSpecification extends Model
 {
     protected $primaryKey = 'spec_id';
 
-    protected $fillable = ['product_id', 'category_name', 'attribute_name', 'attribute_value'];
+    protected $fillable = ['product_id', 'category_name', 'label', 'value'];
 
     public function product()
     {
