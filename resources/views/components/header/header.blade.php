@@ -82,7 +82,7 @@
                 <div id="searchBar" class="hidden items-center">
                     <div class="relative">
                         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" id="searchInput" placeholder="Search products..." class="w-32 sm:w-48 pl-9 pr-3 py-2 bg-blue-900/40 border border-blue-700/50 rounded-lg text-xs font-medium text-white placeholder-blue-300 outline-none focus:border-blue-400 transition">
+                        <input type="text" id="searchInput" placeholder="Search products..." value="{{ request('search') }}" class="w-32 sm:w-48 pl-9 pr-3 py-2 bg-blue-900/40 border border-blue-700/50 rounded-lg text-xs font-medium text-white placeholder-blue-300 outline-none focus:border-blue-400 transition">
                     </div>
                 </div>
                 <button type="button" onclick="toggleSearch()" aria-label="Search" class="text-white hover:text-cyan-300 transition-colors">
@@ -145,9 +145,20 @@
 function toggleSearch() {
     const bar = document.getElementById('searchBar');
     const input = document.getElementById('searchInput');
+    const hidden = bar.classList.contains('hidden');
     bar.classList.toggle('hidden');
-    if (!bar.classList.contains('hidden')) input.focus();
+    if (hidden) { input.focus(); }
+    else if (input.value.trim()) { doSearch(input.value.trim()); }
 }
+function doSearch(q) {
+    window.location = '{{ route('products.index') }}?search=' + encodeURIComponent(q);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var si = document.getElementById('searchInput');
+    if (si) si.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); doSearch(this.value.trim()); }
+    });
+});
 function toggleProfileDropdown() {
     document.getElementById('profileMenu').classList.toggle('hidden');
 }

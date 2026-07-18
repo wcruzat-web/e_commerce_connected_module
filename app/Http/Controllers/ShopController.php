@@ -12,8 +12,11 @@ class ShopController extends Controller
 {
     public function index(Request $request): View
     {
+        $sort = $request->input('sort', 'featured');
+
         $dbProducts = Product::with(['category', 'specifications', 'compatibilities', 'reviews.user'])
             ->where('is_active', true)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $products = $dbProducts->map(fn ($p) => $this->mapProduct($p))->values();
@@ -28,6 +31,7 @@ class ShopController extends Controller
         $chipsets = $request->input('chipsets', []);
         $sockets = $request->input('sockets', []);
         $vram = $request->input('vram');
+        $search = $request->input('search');
 
         if (!empty($category)) {
             $products = $products->where('category', $category);
@@ -44,8 +48,17 @@ class ShopController extends Controller
         if (!empty($vram)) {
             $products = $products->where('vram', $vram);
         }
+        if (!empty($search)) {
+            $products = $products->filter(fn ($p) => stripos($p['name'], $search) !== false || stripos($p['brand'], $search) !== false);
+        }
 
-        return view('pages.customer.shop.index', compact('products'));
+        if ($sort === 'price_asc' || $sort === 'price_desc') {
+            $arr = $products->toArray();
+            usort($arr, fn ($a, $b) => $sort === 'price_asc' ? ($a['price'] <=> $b['price']) : ($b['price'] <=> $a['price']));
+            $products = collect($arr);
+        }
+
+        return view('pages.customer.shop.index', compact('products', 'search', 'sort'));
     }
 
     public function show(string $id): View
