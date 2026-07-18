@@ -1,4 +1,4 @@
-<div class="bg-[#1e3a8a] text-white pb-16 pt-6 px-6 md:px-12 relative overflow-hidden" x-show="view === 'catalog'">
+<div class="bg-[#1e3a8a] text-white pb-16 pt-6 px-6 md:px-12 relative overflow-hidden">
     <div class="max-w-7xl mx-auto">
         <div>
             <span class="bg-sky-500/20 text-sky-300 text-xs font-semibold px-3 py-1 rounded-full border border-sky-500/30">
