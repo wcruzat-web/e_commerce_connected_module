@@ -11,7 +11,8 @@ class PromoBannerController extends \App\Http\Controllers\Controller
 {
     public function index(): JsonResponse
     {
-        $banners = PromoBanner::orderBy('banner_id', 'desc')->get();
+        $banner = PromoBanner::orderByDesc('banner_id')->first();
+        $banners = $banner ? [$banner] : [];
         return response()->json($banners);
     }
 
@@ -22,11 +23,23 @@ class PromoBannerController extends \App\Http\Controllers\Controller
             'subtitle' => 'required|string|max:100',
         ]);
 
-        $banner = PromoBanner::create([
-            'title' => $validated['title'],
-            'subtitle' => $validated['subtitle'],
-            'is_active' => true,
-        ]);
+        $banner = PromoBanner::orderByDesc('banner_id')->first();
+
+        if ($banner) {
+            $banner->update([
+                'title' => $validated['title'],
+                'subtitle' => $validated['subtitle'],
+                'is_active' => true,
+            ]);
+        } else {
+            $banner = PromoBanner::create([
+                'title' => $validated['title'],
+                'subtitle' => $validated['subtitle'],
+                'is_active' => true,
+            ]);
+        }
+
+        PromoBanner::where('banner_id', '!=', $banner->banner_id)->delete();
 
         return response()->json([
             'success' => true,

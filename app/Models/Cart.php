@@ -10,6 +10,7 @@ class Cart extends Model
 
     protected $fillable = [
         'customer_id',
+        'coupon_code',
     ];
 
     public function customer()

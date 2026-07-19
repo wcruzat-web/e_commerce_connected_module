@@ -6,13 +6,6 @@
 --}}
 
     <script>
-    function applyVoucher() {
-        const code = document.getElementById('voucherInput')?.value.trim();
-        if (!code) return;
-        // ToDo: POST /cart/voucher with { code }
-        console.log('Voucher applied:', code);
-    }
-
     document.querySelectorAll('.address-card').forEach(card => {
         const editBtn = card.querySelector('.edit-address-btn');
         if (editBtn) {
@@ -98,7 +91,203 @@
         return d.innerHTML;
     }
 
+    async function applyVoucher() {
+        const input = document.getElementById('voucherInput');
+        const msgEl = document.getElementById('voucherMsg');
+        const code = input?.value.trim().toUpperCase();
+        if (!code) return;
+
+        const submitBtn = input.closest('form')?.querySelector('button[type="submit"]');
+        if (!submitBtn) return;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Applying...';
+        msgEl.textContent = '';
+        msgEl.className = 'mt-3 text-xs min-h-[14px]';
+
+        try {
+            const response = await fetch('{{ route("cart.voucher.apply") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({ code }),
+                signal: controller.signal,
+            });
+
+            const raw = await response.text();
+            let data = {};
+
+            try {
+                data = raw ? JSON.parse(raw) : {};
+            } catch {
+                throw new Error(raw || 'Unexpected voucher response.');
+            }
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Invalid voucher.');
+            }
+
+            updateSummary(data.summary);
+            showVoucherApplied(data.summary);
+            toastNotify('success', data.message || 'Voucher applied!');
+            input.value = '';
+        } catch (error) {
+            const message = error?.name === 'AbortError'
+                ? 'Voucher request timed out. Please try again.'
+                : (error?.message || 'Network error. Please try again.');
+            msgEl.textContent = message;
+            msgEl.className = 'mt-3 text-xs text-red-500 min-h-[14px]';
+            toastNotify('error', message);
+        } finally {
+            clearTimeout(timeoutId);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Apply';
+        }
+    }
+
+    function removeVoucher() {
+        const msg = document.getElementById('voucherMsg');
+        msg.textContent = '';
+        msg.className = 'mt-3 text-xs min-h-[14px]';
+
+        fetch('{{ route("cart.voucher.remove") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                toastNotify('success', data.message);
+                updateSummary(data.summary);
+                showVoucherForm();
+            } else {
+                toastNotify('error', 'Failed to remove voucher');
+            }
+        })
+        .catch(() => toastNotify('error', 'Network error'));
+    }
+
+    function updateSummary(summary) {
+        const itemsEl = document.getElementById('summaryItemCount');
+        if (itemsEl) itemsEl.textContent = summary.itemsCount;
+
+        const subEl = document.getElementById('summarySubtotal');
+        if (subEl) subEl.textContent = '₱' + summary.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const discRow = document.getElementById('discountRow');
+        const discEl = document.getElementById('summaryDiscount');
+        const discLabelEl = document.getElementById('summaryDiscountLabel');
+        if (discRow && discEl && discLabelEl) {
+            if (summary.discount > 0) {
+                discRow.classList.remove('hidden');
+                discEl.textContent = '-₱' + summary.discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                discLabelEl.textContent = ' (' + summary.couponLabel + ')';
+            } else {
+                discRow.classList.add('hidden');
+            }
+        }
+
+        const shipEl = document.querySelector('.summary-shipping');
+        if (shipEl) {
+            if (summary.shippingFee === 0) {
+                if (summary.isFreeShipping) {
+                    shipEl.innerHTML = `
+                        <div class="flex flex-col items-end">
+                            <span class="font-medium text-gray-900">₱0.00</span>
+                            <span class="text-[11px] font-bold text-green-600">FREE (Voucher)</span>
+                        </div>`;
+                } else {
+                    shipEl.innerHTML = `
+                        <div class="flex flex-col items-end">
+                            <span class="font-medium text-gray-900">₱0.00</span>
+                            <span class="text-[11px] font-bold text-green-600">FREE</span>
+                        </div>`;
+                }
+            } else {
+                shipEl.innerHTML = '<span class="font-medium text-gray-900">₱' + summary.shippingFee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>';
+            }
+        }
+
+        const taxEl = document.getElementById('summaryTax');
+        if (taxEl) taxEl.textContent = '₱' + summary.tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const totalEl = document.getElementById('summaryGrandTotal');
+        if (totalEl) totalEl.textContent = '₱' + summary.grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function showVoucherApplied(summary) {
+        const formEl = document.getElementById('voucherForm');
+        const appliedEl = document.getElementById('voucherApplied');
+        const codeEl = document.getElementById('voucherCode');
+        const labelEl = document.getElementById('voucherLabel');
+
+        if (formEl) formEl.classList.add('hidden');
+        if (appliedEl) {
+            appliedEl.classList.remove('hidden');
+            if (codeEl) codeEl.textContent = summary.couponCode || '';
+            if (labelEl) labelEl.textContent = summary.couponLabel || '';
+
+            const savingsEl = document.getElementById('voucherSavings');
+            if (savingsEl) {
+                if (summary.discount > 0) {
+                    savingsEl.textContent = 'You saved ₱' + summary.discount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    savingsEl.classList.remove('hidden');
+                } else {
+                    savingsEl.textContent = '';
+                    savingsEl.classList.add('hidden');
+                }
+            }
+        }
+    }
+
+    function showVoucherForm() {
+        const formEl = document.getElementById('voucherForm');
+        const appliedEl = document.getElementById('voucherApplied');
+        const codeEl = document.getElementById('voucherCode');
+        const labelEl = document.getElementById('voucherLabel');
+        const savingsEl = document.getElementById('voucherSavings');
+
+        if (formEl) formEl.classList.remove('hidden');
+        if (appliedEl) appliedEl.classList.add('hidden');
+        if (codeEl) codeEl.textContent = '';
+        if (labelEl) labelEl.textContent = '';
+        if (savingsEl) {
+            savingsEl.textContent = '';
+            savingsEl.classList.add('hidden');
+        }
+
+        const input = document.getElementById('voucherInput');
+        if (input) input.value = '';
+    }
+
+    function toastNotify(type, message) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+        const toast = document.createElement('div');
+        toast.className = `${colors[type] || 'bg-gray-700'} text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 transition-opacity duration-300`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        requestAnimationFrame(() => toast.style.opacity = '1');
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
     function updateAddressCard(card, addr) {
+        if (!card || !addr) return;
+
         card.setAttribute('data-street', addr.street);
         card.setAttribute('data-barangay', addr.barangay);
         card.setAttribute('data-city', addr.city);
@@ -107,9 +296,12 @@
         card.setAttribute('data-country', addr.country);
         card.setAttribute('data-type', addr.address_type);
 
-        card.querySelector('input[type=radio]').value = addr.address_id;
+        const radio = card.querySelector('input[type=radio]');
+        if (radio) radio.value = addr.address_id;
+
         const typeSpan = card.querySelector('.text-gray-400.uppercase');
         if (typeSpan) typeSpan.textContent = addr.address_type;
+
         const lines = card.querySelectorAll('.text-xs.text-gray-500');
         if (lines[0]) lines[0].textContent = addr.street + ', ' + addr.barangay;
         if (lines[1]) lines[1].textContent = addr.city + ', ' + addr.province + ' ' + addr.postal_code;
@@ -233,15 +425,22 @@
         card.click();
     }
 
-    document.getElementById('addressModal').addEventListener('click', function(e) {
-        if (e.target === this) closeAddressModal();
-    });
+    const addressModalEl = document.getElementById('addressModal');
+    if (addressModalEl) {
+        addressModalEl.addEventListener('click', function(e) {
+            if (e.target === this) closeAddressModal();
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         const defaultCard = document.querySelector('.address-card input[type=radio]:checked');
         if (defaultCard) {
             defaultCard.closest('.address-card').click();
         }
+
+        @if(isset($summary) && $summary->voucherStatus && $summary->voucherStatus !== 'valid' && $summary->voucherMessage)
+            toastNotify('error', @json($summary->voucherMessage));
+        @endif
     });
 
     function toastNotify(type, message) {

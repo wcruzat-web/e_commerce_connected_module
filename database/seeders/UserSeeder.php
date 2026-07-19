@@ -10,8 +10,9 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // Super Admin
         Customer::updateOrCreate(
-            ['email' => 'admin@admin.com'],
+            ['email' => 'superadmin@example.com'],
             [
                 'first_name' => 'Super',
                 'last_name' => 'Admin',
@@ -21,11 +22,24 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // Admin
         Customer::updateOrCreate(
-            ['email' => 'demo@example.com'],
+            ['email' => 'admin@example.com'],
             [
-                'first_name' => 'Demo',
-                'last_name' => 'Customer',
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'status' => 'Active',
+            ]
+        );
+
+        // Customer
+        Customer::updateOrCreate(
+            ['email' => 'customer@example.com'],
+            [
+                'first_name' => 'Customer',
+                'last_name' => 'User',
                 'password' => Hash::make('password'),
                 'role' => 'customer',
                 'status' => 'Active',

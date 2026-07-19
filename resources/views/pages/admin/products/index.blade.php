@@ -822,9 +822,9 @@ document.getElementById("addPromoBtn").onclick = async () => {
     return fd;
   })());
   if (res.success) {
-    promoBanners.unshift({ id: res.banner.banner_id, title: res.banner.title, subtitle: res.banner.subtitle });
+    promoBanners = [{ id: res.banner.banner_id, title: res.banner.title, subtitle: res.banner.subtitle }];
     renderPromos();
-    showToast("Promo banner added");
+    showToast("Promo banner saved");
   }
 };
 

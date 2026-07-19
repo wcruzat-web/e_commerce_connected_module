@@ -95,6 +95,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/wishlist', [WishlistController::class, 'store'])->name('wishlist.store');
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
     Route::post('/wishlist/{item}/move', [WishlistController::class, 'moveToCart'])->name('wishlist.moveToCart');
+    Route::post('/wishlist/bulk-move', [WishlistController::class, 'bulkMoveToCart'])->name('wishlist.bulkMove');
+    Route::post('/wishlist/bulk-destroy', [WishlistController::class, 'destroyMultiple'])->name('wishlist.bulkDestroy');
     Route::delete('/wishlist/{item}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 
     // Notifications  [AGNER]
@@ -126,6 +128,8 @@ Route::middleware('auth')->group(function () {
     // Cart  [CRUZAT — restored original CartController]
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/voucher', [CartController::class, 'applyVoucher'])->name('cart.voucher.apply');
+    Route::post('/cart/voucher/remove', [CartController::class, 'removeVoucher'])->name('cart.voucher.remove');
     Route::patch('/cart/{cartItem}', [CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
 
@@ -296,6 +300,7 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(fu
     Route::post('/orders/{order}/tracking', [AdminOrderController::class, 'updateTracking'])->name('admin.orders.tracking');
     Route::view('/products', 'pages.admin.products.index')->name('admin.products');
     Route::view('/inventory', 'pages.admin.inventory.index')->name('admin.inventory');
+    Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class)->names('admin.coupons');
 });
 
 /*

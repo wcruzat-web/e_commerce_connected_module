@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\DTOs\PaymentDataDTO;
 use App\Models\Cart;
+use App\Models\Coupon;
+use App\Models\CouponUsage;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 
@@ -29,7 +31,10 @@ class PaymentService
             'paid_at' => now(),
             'subtotal' => $summary->subtotal,
             'tax' => $summary->tax,
+            'discount' => $summary->discount,
+            'shipping_fee' => $summary->shippingFee,
             'grand_total' => $summary->grandTotal,
+            'coupon_code' => $summary->couponCode,
             'shipping_name' => $data->shippingName,
             'shipping_email' => $data->shippingEmail,
             'shipping_phone' => $data->shippingPhone,
@@ -55,6 +60,22 @@ class PaymentService
         }
 
         $cart->items()->delete();
+
+        if ($summary->couponCode) {
+            $coupon = Coupon::where('code', $summary->couponCode)->first();
+            if ($coupon) {
+                $coupon->increment('used_count');
+
+                CouponUsage::create([
+                    'coupon_id' => $coupon->id,
+                    'customer_id' => $cart->customer_id,
+                    'order_id' => $order->order_id,
+                    'used_at' => now(),
+                ]);
+            }
+        }
+
+        $cart->update(['coupon_code' => null]);
 
         $trackingNumber = 'TRS-' . str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT) . '-' . str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
 

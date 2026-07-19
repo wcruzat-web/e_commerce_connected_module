@@ -8,6 +8,10 @@
 <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
     <h2 class="text-sm font-semibold text-gray-900 mb-4">Order Summary</h2>
 
+    @php
+        $hasVoucher = !empty($summary->couponCode);
+    @endphp
+
     <div class="space-y-2.5 text-sm">
         <div class="flex items-center justify-between">
             <span class="text-gray-500">Items ({{ $summary->itemsCount }})</span>
@@ -26,12 +30,27 @@
             @if((float)$summary->shippingFee === 0.0)
                 <div class="flex flex-col items-end">
                     <span class="font-medium text-gray-900">₱0.00</span>
-                    <span class="text-[11px] font-bold text-green-600">FREE</span>
+                    <span class="text-[11px] font-bold text-green-600">{{ $summary->isFreeShipping ? 'FREE (Voucher)' : 'FREE' }}</span>
                 </div>
             @else
                 <span class="font-medium text-gray-900">₱{{ number_format($summary->shippingFee, 2) }}</span>
             @endif
         </div>
+        @if($hasVoucher)
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Voucher</span>
+                <div class="text-right">
+                    <span class="font-medium text-gray-900">{{ $summary->couponCode }}</span>
+                    <div class="text-xs text-gray-500">{{ $summary->couponLabel }}</div>
+                </div>
+            </div>
+        @endif
+        @if((float) $summary->discount > 0)
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Discount</span>
+                <span class="font-medium text-emerald-600">-₱{{ number_format($summary->discount, 2) }}</span>
+            </div>
+        @endif
         <div class="flex items-center justify-between">
             <span class="text-gray-500">Tax (8%)</span>
             <span class="font-medium text-gray-900">₱{{ number_format($summary->tax, 2) }}</span>

@@ -1,6 +1,4 @@
 <?php
-// CRUZAT — cart: AJAX add-to-cart support (ERPV0.2)
-
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
@@ -25,7 +23,6 @@ class CartController extends Controller
 
     public function add(Request $request)
     {
-        // CHANGES HERE: added AJAX JSON response below (lines 38-44) for shop add-to-cart
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
@@ -35,7 +32,6 @@ class CartController extends Controller
         $cart = $this->cartService->getOrCreateCart($customer->customer_id);
         $item = $this->cartService->addItem($cart, $request->product_id, $request->quantity);
 
-        // CHANGES HERE: return JSON for AJAX requests (shop add-to-cart without page reload)
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'ok' => true,
@@ -63,5 +59,43 @@ class CartController extends Controller
         $this->cartService->removeItem($cartItem);
 
         return redirect()->route('cart')->with('success', 'Item removed from cart.');
+    }
+
+    public function applyVoucher(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|max:50',
+        ]);
+
+        $customer = Auth::user();
+        $cart = $this->cartService->getOrCreateCart($customer->customer_id);
+        $result = $this->cartService->applyCoupon($cart, $request->code);
+
+        if (!$result['success']) {
+            return response()->json($result, 422);
+        }
+
+        $summary = $this->cartService->getSummary($cart);
+
+        return response()->json([
+            'success' => true,
+            'message' => $result['message'],
+            'summary' => $summary,
+        ]);
+    }
+
+    public function removeVoucher(Request $request)
+    {
+        $customer = Auth::user();
+        $cart = $this->cartService->getOrCreateCart($customer->customer_id);
+        $this->cartService->removeCoupon($cart);
+
+        $summary = $this->cartService->getSummary($cart);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Voucher removed.',
+            'summary' => $summary,
+        ]);
     }
 }

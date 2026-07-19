@@ -17,6 +17,8 @@ class Order extends Model
         'status',
         'subtotal',
         'tax',
+        'discount',
+        'shipping_fee',
         'grand_total',
         'shipping_name',
         'shipping_email',
@@ -25,6 +27,7 @@ class Order extends Model
         'notes',
         'payment_status',
         'payment_method',
+        'coupon_code',
         'paid_at',
         'customer_received',
     ];

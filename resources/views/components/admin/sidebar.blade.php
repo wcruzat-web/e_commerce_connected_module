@@ -69,6 +69,17 @@
                 </svg>
                 <span class="sidebar-label">Inventory</span>
             </a>
+            <a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ str_starts_with($route, 'admin.coupon') ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 12V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"></path>
+                    <path d="M12 12h.01"></path>
+                    <path d="M16 12h.01"></path>
+                    <path d="M8 16h.01"></path>
+                    <path d="M16 20l4-4"></path>
+                    <path d="M20 16l-4 4"></path>
+                </svg>
+                <span class="sidebar-label">Vouchers</span>
+            </a>
             @if(auth()->user()?->role === 'super_admin')
             <a href="{{ route('admin.users') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $route === 'admin.users' ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

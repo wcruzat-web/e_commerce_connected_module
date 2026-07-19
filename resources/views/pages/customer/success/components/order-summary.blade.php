@@ -9,6 +9,11 @@
 <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
     <h2 class="text-sm font-semibold text-gray-900 mb-4">Order Summary</h2>
 
+    @php
+        $shippingFee = (float) $order->shipping_fee;
+        $voucherLabel = $coupon?->isFreeShipping() ? 'FREE SHIPPING' : ($coupon ? ($coupon->discount_percentage . '% off') : 'Applied voucher');
+    @endphp
+
     <div class="space-y-2.5 text-sm">
         <div class="flex items-center justify-between">
             <span class="text-gray-500">Items ({{ $order->items->sum('quantity') }})</span>
@@ -24,16 +29,30 @@
                 </svg>
                 Shipping
             </span>
-            @php $shippingFee = $order->subtotal >= 3000 ? 0 : 120; @endphp
             @if((float)$shippingFee === 0.0)
                 <div class="flex flex-col items-end">
                     <span class="font-medium text-gray-900">₱0.00</span>
-                    <span class="text-[11px] font-bold text-green-600">FREE</span>
+                    <span class="text-[11px] font-bold text-green-600">{{ $order->coupon_code && $coupon?->isFreeShipping() ? 'FREE (Voucher)' : 'FREE' }}</span>
                 </div>
             @else
                 <span class="font-medium text-gray-900">₱{{ number_format($shippingFee, 2) }}</span>
             @endif
         </div>
+        @if($order->coupon_code)
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Voucher</span>
+                <div class="text-right">
+                    <span class="font-medium text-gray-900">{{ $order->coupon_code }}</span>
+                    <div class="text-xs text-gray-500">{{ $voucherLabel }}</div>
+                </div>
+            </div>
+        @endif
+        @if((float) $order->discount > 0)
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Discount</span>
+                <span class="font-medium text-emerald-600">-₱{{ number_format($order->discount, 2) }}</span>
+            </div>
+        @endif
         <div class="flex items-center justify-between">
             <span class="text-gray-500">Tax (8%)</span>
             <span class="font-medium text-gray-900">₱{{ number_format($order->tax, 2) }}</span>

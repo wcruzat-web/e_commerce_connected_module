@@ -4,6 +4,15 @@ All changes are timestamped and grouped by version/session.
 
 ---
 
+## 2026-07-19
+
+### Customer Header, Category Filter, and Voucher UI Updates
+- Connected the customer top header announcement to the admin promo banner table so banner text updates in admin appear on customer pages automatically
+- Enforced a single active promo banner in admin by upserting the latest banner and removing older duplicates
+- Updated the shop category filter so clicking a category in the header now returns the matching products correctly from the database
+- Fixed voucher apply/remove behavior on cart, checkout, payment, and success pages so the voucher state updates in place without page refresh
+- Hardened voucher UI helpers to avoid `classList` null errors when the applied or form container is missing
+
 ## 2026-07-08
 
 ### 10:00 AM — Project Setup & Customer Pages

@@ -15,11 +15,46 @@ class ShopController extends Controller
     public function index(Request $request): View
     {
         $sort = $request->input('sort', 'featured');
+        $category = trim((string) $request->input('category', ''));
+        $brands = $request->input('brands', []);
+        $chipsets = $request->input('chipsets', []);
+        $sockets = $request->input('sockets', []);
+        $vram = $request->input('vram');
+        $search = $request->input('search');
 
-        $dbProducts = Product::with(['category', 'specifications', 'compatibilities', 'reviews.user'])
-            ->where('is_active', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Product::with(['category', 'specifications', 'compatibilities', 'reviews.user'])
+            ->where('is_active', true);
+
+        if ($category !== '') {
+            $normalizedCategory = mb_strtolower($category);
+            $query->whereRaw('LOWER(TRIM(category)) = ?', [$normalizedCategory]);
+        }
+        if (!empty($brands)) {
+            $query->whereIn('brand', $brands);
+        }
+        if (!empty($chipsets)) {
+            $query->whereHas('specifications', function ($specQuery) use ($chipsets) {
+                $specQuery->where('label', 'Chipset')->whereIn('value', $chipsets);
+            });
+        }
+        if (!empty($sockets)) {
+            $query->whereHas('specifications', function ($specQuery) use ($sockets) {
+                $specQuery->where('label', 'Socket')->whereIn('value', $sockets);
+            });
+        }
+        if (!empty($vram)) {
+            $query->whereHas('specifications', function ($specQuery) use ($vram) {
+                $specQuery->where('label', 'VRAM')->where('value', $vram);
+            });
+        }
+        if (!empty($search)) {
+            $query->where(function ($searchQuery) use ($search) {
+                $searchQuery->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('brand', 'like', '%' . $search . '%');
+            });
+        }
+
+        $dbProducts = $query->orderBy('created_at', 'desc')->get();
 
         $products = $dbProducts->map(fn ($p) => $this->mapProduct($p))->values();
 
@@ -27,32 +62,6 @@ class ShopController extends Controller
             ? auth()->user()->wishlists()->first()?->items()->pluck('product_id')->toArray() ?? []
             : [];
         $products = $products->map(fn ($p) => array_merge($p, ['in_wishlist' => in_array((int)$p['id'], $wishlistIds)]));
-
-        $category = $request->input('category');
-        $brands = $request->input('brands', []);
-        $chipsets = $request->input('chipsets', []);
-        $sockets = $request->input('sockets', []);
-        $vram = $request->input('vram');
-        $search = $request->input('search');
-
-        if (!empty($category)) {
-            $products = $products->where('category', $category);
-        }
-        if (!empty($brands)) {
-            $products = $products->whereIn('brand', $brands);
-        }
-        if (!empty($chipsets)) {
-            $products = $products->whereIn('chipset', $chipsets);
-        }
-        if (!empty($sockets)) {
-            $products = $products->whereIn('socket', $sockets);
-        }
-        if (!empty($vram)) {
-            $products = $products->where('vram', $vram);
-        }
-        if (!empty($search)) {
-            $products = $products->filter(fn ($p) => stripos($p['name'], $search) !== false || stripos($p['brand'], $search) !== false);
-        }
 
         if ($sort === 'price_asc' || $sort === 'price_desc') {
             $arr = $products->toArray();
