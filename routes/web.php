@@ -12,6 +12,9 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\Admin\Api\ProductController as ApiProductController;
+use App\Http\Controllers\Admin\Api\InventoryController as ApiInventoryController;
+use App\Http\Controllers\Admin\Api\PromoBannerController as ApiPromoBannerController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Customer\AddressController;
 use App\Http\Controllers\Customer\ChangePasswordController;
@@ -173,22 +176,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/dummy/add-product', function (Illuminate\Http\Request $request) {
         $data = $request->validate([
             'name' => 'required|string|max:150',
-            'sku' => 'required|string|max:100|unique:products,sku',
+            'sku' => 'required|string|max:100|unique:product_table,sku',
             'brand' => 'nullable|string|max:100',
             'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'product_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'stock' => 'nullable|integer|min:0',
             'badge' => 'nullable|string|max:50',
         ]);
-        $data['slug'] = Str::slug($request->name . '-' . uniqid());
+        $data['slug'] = Str::slug($request->product_name . '-' . uniqid());
         $data['is_active'] = true;
         if (empty($data['badge'])) $data['badge'] = null;
-        if ($request->hasFile('featured_image')) {
-            $data['featured_image'] = 'storage/' . $request->file('featured_image')->store('products', 'public');
+        if ($request->hasFile('product_image')) {
+            $data['product_image'] = $request->file('product_image')->store('products', 'public');
         }
         $product = App\Models\Product::create($data);
-        return redirect("/dummy/add-specs/{$product->id}")->with('success', "Product '{$product->name}' added! Now add its specifications and compatibility.");
+        return redirect("/dummy/add-specs/{$product->product_id}")->with('success', "Product '{$product->product_name}' added! Now add its specifications and compatibility.");
     });
     Route::get('/dummy/add-specs/{product}', function (App\Models\Product $product) {
         $specCategories = ['Core Architectures', 'Performance', 'Memory', 'Connectivity', 'Thermal & Power', 'Physical'];
@@ -213,7 +215,7 @@ Route::middleware('auth')->group(function () {
         if ($request->has('compatibilities')) {
             foreach ($data['compatibilities'] as $compat) {
                 \App\Models\ProductCompatibility::create([
-                    'product_id' => $product->id,
+                    'product_id' => $product->product_id,
                     'category_name' => $compat['category_name'],
                     'item_name' => $compat['item_name'],
                 ]);
@@ -227,15 +229,15 @@ Route::middleware('auth')->group(function () {
     });
     Route::post('/dummy/edit-product/{product}', function (Illuminate\Http\Request $request, App\Models\Product $product) {
         $data = $request->validate([
-            'name' => 'required|string|max:150',
-            'sku' => 'required|string|max:100|unique:products,sku,' . $product->id,
+            'product_name' => 'required|string|max:150',
+            'sku' => 'required|string|max:100|unique:product_table,sku,' . $product->product_id . ',product_id',
             'brand' => 'nullable|string|max:100',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'nullable|integer|min:0',
         ]);
         $product->update($data);
-        return redirect("/dummy/products")->with('success', "Product '{$product->name}' updated!");
+        return redirect("/dummy/products")->with('success', "Product '{$product->product_name}' updated!");
     });
     Route::get('/dummy/edit-specs/{product}', function (App\Models\Product $product) {
         $product->load('specifications', 'compatibilities');
@@ -263,21 +265,21 @@ Route::middleware('auth')->group(function () {
         if ($request->has('compatibilities')) {
             foreach ($data['compatibilities'] as $compat) {
                 \App\Models\ProductCompatibility::create([
-                    'product_id' => $product->id,
+                    'product_id' => $product->product_id,
                     'category_name' => $compat['category_name'],
                     'item_name' => $compat['item_name'],
                 ]);
             }
         }
-        return redirect("/dummy/edit-specs/{$product->id}")->with('success', "Specifications and compatibility for '{$product->name}' updated!");
+        return redirect("/dummy/edit-specs/{$product->product_id}")->with('success', "Specifications and compatibility for '{$product->product_name}' updated!");
     });
     Route::delete('/dummy/products/{product}', function (App\Models\Product $product) {
         $product->specifications()->delete();
         $product->compatibilities()->delete();
         $product->reviews()->delete();
-        \App\Models\CartItem::where('product_id', $product->id)->delete();
+        \App\Models\CartItem::where('product_id', $product->product_id)->delete();
         $product->delete();
-        return redirect('/dummy/products')->with('success', "Product '{$product->name}' deleted!");
+        return redirect('/dummy/products')->with('success', "Product '{$product->product_name}' deleted!");
     });
 });
 
@@ -296,6 +298,27 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(fu
     Route::post('/orders/{order}/tracking', [AdminOrderController::class, 'updateTracking'])->name('admin.orders.tracking');
     Route::view('/products', 'pages.admin.products.index')->name('admin.products');
     Route::view('/inventory', 'pages.admin.inventory.index')->name('admin.inventory');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin — API Routes (Esteban)  [ESTEBAN — REST API + SPA]
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api/admin')->middleware(['auth', 'role:super_admin,admin'])->group(function () { // [ESTEBAN]
+    Route::get('/products', [ApiProductController::class, 'index']);
+    Route::post('/products', [ApiProductController::class, 'store']);
+    Route::put('/products/{id}', [ApiProductController::class, 'update']);
+    Route::delete('/products/{id}', [ApiProductController::class, 'destroy']);
+    Route::patch('/products/{id}/featured', [ApiProductController::class, 'toggleFeatured']);
+    Route::get('/inventory/stats', [ApiInventoryController::class, 'stats']);
+    Route::get('/inventory/products', [ApiInventoryController::class, 'products']);
+    Route::get('/inventory/warehouses', [ApiInventoryController::class, 'warehouses']);
+    Route::post('/inventory/sync', [ApiInventoryController::class, 'forceSync']);
+    Route::get('/revenue', [ApiInventoryController::class, 'revenue']);
+    Route::get('/promos', [ApiPromoBannerController::class, 'index']);
+    Route::post('/promos', [ApiPromoBannerController::class, 'store']);
+    Route::delete('/promos/{id}', [ApiPromoBannerController::class, 'destroy']);
 });
 
 /*

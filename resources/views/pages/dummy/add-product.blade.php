@@ -40,9 +40,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">Product Name</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required placeholder="e.g. NVIDIA RTX 4090"
+                    <input type="text" name="product_name" value="{{ old('product_name') }}" required placeholder="e.g. NVIDIA RTX 4090"
                            class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm outline-none focus:border-cyan-400 focus:bg-white focus:ring-4 focus:ring-cyan-100 transition-all">
-                    @error('name') <p class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</p> @enderror
+                    @error('product_name') <p class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
@@ -118,11 +118,11 @@
                         <label class="flex-1 flex items-center gap-3 rounded-xl border border-dashed border-gray-300 bg-gray-50/50 px-4 py-3 cursor-pointer hover:border-cyan-400 hover:bg-cyan-50/30 transition-all">
                             <svg class="w-6 h-6 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
                             <span class="text-sm text-gray-500 font-medium" id="file-label">Choose image file</span>
-                            <input type="file" name="featured_image" accept="image/*" class="hidden" onchange="document.getElementById('file-label').textContent = this.files[0]?.name || 'Choose image file'">
+                            <input type="file" name="product_image" accept="image/*" class="hidden" onchange="document.getElementById('file-label').textContent = this.files[0]?.name || 'Choose image file'">
                         </label>
                     </div>
                     <p class="text-xs text-slate-400 mt-1.5">Optional. JPG, PNG, or WebP.</p>
-                    @error('featured_image') <p class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</p> @enderror
+                    @error('product_image') <p class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</p> @enderror
                 </div>
             </div>
 

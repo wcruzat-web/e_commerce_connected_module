@@ -22,10 +22,10 @@
 
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h1 class="text-2xl font-bold">Edit Specifications & Compatibility</h1>
-            <p class="text-gray-600 mt-1">Product: <strong>{{ $product->name }}</strong> (SKU: {{ $product->sku }})</p>
+            <p class="text-gray-600 mt-1">Product: <strong>{{ $product->product_name }}</strong> (SKU: {{ $product->sku }})</p>
         </div>
 
-        <form method="POST" action="/dummy/edit-specs/{{ $product->id }}" enctype="multipart/form-data" x-data="specsForm()">
+        <form method="POST" action="/dummy/edit-specs/{{ $product->product_id }}" enctype="multipart/form-data" x-data="specsForm()">
             @csrf
 
             <div class="bg-white rounded-lg shadow p-6 mb-6">

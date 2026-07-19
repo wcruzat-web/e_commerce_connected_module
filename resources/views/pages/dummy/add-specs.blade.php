@@ -21,10 +21,10 @@
 
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h1 class="text-2xl font-bold mb-2">Add Specifications & Compatibility</h1>
-            <p class="text-gray-600">Product: <strong>{{ $product->name }}</strong> (SKU: {{ $product->sku }})</p>
+            <p class="text-gray-600">Product: <strong>{{ $product->product_name }}</strong> (SKU: {{ $product->sku }})</p>
         </div>
 
-        <form method="POST" action="/dummy/add-specs/{{ $product->id }}" x-data="specsForm()">
+        <form method="POST" action="/dummy/add-specs/{{ $product->product_id }}" x-data="specsForm()">
             @csrf
 
             <div class="bg-white rounded-lg shadow p-6 mb-6">

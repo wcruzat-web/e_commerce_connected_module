@@ -79,13 +79,15 @@ class WishlistController extends Controller
         $product = Product::find($validated['product_id']);
         abort_unless($product, 404);
 
-        $pic = $product->featured_image ?? '';
-        if ($pic && !str_starts_with($pic, 'http')) {
+        $pic = $product->product_image ?? '';
+        if ($pic && !str_starts_with($pic, 'http') && !str_starts_with($pic, '/')) {
+            $pic = asset('storage/products/' . $pic);
+        } elseif ($pic && !str_starts_with($pic, 'http')) {
             $pic = asset($pic);
         }
 
         $wishlist = $customer->wishlists()->firstOrCreate(['name' => 'Default Wishlist']);
-        $item = $wishlist->items()->where('product_id', $product->id)->first();
+        $item = $wishlist->items()->where('product_id', $product->product_id)->first();
 
         if ($item) {
             $item->delete();
@@ -94,8 +96,8 @@ class WishlistController extends Controller
         } else {
             $wishlist->items()->create([
                 'customer_id' => $customer->customer_id,
-                'product_id' => $product->id,
-                'product_name' => $product->name,
+                'product_id' => $product->product_id,
+                'product_name' => $product->product_name,
                 'product_description' => $product->description,
                 'product_image' => $pic,
                 'unit_price' => $product->sale_price ?? $product->price,

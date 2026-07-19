@@ -1,5 +1,6 @@
 <?php
 
+// [CRUZAT] — redirects admins away from customer routes
 namespace App\Http\Middleware;
 
 use Closure;

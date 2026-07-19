@@ -72,8 +72,8 @@ class DashboardService
     public function getRevenueByCategory(): array
     {
         $results = OrderItem::selectRaw('categories.name as category, SUM(order_items.subtotal) as total')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->join('categories', 'products.category_id', '=', 'categories.id')
+            ->join('product_table', 'order_items.product_id', '=', 'product_table.product_id') // [ESTEBAN] table/column rename
+            ->join('categories', 'product_table.category_id', '=', 'categories.id')
             ->groupBy('categories.name')
             ->orderByDesc('total')
             ->get();
@@ -97,7 +97,7 @@ class DashboardService
             ->get()
             ->map(function ($product) {
                 return [
-                    'name' => $product->name,
+                    'name' => $product->product_name,
                     'sku' => $product->sku,
                     'left' => $product->stock,
                     'pct' => 0,

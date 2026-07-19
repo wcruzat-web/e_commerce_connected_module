@@ -26,7 +26,7 @@ class CartController extends Controller
     {
         // CHANGES HERE: added AJAX JSON response below (lines 38-44) for shop add-to-cart
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:product_table,product_id',
             'quantity' => 'required|integer|min:1',
         ]);
 

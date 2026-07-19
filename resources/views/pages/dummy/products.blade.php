@@ -36,7 +36,7 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($products as $p)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3">{{ $p->name }}</td>
+                            <td class="px-4 py-3">{{ $p->product_name }}</td>
                             <td class="px-4 py-3 text-gray-500">{{ $p->sku }}</td>
                             <td class="px-4 py-3">${{ number_format($p->price, 2) }}</td>
                             <td class="px-4 py-3">{{ $p->stock }}</td>
@@ -44,9 +44,9 @@
                             <td class="px-4 py-3">{{ $p->compatibilities_count }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex gap-2 items-center">
-                                    <a href="/dummy/edit-product/{{ $p->id }}" class="text-cyan-600 hover:underline font-semibold text-xs">Edit</a>
-                                    <a href="/dummy/edit-specs/{{ $p->id }}" class="text-blue-600 hover:underline font-semibold text-xs">Specs & Compat</a>
-                                    <form method="POST" action="/dummy/products/{{ $p->id }}" onsubmit="return confirm('Delete {{ $p->name }}?')" class="inline">
+                                    <a href="/dummy/edit-product/{{ $p->product_id }}" class="text-cyan-600 hover:underline font-semibold text-xs">Edit</a>
+                                    <a href="/dummy/edit-specs/{{ $p->product_id }}" class="text-blue-600 hover:underline font-semibold text-xs">Specs & Compat</a>
+                                    <form method="POST" action="/dummy/products/{{ $p->product_id }}" onsubmit="return confirm('Delete {{ $p->product_name }}?')" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-500 hover:text-red-700 hover:underline font-semibold text-xs">Remove</button>

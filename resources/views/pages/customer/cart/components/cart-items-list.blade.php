@@ -34,8 +34,8 @@
             <div class="cart-item flex items-start gap-4 py-4 {{ $loop->first ? 'pt-0' : '' }}" data-item-id="{{ $item->cart_item_id }}" data-price="{{ $item->unit_price }}" data-max-qty="{{ $item->product->stock ?? 0 }}">
                 {{-- product image --}}
                 <div class="w-20 h-20 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0 overflow-hidden">
-                    @if($item->product->featured_image)
-                        <img src="{{ $item->product->featured_image }}" alt="{{ $item->product->name }}" class="w-full h-full object-contain p-2">
+                    @if($item->product->product_image)
+                        <img src="{{ $item->product->getImageUrlAttribute() ?? asset('storage/' . $item->product->product_image) }}" alt="{{ $item->product->product_name }}" class="w-full h-full object-contain p-2">
                     @else
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="18" height="18" rx="2"></rect>
@@ -52,7 +52,7 @@
                         {{-- category tag --}}
                         <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{{ $item->product->category->name ?? '' }}</span>
                     </div>
-                    <p class="text-sm font-semibold text-gray-900">{{ $item->product->name }}</p>
+                    <p class="text-sm font-semibold text-gray-900">{{ $item->product->product_name }}</p>
                     <p class="text-xs text-gray-400 mt-0.5">SKU: {{ $item->product->sku }}</p>
 
                     <div class="mt-2">

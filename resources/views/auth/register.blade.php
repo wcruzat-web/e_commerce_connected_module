@@ -1,3 +1,4 @@
+{{-- [AGNER] — customer registration page --}}
 @extends('layouts.guest')
 
 @section('title', 'Register — ShopEase')

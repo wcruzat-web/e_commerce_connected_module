@@ -74,7 +74,7 @@ class ShopController extends Controller
     public function review(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:product_table,product_id',
             'comment' => 'required|string|max:2000',
             'rating' => 'required|integer|min:1|max:5',
         ]);
@@ -120,7 +120,7 @@ class ShopController extends Controller
     public function decrementStock(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:product_table,product_id',
             'quantity' => 'required|integer|min:1',
         ]);
 
@@ -139,7 +139,7 @@ class ShopController extends Controller
     public function restoreStock(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'product_id' => 'required|exists:product_table,product_id',
             'quantity' => 'required|integer|min:1',
         ]);
 
@@ -185,14 +185,14 @@ class ShopController extends Controller
         })->values()->toArray();
 
         return [
-            'id' => (string) $p->id,
-            'name' => $p->name,
+            'id' => (string) $p->product_id,
+            'name' => $p->product_name,
             'brand' => $p->brand ?? 'Generic',
             'price' => (float) ($p->sale_price ?: $p->price),
             'sku' => $p->sku,
             'category' => $p->category->name ?? 'Uncategorized',
-            'image' => $p->featured_image
-                ? (str_starts_with($p->featured_image, 'http') ? $p->featured_image : asset($p->featured_image))
+            'image' => $p->product_image
+                ? (str_starts_with($p->product_image, 'http') ? $p->product_image : asset($p->product_image))
                 : 'https://placehold.co/200x200?text=No+Image',
             'badge' => $p->badge ?? '',
             'badgeClass' => $p->badge === 'Sale' ? 'bg-red-500' : ($p->badge === 'Best Seller' ? 'bg-amber-500' : 'bg-blue-900'),

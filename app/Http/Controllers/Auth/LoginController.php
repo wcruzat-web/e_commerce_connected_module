@@ -1,5 +1,6 @@
 <?php
 
+// [AGNER] — auth login, role-based redirect (admin → dashboard, customer → cart)
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
