@@ -58,7 +58,10 @@ class ShopController extends Controller
             $products = collect($arr);
         }
 
-        return view('pages.customer.shop.index', compact('products', 'search', 'sort'));
+        $featuredProduct = Product::where('is_featured', true)->where('is_active', true)->first();
+        $featured = $featuredProduct ? $this->mapProduct($featuredProduct) : null;
+
+        return view('pages.customer.shop.index', compact('products', 'search', 'sort', 'featured'));
     }
 
     public function show(string $id): View
@@ -188,7 +191,8 @@ class ShopController extends Controller
             'id' => (string) $p->id,
             'name' => $p->name,
             'brand' => $p->brand ?? 'Generic',
-            'price' => (float) ($p->sale_price ?: $p->price),
+            'price' => (float) $p->price,
+            'original_price' => $p->badge === 'Sale' && $p->sale_price ? (float) $p->sale_price : null,
             'sku' => $p->sku,
             'category' => $p->category->name ?? 'Uncategorized',
             'image' => $p->featured_image

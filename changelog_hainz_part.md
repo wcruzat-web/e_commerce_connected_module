@@ -199,3 +199,49 @@ This file documents the integration of Hainz's real product/shop system into the
 - **Why**: Consistent with the component-split pattern used by orders, wishlist, history, etc.
 
 ---
+
+### ERPV1.6 — Featured product hero banner
+
+```
+- ShopController: passes featured product to view as $featured
+- hero-banner.blade.php: two-column layout with original hero info
+  (left) and featured product details (right), no product image,
+  only "View Details" link, original blue background preserved
+```
+
+#### Files Changed
+- `app/Http/Controllers/ShopController.php::index()` — queries `is_featured && is_active`, maps via `mapProduct()`, passes as `$featured`
+- `resources/views/pages/customer/shop/components/hero-banner.blade.php` — when featured product exists, shows split layout:
+  - **Left**: Original hero content (store tagline, heading, description)
+  - **Right**: Featured badge, product name, price, brand/SKU, "View Details" link
+  - Separated by subtle `border-l` divider
+  - Falls back to original static content when no featured product
+
+#### How to test
+1. In admin panel → Products, click the star icon on any product to feature it
+2. Visit the shop page — featured product info appears on the right side
+3. Click the star again to unfeature — banner falls back to static content
+
+#### To revert
+- Revert `ShopController.php` and `hero-banner.blade.php`
+
+---
+
+### ERPV1.7 — Product badge & sale price
+
+```
+- Admin product form: added Badge radio (None / New / Sale)
+- When "Sale" selected, Original Price input appears
+- badge stored in products.badge, original price stored in
+  products.sale_price
+```
+
+#### Files Changed
+- `resources/views/pages/admin/products/index.blade.php` — badge radio + original price input in modal; JS toggle + submit + edit pre-population
+- `app/Http/Controllers/Admin/Api/ProductController.php` — store/update now save `badge` and `sale_price`
+
+#### Notes
+- Best Seller badge not implemented yet (should be auto-assigned to highest sold product via scheduled task)
+- Shop display of sale/original prices not yet wired — Hainz to handle in `mapProduct()` / `product-card.blade.php`
+
+---

@@ -9,8 +9,10 @@ class Product extends Model
     protected $fillable = [
         'brand', 'name', 'slug', 'description', 'price', 'sale_price',
         'category_id', 'featured_image', 'stock', 'sku', 'badge',
-        'rating', 'review_count', 'is_active',
+        'rating', 'review_count', 'is_active', 'is_featured', 'category',
     ];
+
+    protected $appends = ['image_url'];
 
     public function category()
     {
@@ -35,5 +37,18 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(ProductReview::class, 'product_id', 'id');
+    }
+
+    public function warehouseStock()
+    {
+        return $this->hasMany(WarehouseStock::class, 'product_id', 'id');
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if ($this->featured_image) {
+            return asset($this->featured_image);
+        }
+        return null;
     }
 }

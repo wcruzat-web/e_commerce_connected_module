@@ -31,9 +31,22 @@
 
             @php
                 use Illuminate\Support\Facades\DB;
-                $mmCategories = \App\Models\Category::with(['products' => function ($q) {
-                    $q->where('is_active', 1)->orderBy('created_at', 'desc')->limit(4);
-                }])->get();
+                $headerCategories = \App\Models\Product::where('is_active', 1)
+                    ->whereNotNull('category')
+                    ->distinct()
+                    ->pluck('category')
+                    ->toArray();
+                $mmCategories = [];
+                foreach ($headerCategories as $cat) {
+                    $products = \App\Models\Product::where('is_active', 1)
+                        ->where('category', $cat)
+                        ->orderBy('created_at', 'desc')
+                        ->limit(4)
+                        ->get();
+                    if ($products->count()) {
+                        $mmCategories[] = (object)['name' => $cat, 'products' => $products];
+                    }
+                }
                 $topProduct = \App\Models\Product::select('products.*', DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'))
                     ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
                     ->groupBy('products.id')
@@ -73,9 +86,8 @@
                 </div>
             </div>
 
-            @php $cats = $headerCategories ?? \App\Models\Category::all(); @endphp
-            @foreach ($cats as $cat)
-                <a href="{{ route('products.index', ['category' => $cat->name]) }}" class="text-sm font-medium text-white hover:text-cyan-300 transition-colors nav-cat-link">{{ $cat->name }}</a>
+            @foreach ($headerCategories as $cat)
+                <a href="{{ route('products.index', ['category' => $cat]) }}" class="text-sm font-medium text-white hover:text-cyan-300 transition-colors nav-cat-link">{{ $cat }}</a>
             @endforeach
 
             <div class="flex items-center gap-5 absolute right-0">
@@ -133,8 +145,8 @@
 
         <div id="mobileNav" class="hidden lg:hidden border-t border-white/10 pb-4">
             <div class="space-y-3 pt-4 text-sm">
-                @foreach ($cats as $cat)
-                    <a href="{{ route('products.index', ['category' => $cat->name]) }}" class="block text-white hover:text-cyan-300 transition-colors font-medium" onclick="toggleMobileNav()">{{ $cat->name }}</a>
+                @foreach ($headerCategories as $cat)
+                    <a href="{{ route('products.index', ['category' => $cat]) }}" class="block text-white hover:text-cyan-300 transition-colors font-medium" onclick="toggleMobileNav()">{{ $cat }}</a>
                 @endforeach
             </div>
         </div>

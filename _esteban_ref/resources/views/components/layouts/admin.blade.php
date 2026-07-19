@@ -1,22 +1,93 @@
-@extends('layouts.admin')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>Product Display Management</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .fade-in { animation: fadeIn .15s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px);} to { opacity: 1; transform: translateY(0);} }
+  .modal-in { animation: modalIn .18s ease-out; }
+  @keyframes modalIn { from { opacity: 0; transform: scale(.96);} to { opacity: 1; transform: scale(1);} }
+</style>
+</head>
+<body class="bg-gray-50 text-slate-800">
 
-@section('title', 'Product Management')
+<div class="flex min-h-screen">
 
-@section('content')
-
-<div class="flex min-h-screen bg-slate-50" style="font-family: 'Outfit', sans-serif;">
-
-    @include('components.admin.sidebar')
-
-    <div class="flex-1 min-w-0">
-
-        @include('pages.admin.dashboard.components.topbar')
-
-        <div class="p-4 lg:p-6">
-            <x-admin.product />
+  <!-- Sidebar -->
+  <aside class="w-56 shrink-0 bg-[#152a6e] text-white flex flex-col justify-between">
+    <div>
+      <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
+        <div class="w-9 h-9 rounded-full bg-slate-300"></div>
+        <div>
+          <div class="font-semibold text-sm leading-tight">BusinessName's</div>
+          <div class="text-xs text-blue-200 leading-tight">Admin</div>
         </div>
+      </div>
 
+      <nav class="mt-4 flex flex-col gap-1 px-3 text-sm">
+        <button data-page="dashboard" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-100 hover:bg-white/10 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </button>
+        <button data-page="product" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white font-medium transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+          Product
+        </button>
+        <button data-page="inventory" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-100 hover:bg-white/10 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+          Inventory
+        </button>
+      </nav>
     </div>
+
+    <div class="px-3 pb-5">
+      <button id="signOutBtn" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-100 hover:bg-white/10 transition text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col">
+
+    <!-- Topbar -->
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
+      <div class="flex items-center gap-2 text-sm text-teal-500 font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+        ERP Sync Active
+        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+      </div>
+
+      <div class="flex items-center gap-5">
+        <button id="notifBtn" class="relative text-slate-500 hover:text-slate-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <div class="h-6 w-px bg-gray-200"></div>
+        <div class="flex items-center gap-3">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=JohnDoe" class="w-9 h-9 rounded-full bg-slate-100" alt="avatar">
+          <div class="text-sm">
+            <div class="font-medium text-slate-800 leading-tight">John Doe</div>
+            <div class="text-xs text-slate-400 leading-tight">Super Admin</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6">
+      {{ $slot }}
+    </main>
+  </div>
 </div>
 
 <!-- Toast -->
@@ -24,7 +95,7 @@
 
 <!-- Add/Edit Product Modal -->
 <div id="productModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-40 p-4">
-  <div class="modal-in bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 max-h-[90vh] overflow-y-auto">
+  <div class="modal-in bg-white rounded-xl shadow-xl w-full max-w-md p-6">
     <div class="flex items-center justify-between mb-4">
       <h2 id="modalTitle" class="text-lg font-bold text-slate-900">Add Product</h2>
       <button id="closeModalBtn" class="text-slate-400 hover:text-slate-600">
@@ -33,25 +104,31 @@
     </div>
     <form id="productForm" class="flex flex-col gap-3" enctype="multipart/form-data">
       <input type="hidden" id="productId">
-
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs font-medium text-slate-500">Product Name</label>
-          <input required id="pName" type="text" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="e.g. NVIDIA RTX 4090 Founder Edition">
-        </div>
-        <div>
-          <label class="text-xs font-medium text-slate-500">Brand</label>
-          <input required id="pBrand" type="text" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="e.g. NVIDIA">
-        </div>
+      <div>
+        <label class="text-xs font-medium text-slate-500">Product Name</label>
+        <input required id="pName" type="text" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="e.g. NVIDIA RTX 4090 Founder Edition">
+      </div>
+      <div>
+        <label class="text-xs font-medium text-slate-500">Brand</label>
+        <input required id="pBrand" type="text" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="e.g. NVIDIA">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs font-medium text-slate-500">SKU</label>
           <input required id="pSku" type="text" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="NV-4090-FE">
         </div>
         <div>
           <label class="text-xs font-medium text-slate-500">Category</label>
-          <input id="pCategory" list="categoryList" type="text" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="e.g. GPU">
-          <datalist id="categoryList"></datalist>
+          <select id="pCategory" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+            <option value="GPU">GPU</option>
+            <option value="CPU">CPU</option>
+            <option value="Motherboard">Motherboard</option>
+            <option value="Memory">Memory</option>
+            <option value="Cooling">Cooling</option>
+          </select>
         </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs font-medium text-slate-500">Price ($)</label>
           <input required id="pPrice" type="number" step="0.01" min="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="1599">
@@ -61,22 +138,6 @@
           <input required id="pStock" type="number" min="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="2">
         </div>
       </div>
-
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="text-xs font-medium text-slate-500">Badge</label>
-          <div class="flex items-center gap-4 mt-1">
-            <label class="flex items-center gap-1.5 text-sm"><input type="radio" name="pBadge" value="" checked> None</label>
-            <label class="flex items-center gap-1.5 text-sm"><input type="radio" name="pBadge" value="New"> New</label>
-            <label class="flex items-center gap-1.5 text-sm"><input type="radio" name="pBadge" value="Sale"> Sale</label>
-          </div>
-        </div>
-        <div id="originalPriceWrapper" class="hidden">
-          <label class="text-xs font-medium text-slate-500">Original Price ($)</label>
-          <input id="pOriginalPrice" type="number" step="0.01" min="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="1999">
-        </div>
-      </div>
-
       <div>
         <label class="text-xs font-medium text-slate-500">Product Image</label>
         <input id="pImage" type="file" accept="image/*" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-sky-50 file:text-sky-600 hover:file:bg-sky-100">
@@ -84,23 +145,6 @@
           <img id="imagePreviewImg" src="" class="w-16 h-16 object-cover rounded-lg border border-gray-200">
         </div>
       </div>
-
-      <div class="border-t border-gray-200 pt-3 mt-1">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Specifications</label>
-          <button type="button" id="addSpecBtn" class="text-xs text-sky-500 hover:text-sky-600 font-medium">+ Add Row</button>
-        </div>
-        <div id="specsContainer" class="flex flex-col gap-2"></div>
-      </div>
-
-      <div class="border-t border-gray-200 pt-3">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Compatibility</label>
-          <button type="button" id="addCompatBtn" class="text-xs text-sky-500 hover:text-sky-600 font-medium">+ Add Row</button>
-        </div>
-        <div id="compatContainer" class="flex flex-col gap-2"></div>
-      </div>
-
       <div class="flex justify-end gap-2 mt-2">
         <button type="button" id="cancelModalBtn" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-slate-600 hover:bg-gray-50 transition">Cancel</button>
         <button type="submit" id="saveProductBtn" class="px-4 py-2 text-sm font-medium bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition">Save Product</button>
@@ -124,23 +168,12 @@
   </div>
 </div>
 
-<style>
-  .fade-in { animation: fadeIn .15s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px);} to { opacity: 1; transform: translateY(0);} }
-  .modal-in { animation: modalIn .18s ease-out; }
-  @keyframes modalIn { from { opacity: 0; transform: scale(.96);} to { opacity: 1; transform: scale(1);} }
-  @media (min-width: 1280px) {
-    #page-product { display: grid !important; grid-template-columns: 1fr 300px !important; }
-  }
-</style>
-
 <script>
 /* ---------------------------------------------------------
    DATA - loaded from database via AJAX
 --------------------------------------------------------- */
 let products = [];
 let promoBanners = [];
-let allBrands = [];
 
 const categoryColors = {
   GPU: "bg-sky-100 text-sky-600",
@@ -158,13 +191,10 @@ const categoryMaxStock = {
   GPU: 50, CPU: 100, Motherboard: 30, Memory: 80, Cooling: 40,
 };
 
-let formSpecs = [];
-let formCompat = [];
-
 /* ---------------------------------------------------------
    API HELPERS
 --------------------------------------------------------- */
-const API_BASE = '/api/admin';
+const API_BASE = '';
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
 function apiHeaders(isJson = true) {
@@ -222,33 +252,25 @@ async function loadProducts() {
   if (filters.brand !== 'All Brands') params.set('brand', filters.brand);
   if (filters.stock !== 'All') params.set('stock', filters.stock);
 
-  const data = await apiGet('/products?' + params.toString());
+  const data = await apiGet('/api/products?' + params.toString());
   products = data.map(p => ({
-    id: p.id,
-    name: p.name,
+    id: p.product_id,
+    name: p.product_name,
     brand: p.brand,
     sku: p.sku,
     category: p.category,
     price: parseFloat(p.price),
     stock: p.stock,
-    badge: p.badge || '',
-    sale_price: p.sale_price || null,
     featured: p.is_featured,
-    image: p.featured_image,
-    image_url: p.image_url,
-    specifications: p.specifications || [],
-    compatibilities: p.compatibilities || [],
+    image: p.product_image,
+    image_url: p.product_image ? '/storage/products/' + p.product_image : null,
   }));
   renderTable();
   renderFeatured();
-  if (allBrands.length === 0) {
-    allBrands = [...new Set(data.map(p => p.brand))].sort();
-    populateBrandFilter();
-  }
 }
 
 async function loadPromos() {
-  const data = await apiGet('/promos');
+  const data = await apiGet('/api/promos');
   promoBanners = data.map(b => ({
     id: b.banner_id,
     title: b.title,
@@ -341,9 +363,6 @@ function renderTable() {
       <td class="py-3 pr-4"><span class="text-xs font-medium px-2 py-1 rounded-full ${status.cls}">${status.label}</span></td>
       <td class="py-3 pr-2">
         <div class="flex items-center gap-2 text-slate-400">
-          <button class="featured-btn" data-id="${p.id}" title="${p.featured ? 'Unfeature' : 'Feature'}">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ${p.featured ? 'text-amber-400' : 'hover:text-amber-400'}" viewBox="0 0 24 24" fill="${p.featured ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
-          </button>
           <button class="preview-btn hover:text-sky-500" data-id="${p.id}" title="Preview">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -398,22 +417,6 @@ function renderPagination(totalPages) {
 }
 
 function attachRowListeners() {
-  document.querySelectorAll(".featured-btn").forEach(btn => {
-    btn.onclick = async () => {
-      const id = Number(btn.dataset.id);
-      const res = await apiPatch('/products/' + id + '/featured');
-      if (res.success) {
-        const p = products.find(x => x.id === id);
-        if (p) {
-          products.forEach(x => x.featured = false);
-          p.featured = !p.featured;
-        }
-        renderTable();
-        renderFeatured();
-        showToast(p.featured ? 'Product featured' : 'Product unfeatured');
-      }
-    };
-  });
   document.querySelectorAll(".preview-btn").forEach(btn => {
     btn.onclick = () => previewProduct(Number(btn.dataset.id));
   });
@@ -516,72 +519,12 @@ function renderPromos() {
 
   document.querySelectorAll(".promo-delete-btn").forEach(btn => {
     btn.onclick = async () => {
-      await apiDelete('/promos/' + btn.dataset.id);
+      await apiDelete('/api/promos/' + btn.dataset.id);
       promoBanners = promoBanners.filter(b => b.id !== Number(btn.dataset.id));
       renderPromos();
       showToast("Promo banner removed");
     };
   });
-}
-
-function makeCategoryOptions(cats) {
-  return cats.map(c => `<option value="${c}">${c}</option>`).join("");
-}
-
-function renderSpecRows() {
-  const container = document.getElementById("specsContainer");
-  container.innerHTML = formSpecs.map((s, i) => `
-    <div class="flex gap-2 items-start spec-row">
-      <input type="text" class="spec-cat text-xs border border-gray-300 rounded-lg px-2 py-1.5 w-40 focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="Section (e.g. Memory)" value="${s.category_name}">
-      <input type="text" class="spec-label text-xs border border-gray-300 rounded-lg px-2 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="Label (e.g. GPU Architecture)" value="${s.label}">
-      <input type="text" class="spec-value text-xs border border-gray-300 rounded-lg px-2 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="Value (e.g. 24GB)" value="${s.value}">
-      <button type="button" class="remove-spec-btn text-red-400 hover:text-red-600 shrink-0 px-1" data-index="${i}">&times;</button>
-    </div>
-  `).join("");
-  container.querySelectorAll(".remove-spec-btn").forEach(btn => {
-    btn.onclick = () => { formSpecs.splice(Number(btn.dataset.index), 1); renderSpecRows(); };
-  });
-}
-
-function renderCompatRows() {
-  const container = document.getElementById("compatContainer");
-  container.innerHTML = formCompat.map((c, i) => `
-    <div class="flex gap-2 items-start compat-row">
-      <input type="text" class="compat-cat text-xs border border-gray-300 rounded-lg px-2 py-1.5 w-40 focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="Type (e.g. Recommended PSU)" value="${c.category_name}">
-      <input type="text" class="compat-item text-xs border border-gray-300 rounded-lg px-2 py-1.5 flex-1 focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="Item name (e.g. Corsair HX1000i)" value="${c.item_name}">
-      <button type="button" class="remove-compat-btn text-red-400 hover:text-red-600 shrink-0 px-1" data-index="${i}">&times;</button>
-    </div>
-  `).join("");
-  container.querySelectorAll(".remove-compat-btn").forEach(btn => {
-    btn.onclick = () => { formCompat.splice(Number(btn.dataset.index), 1); renderCompatRows(); };
-  });
-}
-
-document.getElementById("addSpecBtn").onclick = () => {
-  formSpecs.push({ category_name: '', label: '', value: '' });
-  renderSpecRows();
-};
-
-document.getElementById("addCompatBtn").onclick = () => {
-  formCompat.push({ category_name: '', item_name: '' });
-  renderCompatRows();
-};
-
-function collectSpecData() {
-  const rows = document.querySelectorAll(".spec-row");
-  return Array.from(rows).map(row => ({
-    category_name: row.querySelector(".spec-cat").value,
-    label: row.querySelector(".spec-label").value,
-    value: row.querySelector(".spec-value").value,
-  })).filter(s => s.category_name && s.label);
-}
-
-function collectCompatData() {
-  const rows = document.querySelectorAll(".compat-row");
-  return Array.from(rows).map(row => ({
-    category_name: row.querySelector(".compat-cat").value,
-    item_name: row.querySelector(".compat-item").value,
-  })).filter(c => c.category_name && c.item_name);
 }
 
 /* ---------------------------------------------------------
@@ -592,10 +535,6 @@ function openAddModal() {
   document.getElementById("modalTitle").textContent = "Add Product";
   document.getElementById("productForm").reset();
   document.getElementById("imagePreview").classList.add("hidden");
-  formSpecs = [];
-  formCompat = [];
-  renderSpecRows();
-  renderCompatRows();
   document.getElementById("productModal").classList.remove("hidden");
   document.getElementById("productModal").classList.add("flex");
 }
@@ -613,33 +552,12 @@ function openEditModal(id) {
   document.getElementById("pStock").value = p.stock;
   document.getElementById("pImage").value = "";
 
-  const badgeVal = p.badge || '';
-  document.querySelectorAll('input[name="pBadge"]').forEach(r => r.checked = r.value === badgeVal);
-  document.getElementById("originalPriceWrapper").classList.toggle("hidden", badgeVal !== "Sale");
-  if (badgeVal === 'Sale' && p.sale_price) {
-    document.getElementById("pOriginalPrice").value = p.sale_price;
-  } else {
-    document.getElementById("pOriginalPrice").value = '';
-  }
-
   if (p.image_url) {
     document.getElementById("imagePreview").classList.remove("hidden");
     document.getElementById("imagePreviewImg").src = p.image_url;
   } else {
     document.getElementById("imagePreview").classList.add("hidden");
   }
-
-  formSpecs = (p.specifications || []).map(s => ({
-    category_name: s.category_name || '',
-    label: s.label || '',
-    value: s.value || '',
-  }));
-  formCompat = (p.compatibilities || []).map(c => ({
-    category_name: c.category_name || '',
-    item_name: c.item_name || '',
-  }));
-  renderSpecRows();
-  renderCompatRows();
 
   document.getElementById("productModal").classList.remove("hidden");
   document.getElementById("productModal").classList.add("flex");
@@ -662,12 +580,6 @@ document.getElementById("pImage").addEventListener("change", function() {
   }
 });
 
-document.querySelectorAll('input[name="pBadge"]').forEach(radio => {
-  radio.addEventListener("change", () => {
-    document.getElementById("originalPriceWrapper").classList.toggle("hidden", radio.value !== "Sale");
-  });
-});
-
 document.getElementById("productForm").addEventListener("submit", async e => {
   e.preventDefault();
   const saveBtn = document.getElementById("saveProductBtn");
@@ -675,37 +587,25 @@ document.getElementById("productForm").addEventListener("submit", async e => {
   saveBtn.textContent = "Saving...";
 
   const fd = new FormData();
-  fd.append('name', document.getElementById("pName").value.trim());
+  fd.append('product_name', document.getElementById("pName").value.trim());
   fd.append('brand', document.getElementById("pBrand").value.trim());
   fd.append('sku', document.getElementById("pSku").value.trim());
   fd.append('category', document.getElementById("pCategory").value);
   fd.append('price', parseFloat(document.getElementById("pPrice").value));
   fd.append('stock', parseInt(document.getElementById("pStock").value, 10));
 
-  const badgeEl = document.querySelector('input[name="pBadge"]:checked');
-  const badge = badgeEl ? badgeEl.value : '';
-  fd.append('badge', badge);
-  if (badge === 'Sale') {
-    fd.append('sale_price', parseFloat(document.getElementById("pOriginalPrice").value) || 0);
-  }
-
   const imageInput = document.getElementById("pImage");
   if (imageInput.files.length > 0) {
-    fd.append('featured_image', imageInput.files[0]);
+    fd.append('product_image', imageInput.files[0]);
   }
-
-  const specsData = collectSpecData();
-  const compatData = collectCompatData();
-  fd.append('specs', JSON.stringify(specsData));
-  fd.append('compat', JSON.stringify(compatData));
 
   try {
     if (editingId) {
       fd.append('_method', 'PUT');
-      await apiPut('/products/' + editingId, fd);
+      await apiPut('/api/products/' + editingId, fd);
       showToast("Product updated successfully");
     } else {
-      await apiPost('/products', fd);
+      await apiPost('/api/products', fd);
       showToast("Product added — Inventory updated");
     }
     closeProductModal();
@@ -745,7 +645,7 @@ function closeDeleteModal() {
 
 document.getElementById("cancelDeleteBtn").onclick = closeDeleteModal;
 document.getElementById("confirmDeleteBtn").onclick = async () => {
-  await apiDelete('/products/' + deletingId);
+  await apiDelete('/api/products/' + deletingId);
   if (selectedPreviewId === deletingId) clearPreview();
   showToast("Product deleted");
   closeDeleteModal();
@@ -802,11 +702,13 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 /* ---------------------------------------------------------
    MISC UI
 --------------------------------------------------------- */
+document.getElementById("notifBtn").onclick = () => showToast("You have 1 new notification");
+document.getElementById("signOutBtn").onclick = () => showToast("Signed out (demo only)");
 document.getElementById("addPromoBtn").onclick = async () => {
   const title = prompt("Promo title:", "Flash Sale");
   if (!title) return;
   const subtitle = prompt("Subtitle (e.g. 20% OFF):", "20% OFF") || "";
-  const res = await apiPost('/promos', (() => {
+  const res = await apiPost('/api/promos', (() => {
     const fd = new FormData();
     fd.append('title', title);
     fd.append('subtitle', subtitle);
@@ -820,8 +722,20 @@ document.getElementById("addPromoBtn").onclick = async () => {
 };
 
 /* ---------------------------------------------------------
-   MODAL OUTSIDE CLICK
+   NAVIGATION
 --------------------------------------------------------- */
+document.querySelectorAll(".nav-item").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach(b => {
+      b.classList.remove("bg-white/10", "text-white", "font-medium");
+      b.classList.add("text-blue-100");
+    });
+    btn.classList.add("bg-white/10", "text-white", "font-medium");
+    btn.classList.remove("text-blue-100");
+    goToPage(btn.dataset.page);
+  });
+});
+
 [document.getElementById("productModal"), document.getElementById("deleteModal")].forEach(modal => {
   modal.addEventListener("click", e => {
     if (e.target === modal) {
@@ -832,29 +746,276 @@ document.getElementById("addPromoBtn").onclick = async () => {
 });
 
 /* ---------------------------------------------------------
-   CATEGORY LOADER
+   INVENTORY PAGE
 --------------------------------------------------------- */
-async function loadCategorySuggestions() {
-  const names = await apiGet('/categories');
-  const list = document.getElementById("categoryList");
-  list.innerHTML = names.map(n => `<option value="${n}">`).join("");
-  const filter = document.getElementById("categoryFilter");
-  filter.innerHTML = '<option value="All">All</option>' + names.map(n => `<option value="${n}">${n}</option>`).join("");
+async function renderInventoryStats() {
+  const data = await apiGet('/api/inventory/stats');
+  document.getElementById("statTotalProduct").textContent = data.totalProduct.toLocaleString();
+  document.getElementById("statAvailableStock").textContent = data.availableStock.toLocaleString();
+  document.getElementById("statLowStock").textContent = data.lowStockProduct;
+  document.getElementById("statOutOfStock").textContent = data.outOfStock;
+
+  window._categoryStockData = data.categoryStock;
+  window._lowStockAlerts = data.lowStockAlerts;
+  renderCategoryChart();
+  renderLowStockList();
 }
 
-function populateBrandFilter() {
-  const brandFilter = document.getElementById("brandFilter");
-  brandFilter.innerHTML = '<option value="All Brands">All Brands</option>' + allBrands.map(b => `<option value="${b}">${b}</option>`).join("");
+async function renderRevenueChart() {
+  const revenueData = await apiGet('/api/revenue');
+  window._revenueData = revenueData;
+
+  const svg = document.getElementById("revenueChart");
+  const tooltip = document.getElementById("revenueTooltip");
+  const tooltipMonth = document.getElementById("revenueTooltipMonth");
+  const tooltipValue = document.getElementById("revenueTooltipValue");
+  const W = 600, H = 220, padL = 45, padB = 30, padT = 15, padR = 15;
+  const chartW = W - padL - padR, chartH = H - padT - padB;
+  const maxVal = Math.max(...revenueData.map(d => d.value)) * 1.15;
+
+  const points = revenueData.map((d, i) => {
+    const x = padL + (i / (revenueData.length - 1)) * chartW;
+    const y = padT + chartH - (d.value / maxVal) * chartH;
+    return { x, y, ...d };
+  });
+
+  const linePath = points.map((p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `L ${p.x} ${p.y}`)).join(" ");
+  const areaPath = `${linePath} L ${points[points.length - 1].x} ${padT + chartH} L ${points[0].x} ${padT + chartH} Z`;
+
+  const yTicks = 5;
+  let gridSvg = "";
+  for (let i = 0; i <= yTicks; i++) {
+    const val = Math.round((maxVal / yTicks) * i);
+    const y = padT + chartH - (val / maxVal) * chartH;
+    gridSvg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="#f1f5f9" stroke-width="1"/>`;
+    gridSvg += `<text x="${padL - 8}" y="${y + 4}" font-size="10" fill="#94a3b8" text-anchor="end">${val >= 1000 ? (val/1000)+'k' : val}</text>`;
+  }
+
+  const labelsSvg = points.map(p => `<text x="${p.x}" y="${H - 8}" font-size="10" fill="#94a3b8" text-anchor="middle">${p.month}</text>`).join("");
+  const guideSvg = `<line id="revenueGuideline" x1="0" y1="${padT}" x2="0" y2="${padT + chartH}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" opacity="0"/>`;
+  const dotsSvg = points.map((p, i) => `<circle class="revenue-dot" data-index="${i}" cx="${p.x}" cy="${p.y}" r="4" fill="#38bdf8" stroke="white" stroke-width="2"/>`).join("");
+  const highlightDotSvg = `<circle id="revenueHighlightDot" cx="0" cy="0" r="6" fill="#0284c7" stroke="white" stroke-width="2.5" opacity="0" style="transition: opacity .1s ease;"/>`;
+
+  let hoverZones = "";
+  points.forEach((p, i) => {
+    const prevX = i === 0 ? padL : (points[i - 1].x + p.x) / 2;
+    const nextX = i === points.length - 1 ? (W - padR) : (points[i + 1].x + p.x) / 2;
+    hoverZones += `<rect class="revenue-hover-zone" data-index="${i}" x="${prevX}" y="${padT}" width="${nextX - prevX}" height="${chartH}" fill="transparent" style="cursor: pointer;"/>`;
+  });
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${gridSvg}
+    <path d="${areaPath}" fill="url(#revGrad)"/>
+    <path d="${linePath}" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+    ${guideSvg}
+    ${dotsSvg}
+    ${highlightDotSvg}
+    ${labelsSvg}
+    ${hoverZones}
+  `;
+
+  const guideline = document.getElementById("revenueGuideline");
+  const highlightDot = document.getElementById("revenueHighlightDot");
+
+  function showPoint(i) {
+    const p = points[i];
+    guideline.setAttribute("x1", p.x);
+    guideline.setAttribute("x2", p.x);
+    guideline.setAttribute("opacity", "1");
+    highlightDot.setAttribute("cx", p.x);
+    highlightDot.setAttribute("cy", p.y);
+    highlightDot.setAttribute("opacity", "1");
+    document.querySelectorAll(".revenue-dot").forEach(dot => {
+      dot.setAttribute("r", Number(dot.dataset.index) === i ? "5" : "4");
+    });
+    const svgRect = svg.getBoundingClientRect();
+    const scaleX = svgRect.width / W;
+    const scaleY = svgRect.height / H;
+    const pxX = p.x * scaleX;
+    const pxY = p.y * scaleY;
+    tooltipMonth.textContent = p.month;
+    tooltipValue.textContent = "$" + p.value.toLocaleString();
+    tooltip.classList.remove("hidden");
+    const tooltipWidthEstimate = 90;
+    let left = pxX - tooltipWidthEstimate / 2;
+    left = Math.max(0, Math.min(left, svgRect.width - tooltipWidthEstimate));
+    tooltip.style.left = left + "px";
+    tooltip.style.top = Math.max(0, pxY - 52) + "px";
+  }
+
+  function hidePoint() {
+    guideline.setAttribute("opacity", "0");
+    highlightDot.setAttribute("opacity", "0");
+    document.querySelectorAll(".revenue-dot").forEach(dot => dot.setAttribute("r", "4"));
+    tooltip.classList.add("hidden");
+  }
+
+  document.querySelectorAll(".revenue-hover-zone").forEach(zone => {
+    zone.addEventListener("mouseenter", () => showPoint(Number(zone.dataset.index)));
+    zone.addEventListener("mousemove", () => showPoint(Number(zone.dataset.index)));
+  });
+  svg.addEventListener("mouseleave", hidePoint);
+}
+
+function renderCategoryChart() {
+  const catData = window._categoryStockData || [];
+  const svg = document.getElementById("categoryChart");
+  const W = 320, H = 220, padL = 55, padR = 15, padT = 5, padB = 20;
+  const chartW = W - padL - padR, chartH = H - padT - padB;
+  const maxVal = 2400;
+  const barH = (chartH / Math.max(catData.length, 1)) * 0.55;
+  const gap = (chartH / Math.max(catData.length, 1));
+
+  let bars = "";
+  catData.forEach((d, i) => {
+    const y = padT + i * gap + (gap - barH) / 2;
+    const w = (d.value / maxVal) * chartW;
+    bars += `
+      <text x="${padL - 8}" y="${y + barH/2 + 4}" font-size="10" fill="#64748b" text-anchor="end">${d.label}</text>
+      <rect x="${padL}" y="${y}" width="${chartW}" height="${barH}" rx="3" fill="#eef2ff"/>
+      <rect x="${padL}" y="${y}" width="${w}" height="${barH}" rx="3" fill="#152a6e">
+        <title>${d.label}: ${d.value}</title>
+      </rect>
+    `;
+  });
+
+  const xTicks = [0, 600, 1200, 1800, 2400];
+  let axisLabels = xTicks.map(v => {
+    const x = padL + (v / maxVal) * chartW;
+    return `<text x="${x}" y="${H - 4}" font-size="9" fill="#94a3b8" text-anchor="middle">${v}</text>`;
+  }).join("");
+
+  svg.innerHTML = bars + axisLabels;
+}
+
+async function renderWarehouseList() {
+  const warehouses = await apiGet('/api/inventory/warehouses');
+  const list = document.getElementById("warehouseList");
+  list.innerHTML = warehouses.map(w => {
+    const isSynced = w.status === "Synced";
+    const badgeCls = isSynced ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600";
+    return `
+      <div class="flex items-center justify-between py-3">
+        <div>
+          <div class="text-sm font-medium text-slate-800">${w.name}</div>
+          <div class="text-xs text-slate-400">${w.detail} - Last sync ${w.lastSync}</div>
+        </div>
+        <span class="text-xs font-medium px-2.5 py-1 rounded-full ${badgeCls}">${w.status}</span>
+      </div>
+    `;
+  }).join("");
+
+  const activeCount = warehouses.filter(w => w.status === "Synced").length;
+  document.getElementById("warehouseActiveCount").textContent = `${activeCount}/${warehouses.length} Active`;
+}
+
+function renderLowStockList() {
+  const alerts = window._lowStockAlerts || [];
+  const list = document.getElementById("lowStockList");
+  list.innerHTML = alerts.map(item => {
+    const pct = Math.round((item.left / item.max) * 100);
+    return `
+      <div>
+        <div class="flex items-center justify-between text-sm">
+          <div>
+            <span class="font-medium text-slate-800">${item.name}</span>
+            <span class="text-xs text-slate-400 ml-1">${item.sku}</span>
+          </div>
+          <span class="text-xs font-semibold text-red-500">${item.left} left</span>
+        </div>
+        <div class="w-full h-1.5 bg-gray-100 rounded-full mt-1.5 overflow-hidden">
+          <div class="h-full bg-red-400 rounded-full" style="width:${pct}%"></div>
+        </div>
+        <div class="text-[10px] text-slate-400 mt-1">${pct}% of max stock (${item.max})</div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("lowStockCount").textContent = `${alerts.length} SKUs`;
+}
+
+async function renderInventoryPage() {
+  await renderInventoryStats();
+  await renderRevenueChart();
+  await renderWarehouseList();
+}
+
+document.getElementById("forcedSyncBtn").addEventListener("click", async function () {
+  const btn = this;
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = "Syncing...";
+  btn.classList.add("opacity-70");
+
+  await apiPost('/api/inventory/sync', new FormData());
+  document.getElementById("lastSyncText").textContent = "Just now";
+  await renderWarehouseList();
+  btn.disabled = false;
+  btn.textContent = originalText;
+  btn.classList.remove("opacity-70");
+  showToast("All warehouses forced-synced successfully");
+});
+
+document.getElementById("exportReportBtn").addEventListener("click", async () => {
+  const stats = await apiGet('/api/inventory/stats');
+  const warehouses = await apiGet('/api/inventory/warehouses');
+
+  const rows = [["Metric", "Value"]];
+  rows.push(["Total Product", stats.totalProduct]);
+  rows.push(["Available Stock", stats.availableStock]);
+  rows.push(["Low Stock Product", stats.lowStockProduct]);
+  rows.push(["Out of Stock", stats.outOfStock]);
+  rows.push([]);
+  rows.push(["Warehouse", "Products", "Last Sync", "Status"]);
+  warehouses.forEach(w => rows.push([w.name, w.detail, w.lastSync, w.status]));
+  rows.push([]);
+  rows.push(["Low Stock Item", "SKU", "Units Left", "Max Stock"]);
+  (stats.lowStockAlerts || []).forEach(i => rows.push([i.name, i.sku, i.left, i.max]));
+
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "inventory_report.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("Inventory report downloaded");
+});
+
+/* ---------------------------------------------------------
+   PAGE NAVIGATION
+--------------------------------------------------------- */
+function goToPage(page) {
+  document.getElementById("page-product").classList.add("hidden");
+  document.getElementById("page-inventory").classList.add("hidden");
+
+  if (page === "product") {
+    document.getElementById("page-product").classList.remove("hidden");
+  } else if (page === "inventory") {
+    document.getElementById("page-inventory").classList.remove("hidden");
+    renderInventoryPage();
+  } else {
+    document.getElementById("page-inventory").classList.remove("hidden");
+    renderInventoryPage();
+  }
 }
 
 /* ---------------------------------------------------------
-   INIT
+   INIT - Load data from database
 --------------------------------------------------------- */
 (async function init() {
-  await loadCategorySuggestions();
   await loadProducts();
   await loadPromos();
+  goToPage("product");
 })();
 </script>
 
-@endsection
+</body>
+</html>

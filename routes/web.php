@@ -300,6 +300,25 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(fu
 
 /*
 |--------------------------------------------------------------------------
+| Admin — Esteban Product & Promo API  [ESTEBAN]
+|--------------------------------------------------------------------------
+*/
+Route::prefix('api/admin')->middleware(['auth', 'role:super_admin,admin'])->group(function () {
+    Route::get('/products', [\App\Http\Controllers\Admin\Api\ProductController::class, 'index']);
+    Route::post('/products', [\App\Http\Controllers\Admin\Api\ProductController::class, 'store']);
+    Route::put('/products/{id}', [\App\Http\Controllers\Admin\Api\ProductController::class, 'update']);
+    Route::delete('/products/{id}', [\App\Http\Controllers\Admin\Api\ProductController::class, 'destroy']);
+    Route::patch('/products/{id}/featured', [\App\Http\Controllers\Admin\Api\ProductController::class, 'toggleFeatured']);
+    Route::get('/promos', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'index']);
+    Route::post('/promos', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'store']);
+    Route::delete('/promos/{id}', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'destroy']);
+    Route::get('/categories', function () {
+        return \App\Models\Product::whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
 | Admin — User Management (super_admin only)  [CRUZAT — untouched]
 |--------------------------------------------------------------------------
 */

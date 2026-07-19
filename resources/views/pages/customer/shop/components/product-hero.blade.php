@@ -14,6 +14,9 @@
         </div>
 
         <div class="flex items-baseline space-x-3 border-y border-gray-100 py-4">
+            @if($product['original_price'])
+                <span class="text-lg text-gray-400 line-through">₱{{ number_format($product['original_price']) }}</span>
+            @endif
             <span class="text-3xl font-black text-slate-900">₱{{ number_format($product['price']) }}</span>
         </div>
 

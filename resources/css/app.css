@@ -178,3 +178,4 @@ body { transition: background-color .25s ease, color .25s ease; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: #94a3b855; border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8aa; }
+
