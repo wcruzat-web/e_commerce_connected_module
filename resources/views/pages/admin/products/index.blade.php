@@ -142,6 +142,7 @@ let products = [];
 let promoBanners = [];
 let allBrands = [];
 
+// ESTEBAN — adapted: category colors for badge rendering in table
 const categoryColors = {
   GPU: "bg-sky-100 text-sky-600",
   CPU: "bg-blue-100 text-blue-600",
@@ -150,10 +151,12 @@ const categoryColors = {
   Cooling: "bg-cyan-100 text-cyan-600",
 };
 
+// ESTEBAN — adapted: short labels for featured preview chart
 const categoryToChartLabel = {
   GPU: "GPU", CPU: "CPU", Motherboard: "MB", Memory: "RAM", Cooling: "Cooling",
 };
 
+// ESTEBAN — adapted: max stock thresholds for low-stock progress bars
 const categoryMaxStock = {
   GPU: 50, CPU: 100, Motherboard: 30, Memory: 80, Cooling: 40,
 };
@@ -164,6 +167,7 @@ let formCompat = [];
 /* ---------------------------------------------------------
    API HELPERS
 --------------------------------------------------------- */
+// ESTEBAN — changed: API_BASE='/api/admin' (was '')
 const API_BASE = '/api/admin';
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
@@ -215,6 +219,7 @@ async function apiPatch(url) {
 /* ---------------------------------------------------------
    DATA LOADING
 --------------------------------------------------------- */
+// ESTEBAN — adapted: column mapping uses 'id','name','featured_image' (was 'product_id','product_name','product_image'); added URLSearchParams for filters
 async function loadProducts() {
   const params = new URLSearchParams();
   if (filters.search) params.set('search', filters.search);
@@ -397,6 +402,7 @@ function renderPagination(totalPages) {
   container.appendChild(nextBtn);
 }
 
+// ESTEBAN — added: featured-toggle star button with single-featured enforcement
 function attachRowListeners() {
   document.querySelectorAll(".featured-btn").forEach(btn => {
     btn.onclick = async () => {
@@ -528,6 +534,7 @@ function makeCategoryOptions(cats) {
   return cats.map(c => `<option value="${c}">${c}</option>`).join("");
 }
 
+// ESTEBAN — added: Specifications dynamic rows (Section/Label/Value inputs)
 function renderSpecRows() {
   const container = document.getElementById("specsContainer");
   container.innerHTML = formSpecs.map((s, i) => `
@@ -562,6 +569,7 @@ document.getElementById("addSpecBtn").onclick = () => {
   renderSpecRows();
 };
 
+// ESTEBAN — added: Compatibility dynamic rows (Type/Item Name inputs)
 document.getElementById("addCompatBtn").onclick = () => {
   formCompat.push({ category_name: '', item_name: '' });
   renderCompatRows();
@@ -668,6 +676,7 @@ document.querySelectorAll('input[name="pBadge"]').forEach(radio => {
   });
 });
 
+// ESTEBAN — added: Badge (None/New/Sale) radio buttons + original price input; specs/compat JSON in FormData
 document.getElementById("productForm").addEventListener("submit", async e => {
   e.preventDefault();
   const saveBtn = document.getElementById("saveProductBtn");
@@ -842,14 +851,16 @@ async function loadCategorySuggestions() {
   filter.innerHTML = '<option value="All">All</option>' + names.map(n => `<option value="${n}">${n}</option>`).join("");
 }
 
+// ESTEBAN — added: loads category suggestions from DB for datalist + filter (was hardcoded <select>)
 function populateBrandFilter() {
   const brandFilter = document.getElementById("brandFilter");
   brandFilter.innerHTML = '<option value="All Brands">All Brands</option>' + allBrands.map(b => `<option value="${b}">${b}</option>`).join("");
 }
 
+// ESTEBAN — added: dynamically populates brand filter from loaded products (was hardcoded)
 /* ---------------------------------------------------------
    INIT
---------------------------------------------------------- */
+-------------------------------------------------------- */
 (async function init() {
   await loadCategorySuggestions();
   await loadProducts();

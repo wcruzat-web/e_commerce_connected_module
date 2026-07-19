@@ -1,3 +1,4 @@
+{{-- AGNER — forgot-password page: copied from _new_auth --}}
 @extends('layouts.guest')
 
 @section('title', 'Forgot Password — ShopEase')

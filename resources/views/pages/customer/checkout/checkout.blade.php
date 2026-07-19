@@ -1,12 +1,4 @@
-{{--
-    ERP MODULE: Checkout — Shipping & Contact Details (Checkout Page)
-    PAGE: Checkout
-    DESCRIPTION: Collects shipping info and creates order on submit.
-    DATA SOURCE: CheckoutController@index — $cart (Cart model), $summary (CartSummaryDTO)
-    ROUTES:
-      GET  /checkout  — CheckoutController@index
-      POST /checkout  — CheckoutController@store
---}}
+{{-- CRUZAT — checkout page: contact fields, address, payment method selection (ERPV0.2) --}}
 
 @extends('layouts.store')
 

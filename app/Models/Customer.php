@@ -1,7 +1,5 @@
 <?php
-// [CRUZAT] Original Customer model (base fields, carts/addresses/orders relationships)
-// [AGNER]  Added HasFactory, Notifiable, SoftDeletes; new relationships (paymentMethods,
-//          wishlists, wishlistItems, notifications, settings); fullName accessor
+// AGNER — Customer model: copied from _new_auth
 
 namespace App\Models;
 

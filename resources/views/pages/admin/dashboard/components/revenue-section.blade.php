@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — revenue-section: 6-month revenue chart with gradient fill --}}{{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Revenue Section
     DESCRIPTION: Revenue overview line chart + revenue by category breakdown.

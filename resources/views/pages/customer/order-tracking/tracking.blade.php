@@ -1,4 +1,4 @@
-{{-- [CRUZAT] Tracking page layout --}}
+{{-- CRUZAT — tracking: real-time polling containers for timeline/status/receipt (ERPV0.2.2, ERPV0.2.4) --}}
 
 @extends('layouts.store')
 

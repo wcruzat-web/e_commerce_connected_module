@@ -1,3 +1,4 @@
+{{-- CRUZAT — success order-summary: finalized order totals after placement --}}
 {{--
     ERP MODULE: Checkout — Order Confirmation (Success Page)
     COMPONENT: Order Summary

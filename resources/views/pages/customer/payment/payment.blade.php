@@ -1,31 +1,4 @@
-{{--
-    ==================================================================
-    ERP MODULE: Checkout — Payment (Payment Page)
-    ------------------------------------------------------------------
-    FRONTEND-ONLY IMPLEMENTATION — NO BACKEND LOGIC INCLUDED.
-
-    This view composes the full Payment Page from
-    page-scoped components stored alongside it in the
-    pages/payment/components/ directory.
-
-    Shared components (checkout stepper, voucher card) are
-    pulled from pages/cart/components/ since they are identical.
-
-    The site header / top navigation lives in
-    resources/views/layouts/app.blade.php and is rendered above
-    @yield('content').
-
-    Only the Payment Page body is assembled here.
-
-    TODO (Backend Integration):
-      Controller: CheckoutController
-      Method: showPayment() / placeOrder()
-      Route: GET /checkout/payment
-      Route: POST /checkout/payment (place order)
-      Replace static data with: $cart->summary(), $order->payment_method
-      Future: integrate real payment gateway (Stripe / PayMongo / GCash API)
-    ==================================================================
---}}
+{{-- CRUZAT — payment page: saved methods, card/GCash tabs, CVV, validation (ERPV0.2.5-0.2.12) --}}
 
 @extends('layouts.store')
 

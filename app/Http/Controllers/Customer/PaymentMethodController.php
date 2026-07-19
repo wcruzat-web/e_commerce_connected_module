@@ -1,4 +1,5 @@
 <?php
+// AGNER — payment methods: card/GCash fields, validation, Luhn check (ERPV0.2.5-0.2.12)
 
 namespace App\Http\Controllers\Customer;
 

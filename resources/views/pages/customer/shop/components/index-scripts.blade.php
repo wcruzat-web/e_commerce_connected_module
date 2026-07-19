@@ -1,3 +1,4 @@
+{{-- HAINZ — index-scripts: shop listing JS for filters, wishlist, add-to-cart AJAX (ERPV1.1, ERPV1.3) --}}
 <script>
 document.querySelectorAll('.js-wish-form').forEach(function(form) {
     form.addEventListener('submit', function(e) {

@@ -303,18 +303,26 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(fu
 | Admin — Esteban Product & Promo API  [ESTEBAN]
 |--------------------------------------------------------------------------
 */
+// ESTEBAN — API group: all product/promo/inventory routes under /api/admin (was /api/)
 Route::prefix('api/admin')->middleware(['auth', 'role:super_admin,admin'])->group(function () {
     Route::get('/products', [\App\Http\Controllers\Admin\Api\ProductController::class, 'index']);
     Route::post('/products', [\App\Http\Controllers\Admin\Api\ProductController::class, 'store']);
     Route::put('/products/{id}', [\App\Http\Controllers\Admin\Api\ProductController::class, 'update']);
     Route::delete('/products/{id}', [\App\Http\Controllers\Admin\Api\ProductController::class, 'destroy']);
-    Route::patch('/products/{id}/featured', [\App\Http\Controllers\Admin\Api\ProductController::class, 'toggleFeatured']);
+    Route::patch('/products/{id}/featured', [\App\Http\Controllers\Admin\Api\ProductController::class, 'toggleFeatured']); // ESTEBAN — added: featured toggle route
     Route::get('/promos', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'index']);
     Route::post('/promos', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'store']);
     Route::delete('/promos/{id}', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'destroy']);
+    // ESTEBAN — changed: returns distinct products.category instead of querying categories table
     Route::get('/categories', function () {
         return \App\Models\Product::whereNotNull('category')->distinct()->orderBy('category')->pluck('category');
     });
+    // ESTEBAN — added: inventory API routes for inventory monitoring page (V2.9)
+    Route::get('/inventory/stats', [\App\Http\Controllers\Admin\Api\InventoryController::class, 'stats']);
+    Route::get('/inventory/warehouses', [\App\Http\Controllers\Admin\Api\InventoryController::class, 'warehouses']);
+    Route::post('/inventory/sync', [\App\Http\Controllers\Admin\Api\InventoryController::class, 'forceSync']);
+    // ESTEBAN — revenue computed from orders table via DashboardService (was revenue_overview table)
+    Route::get('/revenue', [\App\Http\Controllers\Admin\Api\InventoryController::class, 'revenue']);
 });
 
 /*

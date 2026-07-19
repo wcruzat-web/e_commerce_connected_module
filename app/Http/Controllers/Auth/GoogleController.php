@@ -1,4 +1,5 @@
 <?php
+// AGNER — Google OAuth login via Socialite (ERPV0.2)
 
 namespace App\Http\Controllers\Auth;
 

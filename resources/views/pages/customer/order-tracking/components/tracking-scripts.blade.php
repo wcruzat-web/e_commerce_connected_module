@@ -1,3 +1,4 @@
+{{-- CRUZAT — tracking-scripts: 3-second polling, DOM swap, receipt refresh (ERPV0.2.2, ERPV0.2.4) --}}
 <script>
     function toastNotify(type, message) {
         var container = document.getElementById('toastContainer');

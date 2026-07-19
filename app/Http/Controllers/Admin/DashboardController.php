@@ -1,4 +1,5 @@
 <?php
+// CRUZAT — admin dashboard: stats, revenue chart, recent orders, low stocks
 
 namespace App\Http\Controllers\Admin;
 

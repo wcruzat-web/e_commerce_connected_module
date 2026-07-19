@@ -1,3 +1,4 @@
+{{-- CRUZAT — checkout-stepper: Cart → Checkout → Payment → Success progress indicator --}}
 {{--
     ==================================================================
     ERP MODULE: Shopping Cart (Cart Page)

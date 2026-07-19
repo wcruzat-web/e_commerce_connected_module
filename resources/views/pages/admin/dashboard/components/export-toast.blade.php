@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — export-toast: CSV export confirmation toast --}}{{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Export Report Toast
     DESCRIPTION: Transient toast notification shown when export starts.

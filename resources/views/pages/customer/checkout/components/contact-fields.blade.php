@@ -1,10 +1,4 @@
-{{--
-    ERP MODULE: Checkout — Contact Fields
-    COMPONENT: ContactFields
-    DESCRIPTION: First name, last name, email, and phone inputs for checkout form. Uses @error directives for validation feedback.
-    DATA SOURCE: Form POST to CheckoutController@store
-    ROUTE: POST /checkout
---}}
+{{-- CRUZAT — contact-fields: pre-fill from registered user (ERPV0.2) --}}
 <div class="grid grid-cols-2 gap-4">
     <div>
         <label for="first_name" class="block text-xs font-medium text-gray-600 mb-1.5">First Name</label>

@@ -1,4 +1,5 @@
 <?php
+// CRUZAT — cart: AJAX add-to-cart support (ERPV0.2)
 
 namespace App\Http\Controllers;
 

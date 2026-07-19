@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — low-stocks: sidebar list of products with stock <= 5 --}}{{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Low Stocks Alert
     DESCRIPTION: Low stock products list with progress bars.

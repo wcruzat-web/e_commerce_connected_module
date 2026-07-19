@@ -1,3 +1,4 @@
+{{-- HAINZ — shop filters: category, brand, chipset, socket, VRAM with reset (ERPV1.1, ERPV1.2) --}}
 <aside class="space-y-6">
     <form method="GET" action="{{ route('products.index') }}">
     <div class="bg-white rounded-[20px] border border-gray-200/80 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">

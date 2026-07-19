@@ -1,4 +1,5 @@
 <?php
+// AGNER — dev login bypass for testing
 
 namespace App\Http\Controllers\Auth;
 

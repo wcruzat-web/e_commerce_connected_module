@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — stat-cards: total products, revenue, orders, customers summary cards --}}{{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Stat Cards
     DESCRIPTION: 4 stat cards (Total Revenue, Orders, ERP Syncs, Low Stocks).

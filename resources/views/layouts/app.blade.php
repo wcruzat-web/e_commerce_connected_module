@@ -1,3 +1,4 @@
+{{-- AGNER — app layout: copied from _new_auth, includes header for payment page (ERPV1.1) --}}
 <!DOCTYPE html>
 @php
     $__prefs = auth()->check()

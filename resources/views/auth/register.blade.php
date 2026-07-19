@@ -1,3 +1,4 @@
+{{-- AGNER — register page: added phone field (ERPV0.2) --}}
 @extends('layouts.guest')
 
 @section('title', 'Register — ShopEase')

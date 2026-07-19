@@ -1,3 +1,4 @@
+{{-- CRUZAT — success page: order confirmation after successful payment --}}
 {{--
     ERP MODULE: Checkout — Order Confirmation (Success Page)
     DESCRIPTION: Displays confirmed order details (order number, total, items) after successful payment.

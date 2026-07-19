@@ -1,4 +1,5 @@
 <?php
+// CRUZAT — success: order confirmation display after successful payment
 
 namespace App\Http\Controllers;
 

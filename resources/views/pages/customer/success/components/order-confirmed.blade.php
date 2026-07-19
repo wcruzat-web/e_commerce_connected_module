@@ -1,3 +1,4 @@
+{{-- CRUZAT — order-confirmed: confirmation card with checkmark, order number, action buttons --}}
 {{--
     ERP MODULE: Checkout — Order Confirmation (Success Page)
     COMPONENT: Order Confirmed Card

@@ -1,3 +1,4 @@
+{{-- HAINZ — product-card: shop listing card with badge, sale price strikethrough, wishlist toggle (ERPV1.1, ERPV1.7) --}}
 <div class="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm flex flex-col justify-between transition hover:shadow-md relative {{ !$product['inStock'] ? 'opacity-70 bg-gray-50/50' : '' }}">
     <div>
         <div class="flex justify-between items-center mb-3">

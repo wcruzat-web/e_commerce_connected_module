@@ -1,3 +1,4 @@
+{{-- AGNER — profile page: saved addresses, component-split (ERPV0.2.2, ERPV0.4) --}}
 @extends('layouts.customer')
 
 @section('content')

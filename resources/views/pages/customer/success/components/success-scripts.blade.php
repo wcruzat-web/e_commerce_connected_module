@@ -1,3 +1,4 @@
+{{-- CRUZAT — success-scripts: post-order navigation actions --}}
 {{--
     ERP MODULE: Checkout — Order Confirmation (Success Page)
     COMPONENT: Success Page JavaScript

@@ -1,3 +1,4 @@
+{{-- AGNER — login page: restyled with Outfit font, #00BBFF accent (ERPV0.2) --}}
 @extends('layouts.guest')
 
 @section('title', 'Login — ShopEase')

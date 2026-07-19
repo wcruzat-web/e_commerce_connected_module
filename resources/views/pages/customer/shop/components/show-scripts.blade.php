@@ -1,3 +1,4 @@
+{{-- HAINZ — shop show page JS: review form, tab navigation (ERPV1.1) --}}
 <script>
 function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));

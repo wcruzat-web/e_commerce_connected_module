@@ -1,4 +1,5 @@
 <?php
+// AGNER — customer dashboard: real cart/order counts (ERPV0.2.13)
 
 namespace App\Http\Controllers\Customer;
 

@@ -1,5 +1,5 @@
 <?php
-// [CRUZAT] Tracking pages (index, track)
+// CRUZAT — tracking: real-time polling, customer_received (ERPV0.2.2, ERPV0.2.4)
 
 namespace App\Http\Controllers;
 

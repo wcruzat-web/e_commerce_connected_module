@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// HAINZ — ProductReview: customer reviews on product detail pages (ERPV1.1)
 class ProductReview extends Model
 {
     protected $primaryKey = 'review_id';

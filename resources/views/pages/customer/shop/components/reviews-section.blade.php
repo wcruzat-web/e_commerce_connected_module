@@ -1,3 +1,4 @@
+{{-- HAINZ — reviews-section: customer reviews, rating distribution, review form (ERPV1.1) --}}
 <div id="tab-reviews" class="tab-content hidden">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center pt-4 pb-6">
         <div class="flex flex-col items-center justify-center text-center md:border-r border-gray-100 py-4">

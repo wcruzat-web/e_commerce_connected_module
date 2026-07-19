@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 
+// AGNER — LoginController: last_login on login, role-based redirect (ERPV0.2)
 class LoginController extends Controller
 {
     public function store(Request $request): RedirectResponse

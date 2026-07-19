@@ -1,4 +1,5 @@
 <?php
+// AGNER — saved payment methods: added cvv to fillable (ERPV0.2.12)
 
 namespace App\Models;
 

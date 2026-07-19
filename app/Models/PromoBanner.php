@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// ESTEBAN — PromoBanner: promo banners for admin management (V2.1)
 class PromoBanner extends Model
 {
     protected $table = 'promo_banners';

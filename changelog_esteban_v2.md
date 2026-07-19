@@ -196,3 +196,44 @@
 ## V2.8 — Featured Product Hero Section (Customer Shop)
 
 > Not in scope — moved to Hainz's changelog (`changelog_hainz_part.md` ERPV1.6)
+
+## V2.9 — Inventory Monitoring Page
+
+### Models
+- `App\Models\Warehouse` — New model, table `warehouses`, PK `warehouse_id`, fillable: `warehouse_name`, `location`, `sync_status`, `last_sync_at`
+- `App\Models\WarehouseStock` — New model, table `warehouse_stock`, PK `warehouse_stock_id`, fillable: `warehouse_id`, `product_id`, `quantity`; FK relationships to `Warehouse` and `Product`
+
+### Controller
+- `App\Http\Controllers\Admin\Api\InventoryController` — 4 endpoints:
+  - `GET /api/admin/inventory/stats` — Returns total product count, available stock sum, low stock count (stock <= 5), out of stock count, category stock breakdown (from `products` table), low stock alerts with dynamic max stock per category
+  - `GET /api/admin/inventory/warehouses` — Returns all warehouses with product count and sync status
+  - `POST /api/admin/inventory/sync` — Updates all warehouses to `Synced` status
+  - `GET /api/admin/revenue` — Returns last 6 months revenue from `orders` table (via `DashboardService::getRevenueOverview`)
+
+### Routes
+- Added under `prefix('api/admin')`:
+  - `GET /inventory/stats`
+  - `GET /inventory/warehouses`
+  - `POST /inventory/sync`
+  - `GET /revenue`
+
+### Views
+- `resources/views/components/admin/inventory.blade.php` — Copied from Esteban's ref (unchanged layout)
+- `resources/views/pages/admin/inventory/index.blade.php` — New standalone page:
+  - Extends `layouts.admin`, includes project sidebar + topbar
+  - Embeds `<x-admin.inventory class="" />`
+  - JS: Esteban's exact chart rendering (line chart with gradient fill for revenue, horizontal bar chart for category stock)
+  - All data loaded from backend (no hardcoded values):
+    - Revenue: computed from `orders` table (paid orders, last 6 months)
+    - Category stock: from `products` table `SUM(stock) GROUP BY category`
+    - Low stock: from `products` table (stock <= 5)
+    - Max stock per category: computed dynamically from DB
+    - Chart axis ticks: computed dynamically from data
+
+### Key Design Decisions
+- Standalone page with sidebar + topbar (follows same pattern as products page)
+- Inventory component's `class=""` overrides default `hidden` so it's always visible
+- Revenue chart uses line chart with gradient area fill (same as Esteban's original)
+- Category chart uses horizontal bar chart (same as Esteban's original)
+- `forcedSync` and `exportReport` buttons match Esteban's exact behavior
+- No hardcoded chart max values — all computed from actual database values

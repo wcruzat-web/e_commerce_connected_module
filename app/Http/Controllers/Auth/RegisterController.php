@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+// AGNER — RegisterController: added phone, last_login (ERPV0.2)
 class RegisterController extends Controller
 {
     public function store(Request $request): RedirectResponse

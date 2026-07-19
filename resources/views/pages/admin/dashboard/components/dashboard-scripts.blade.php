@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — dashboard-scripts: stat fetch, revenue chart, order/notification polling --}}{{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Dashboard JavaScript
     DESCRIPTION: Frontend-only stubs for notifications, export, sync logs, sign out.

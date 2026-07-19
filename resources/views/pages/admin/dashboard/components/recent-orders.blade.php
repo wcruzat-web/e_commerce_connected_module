@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — recent-orders: latest orders table with status badges --}}{{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Recent Orders
     DESCRIPTION: Recent orders table with status badges.

@@ -1,3 +1,4 @@
+{{-- AGNER — guest layout: copied from _new_auth --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>

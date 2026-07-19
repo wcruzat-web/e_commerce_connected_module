@@ -1,3 +1,4 @@
+{{-- HAINZ — compatibility-tab: compatibility groups display for product detail (ERPV1.1) --}}
 <div id="tab-compatibility" class="tab-content hidden">
     @if(!empty($product['compatGroups']))
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 pb-6">

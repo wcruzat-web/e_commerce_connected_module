@@ -1,3 +1,4 @@
+{{-- HAINZ — product-hero: product detail hero with gallery, price, badge, specs-at-a-glance (ERPV1.1) --}}
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
     <div class="relative flex flex-col justify-center items-center border border-gray-100 rounded-xl p-6 bg-gray-50/50">
         @unless($product['inStock'])

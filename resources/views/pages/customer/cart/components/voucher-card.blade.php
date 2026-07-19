@@ -1,3 +1,4 @@
+{{-- CRUZAT — voucher-card: promo code input and apply button --}}
 {{--
     ==================================================================
     ERP MODULE: Shopping Cart (Cart Page)

@@ -11,10 +11,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+// ESTEBAN — adapted from original: column mapping uses 'name' (was 'product_name'), 'featured_image' (was 'product_image'), 'id' (was 'product_id')
+// ESTEBAN — added: 'storage/' prefix on image path (V2.3), badge/sale_price fields (V2.7), specs/compat (V2.6), category_id sync (V2.7), featured toggle (V2.5)
 class ProductController extends \App\Http\Controllers\Controller
 {
     public function index(Request $request): JsonResponse
     {
+        // ESTEBAN — added: eager-load specifications and compatibilities relationships
         $query = Product::with(['specifications', 'compatibilities']);
 
         if ($search = $request->input('search')) {
@@ -47,6 +50,7 @@ class ProductController extends \App\Http\Controllers\Controller
         return response()->json($products);
     }
 
+    // ESTEBAN — added: wipe-and-replace pattern for Specifications (V2.6)
     private function saveSpecs(Product $product, ?array $specs): void
     {
         $product->specifications()->delete();
@@ -61,6 +65,7 @@ class ProductController extends \App\Http\Controllers\Controller
         }
     }
 
+    // ESTEBAN — added: syncs free-text category to category_id FK via firstOrCreate on categories table (V2.7)
     private function syncCategoryId(Product $product): void
     {
         if ($product->category) {
@@ -70,6 +75,7 @@ class ProductController extends \App\Http\Controllers\Controller
         }
     }
 
+    // ESTEBAN — added: wipe-and-replace pattern for Compatibility (V2.6)
     private function saveCompat(Product $product, ?array $compat): void
     {
         $product->compatibilities()->delete();
@@ -98,6 +104,7 @@ class ProductController extends \App\Http\Controllers\Controller
 
         $imagePath = null;
         if ($request->hasFile('featured_image')) {
+            // ESTEBAN — added: 'storage/' prefix so path matches customer-facing views convention (V2.3)
             $imagePath = 'storage/' . $request->file('featured_image')->store('products', 'public');
         }
 
@@ -108,14 +115,17 @@ class ProductController extends \App\Http\Controllers\Controller
             'category' => $validated['category'],
             'price' => $validated['price'],
             'stock' => $validated['stock'],
+            // ESTEBAN — added: badge (New/Sale) and original price fields (V2.7)
             'badge' => $request->input('badge', ''),
             'sale_price' => $request->input('badge') === 'Sale' ? $request->input('sale_price') : null,
             'featured_image' => $imagePath,
             'is_featured' => false,
         ]);
 
+        // ESTEBAN — added: sync free-text category to category_id FK (V2.7)
         $this->syncCategoryId($product);
 
+        // ESTEBAN — added: Specifications and Compatibility save (V2.6)
         $specs = json_decode($request->input('specs', '[]'), true) ?? [];
         $compat = json_decode($request->input('compat', '[]'), true) ?? [];
         $this->saveSpecs($product, $specs);
@@ -155,6 +165,7 @@ class ProductController extends \App\Http\Controllers\Controller
 
         if ($request->hasFile('featured_image')) {
             if ($product->featured_image) {
+                // ESTEBAN — added: strips 'storage/' before deleting old image from storage (V2.3)
                 $oldPath = str_replace('storage/', '', $product->featured_image);
                 Storage::disk('public')->delete($oldPath);
             }
@@ -197,6 +208,7 @@ class ProductController extends \App\Http\Controllers\Controller
         $product = Product::findOrFail($id);
 
         if ($product->featured_image) {
+            // ESTEBAN — added: strips 'storage/' before deleting old image from storage (V2.3)
             $oldPath = str_replace('storage/', '', $product->featured_image);
             Storage::disk('public')->delete($oldPath);
         }
@@ -209,6 +221,7 @@ class ProductController extends \App\Http\Controllers\Controller
         ]);
     }
 
+    // ESTEBAN — added: single-featured enforcement — unfeatures all others when setting a new featured product (V2.5)
     public function toggleFeatured(int $id): JsonResponse
     {
         $product = Product::findOrFail($id);

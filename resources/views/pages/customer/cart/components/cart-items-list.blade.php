@@ -1,3 +1,4 @@
+{{-- CRUZAT — cart-items-list: cart table with quantity controls, remove button (ERPV0.2) --}}
 {{--
     ERP MODULE: Shopping Cart (Cart Page)
     COMPONENT: Cart Items List

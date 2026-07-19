@@ -44,7 +44,8 @@
         </div>
 
         <nav class="px-3 py-5 space-y-1">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium">
+            @php $route = request()->route()->getName(); @endphp
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $route === 'admin.dashboard' ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="7" height="7" rx="1"></rect>
                     <rect x="14" y="3" width="7" height="7" rx="1"></rect>
@@ -53,7 +54,7 @@
                 </svg>
                 <span class="sidebar-label">Dashboard</span>
             </a>
-            <a href="{{ route('admin.products') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-200 hover:bg-white/10 hover:text-white text-sm font-medium transition-colors">
+            <a href="{{ route('admin.products') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $route === 'admin.products' ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 7L12 3 4 7v10l8 4 8-4V7z"></path>
                     <path d="M4 7l8 4 8-4"></path>
@@ -61,7 +62,7 @@
                 </svg>
                 <span class="sidebar-label">Product</span>
             </a>
-            <a href="{{ route('admin.inventory') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-200 hover:bg-white/10 hover:text-white text-sm font-medium transition-colors">
+            <a href="{{ route('admin.inventory') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $route === 'admin.inventory' ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
                     <rect x="9" y="3" width="6" height="4" rx="1"></rect>
@@ -69,7 +70,7 @@
                 <span class="sidebar-label">Inventory</span>
             </a>
             @if(auth()->user()?->role === 'super_admin')
-            <a href="{{ route('admin.users') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-blue-200 hover:bg-white/10 hover:text-white text-sm font-medium transition-colors">
+            <a href="{{ route('admin.users') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $route === 'admin.users' ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>

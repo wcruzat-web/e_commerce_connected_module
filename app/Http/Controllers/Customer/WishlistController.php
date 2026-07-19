@@ -1,4 +1,5 @@
 <?php
+// AGNER — wishlist: uses Product model (ERPV0.2, ERPV1.3)
 
 namespace App\Http\Controllers\Customer;
 

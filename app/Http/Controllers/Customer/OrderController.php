@@ -1,4 +1,5 @@
 <?php
+// AGNER — orders: unified view with status tabs, customer_received (ERPV0.2.3, ERPV0.2.4)
 
 namespace App\Http\Controllers\Customer;
 

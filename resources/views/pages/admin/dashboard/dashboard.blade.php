@@ -1,3 +1,4 @@
+{{-- CRUZAT — admin dashboard: stats, revenue chart, recent orders, low stocks --}}
 {{--
     ERP MODULE: Admin Dashboard
     DESCRIPTION: Dashboard page composing sidebar, topbar, stat cards, revenue,

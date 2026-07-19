@@ -1,4 +1,5 @@
 <?php
+// CRUZAT — checkout: shipping, contact, address selection, order placement (ERPV0.2)
 
 namespace App\Http\Controllers;
 

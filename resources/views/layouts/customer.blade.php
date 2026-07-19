@@ -1,3 +1,4 @@
+{{-- AGNER — customer layout: copied from _new_auth --}}
 <!DOCTYPE html>
 @php
     $__prefs = auth()->check()

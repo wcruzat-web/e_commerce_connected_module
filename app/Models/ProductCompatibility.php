@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// HAINZ — ProductCompatibility: compatibility groups for product detail tabs (ERPV1.1)
 class ProductCompatibility extends Model
 {
     protected $table = 'product_compabilities';

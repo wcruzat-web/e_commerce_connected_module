@@ -6,6 +6,7 @@ use App\Models\PromoBanner;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
+// ESTEBAN — PromoBannerController: CRUD for promo banners (copied from original)
 class PromoBannerController extends \App\Http\Controllers\Controller
 {
     public function index(): JsonResponse

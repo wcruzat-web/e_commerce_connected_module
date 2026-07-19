@@ -1,3 +1,4 @@
+{{-- AGNER — store layout: includes header (ERPV0.2) --}}
 <!DOCTYPE html>
 @php
     $__prefs = auth()->check()

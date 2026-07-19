@@ -1,3 +1,4 @@
+{{-- CRUZAT — cart-scripts: AJAX add/remove, quantity update, toast notifications (ERPV0.2) --}}
 {{--
     ERP MODULE: Shopping Cart (Cart Page)
     COMPONENT: Cart Page JavaScript

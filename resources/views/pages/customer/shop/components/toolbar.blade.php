@@ -1,3 +1,4 @@
+{{-- HAINZ — toolbar: sort dropdown with URLSearchParams (ERPV1.4) --}}
 <div class="flex justify-between items-center mb-6">
     <p class="text-sm font-semibold text-slate-600">
         <span class="text-slate-900 font-extrabold text-base">{{ count($products) }}</span> Products

@@ -1,4 +1,4 @@
-{{--
+{{-- CRUZAT — notification-icon: bell icon with unread count badge --}}{{--
     ERP MODULE: Admin Components
     COMPONENT: Notification Icon
     DESCRIPTION: Renders an SVG icon by name with the given Tailwind class.

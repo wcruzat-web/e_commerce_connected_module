@@ -1,3 +1,4 @@
+{{-- CRUZAT — notifications-panel: slide-over panel with all notifications, mark-read --}}
 {{--
     ERP MODULE: Admin Components
     COMPONENT: Notifications Panel

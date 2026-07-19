@@ -1,3 +1,4 @@
+{{-- CRUZAT — dashboard print view: printable revenue report --}}
 @php
     $maxRevenue = max(array_column($revenueMonths, 'revenue')) ?: 1;
     $startX = 70;

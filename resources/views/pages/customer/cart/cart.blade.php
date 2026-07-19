@@ -1,3 +1,4 @@
+{{-- CRUZAT — cart page: items list, order summary, voucher, stepper, AJAX add-to-cart (ERPV0.2) --}}
 {{--
     ERP MODULE: Shopping Cart (Cart Page)
     PAGE: Cart

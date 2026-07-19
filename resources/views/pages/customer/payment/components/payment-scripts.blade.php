@@ -1,8 +1,4 @@
-{{--
-    ERP MODULE: Checkout — Payment (Payment Page)
-    COMPONENT: Payment Page JavaScript
-    DESCRIPTION: Payment method tab switching, client-side card validation (Luhn, expiry, CVV), click handler that submits form on valid.
---}}
+{{-- CRUZAT — payment-scripts: saved method selection, form toggle, validation (ERPV0.2.7, ERPV0.2.12) --}}
 
 <script>
     function selectPaymentMethod(method, fillData) {

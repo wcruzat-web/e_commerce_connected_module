@@ -1,3 +1,4 @@
+{{-- HAINZ — specs-tab: grouped specifications display for product detail (ERPV1.1) --}}
 <div id="tab-specs" class="tab-content">
     @if(!empty($product['detailSpecs']))
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 pt-4 pb-6">

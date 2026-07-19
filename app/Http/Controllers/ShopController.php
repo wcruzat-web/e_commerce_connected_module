@@ -8,8 +8,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+// HAINZ — shop controller: product listing, detail, reviews, stock management, featured product
 class ShopController extends Controller
 {
+    // HAINZ — index: search/sort/filter logic; featured product query (ERPV1.4, ERPV1.6)
     public function index(Request $request): View
     {
         $sort = $request->input('sort', 'featured');
@@ -155,6 +157,7 @@ class ShopController extends Controller
         ]);
     }
 
+    // HAINZ — mapProduct: converts Product model to array for shop views; added badge/sale_price (ERPV1.7), featured image asset path (ERPV1.2)
     private function mapProduct($p): array
     {
         $groupedSpecs = $p->specifications->groupBy('category_name');

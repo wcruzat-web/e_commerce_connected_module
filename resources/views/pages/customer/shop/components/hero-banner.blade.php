@@ -1,3 +1,4 @@
+{{-- HAINZ — hero-banner: two-column layout with featured product on right (ERPV1.6) --}}
 <div class="bg-[#1e3a8a] text-white pb-16 pt-6 px-6 md:px-12 relative overflow-hidden">
     <div class="max-w-7xl mx-auto">
         @if ($featured)

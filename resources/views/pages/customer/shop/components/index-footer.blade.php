@@ -1,3 +1,4 @@
+{{-- HAINZ — index-footer: shop page footer pagination (ERPV1.1) --}}
 <footer class="bg-white border-t border-gray-200 mt-20 text-xs text-gray-500">
     <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div>

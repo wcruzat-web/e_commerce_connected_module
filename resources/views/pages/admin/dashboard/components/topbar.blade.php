@@ -1,3 +1,4 @@
+{{-- CRUZAT — dashboard topbar: ERP sync status, notifications, user info --}}
 {{--
     ERP MODULE: Admin Dashboard
     COMPONENT: Topbar
