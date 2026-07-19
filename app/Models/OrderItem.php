@@ -1,7 +1,6 @@
 <?php
 // [CRUZAT] Original OrderItem model (order_id, product_id, quantity, unit_price, subtotal)
 // [AGNER]  Added customer_id, product_name, product_image to fillable
-// [ESTEBAN] FK local key updated to 'product_id'
 
 namespace App\Models;
 
@@ -39,6 +38,6 @@ class OrderItem extends Model
     // [CRUZAT]
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id', 'product_id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

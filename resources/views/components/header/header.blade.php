@@ -34,9 +34,9 @@
                 $mmCategories = \App\Models\Category::with(['products' => function ($q) {
                     $q->where('is_active', 1)->orderBy('created_at', 'desc')->limit(4);
                 }])->get();
-                $topProduct = \App\Models\Product::select('product_table.*', DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'))
-                    ->leftJoin('order_items', 'product_table.product_id', '=', 'order_items.product_id')
-                    ->groupBy('product_table.product_id')
+                $topProduct = \App\Models\Product::select('products.*', DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'))
+                    ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
+                    ->groupBy('products.id')
                     ->orderByDesc('total_sold')
                     ->first();
             @endphp
@@ -56,7 +56,7 @@
                                     <h4 class="text-sm font-bold text-blue-900 mb-2.5">{{ $mmCat->name }}</h4>
                                     <ul class="space-y-1.5">
                                         @foreach ($mmCat->products as $mmProd)
-                                            <li><a href="{{ route('products.show', $mmProd->product_id) }}" class="text-xs text-gray-500 hover:text-cyan-500 transition-colors">{{ $mmProd->product_name }}</a></li>
+                                            <li><a href="{{ route('products.show', $mmProd->id) }}" class="text-xs text-gray-500 hover:text-cyan-500 transition-colors">{{ $mmProd->name }}</a></li>
                                         @endforeach
                                     </ul>
                                 </div>
@@ -66,7 +66,7 @@
                         @if ($topProduct)
                         <div class="border-t border-blue-100 mt-5 pt-4 flex flex-wrap items-center gap-2">
                             <span class="text-xs font-semibold text-blue-900">Trending:</span>
-                            <a href="{{ route('products.show', $topProduct->product_id) }}" class="text-[11px] font-medium text-blue-900 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-50 transition-colors">{{ $topProduct->product_name }} ({{ $topProduct->total_sold }} sold)</a>
+                            <a href="{{ route('products.show', $topProduct->id) }}" class="text-[11px] font-medium text-blue-900 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-50 transition-colors">{{ $topProduct->name }} ({{ $topProduct->total_sold }} sold)</a>
                         </div>
                         @endif
                     </div>

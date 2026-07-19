@@ -1,6 +1,5 @@
 <?php
 
-// [CRUZAT] — role-based access middleware (super_admin, admin)
 namespace App\Http\Middleware;
 
 use Closure;

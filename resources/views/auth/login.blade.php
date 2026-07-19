@@ -1,4 +1,3 @@
-{{-- [AGNER] — customer & admin login page --}}
 @extends('layouts.guest')
 
 @section('title', 'Login — ShopEase')

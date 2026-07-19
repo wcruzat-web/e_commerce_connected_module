@@ -1,6 +1,5 @@
 <?php
 
-// [CRUZAT] — dev auto-login + logout handler
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;

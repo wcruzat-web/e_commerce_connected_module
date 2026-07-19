@@ -34,15 +34,15 @@
             </div>
         @endif
 
-        <form method="POST" action="/dummy/edit-product/{{ $product->product_id }}" class="bg-white rounded-3xl border border-gray-200/80 p-8 space-y-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
+        <form method="POST" action="/dummy/edit-product/{{ $product->id }}" class="bg-white rounded-3xl border border-gray-200/80 p-8 space-y-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
             @csrf
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">Product Name</label>
-                    <input type="text" name="product_name" value="{{ old('product_name', $product->product_name) }}" required placeholder="e.g. NVIDIA RTX 4090"
+                    <input type="text" name="name" value="{{ old('name', $product->name) }}" required placeholder="e.g. NVIDIA RTX 4090"
                            class="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm outline-none focus:border-cyan-400 focus:bg-white focus:ring-4 focus:ring-cyan-100 transition-all">
-                    @error('product_name') <p class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</p> @enderror
+                    @error('name') <p class="text-red-500 text-xs mt-1.5 font-medium">{{ $message }}</p> @enderror
                 </div>
 
                 <div>

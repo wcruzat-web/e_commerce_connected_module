@@ -21,13 +21,13 @@ class ProductSeeder extends Seeder
     {
         $product = Product::create([
             'brand' => 'NVIDIA',
-            'product_name' => 'GeForce RTX 4090 Founders Edition',
+            'name' => 'GeForce RTX 4090 Founders Edition',
             'slug' => 'nvidia-geforce-rtx-4090-fe',
             'description' => "Experience the ultimate in gaming and creative performance with the NVIDIA GeForce RTX 4090. Powered by the Ada Lovelace architecture, it delivers a massive leap in performance and efficiency.",
             'price' => 1599.99,
             'sale_price' => null,
             'category_id' => 1,
-            'product_image' => '/images/products/rtx-4090-fe.svg',
+            'featured_image' => '/images/products/rtx-4090-fe.svg',
             'stock' => 2,
             'sku' => 'NV-4090-FE',
             'badge' => 'Only 4 Left',
@@ -60,7 +60,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($specs as $spec) {
-            $spec['product_id'] = $product->product_id;
+            $spec['product_id'] = $product->id;
             ProductSpecification::create($spec);
         }
     }
@@ -69,13 +69,13 @@ class ProductSeeder extends Seeder
     {
         $product = Product::create([
             'brand' => 'Intel',
-            'product_name' => 'Core i9-14900K',
+            'name' => 'Core i9-14900K',
             'slug' => 'intel-core-i9-14900k',
             'description' => "The Intel Core i9-14900K delivers exceptional performance for gaming and content creation with 24 cores and 32 threads.",
             'price' => 589.99,
             'sale_price' => 549.99,
             'category_id' => 2,
-            'product_image' => '/images/products/i9-14900k.svg',
+            'featured_image' => '/images/products/i9-14900k.svg',
             'stock' => 7,
             'sku' => 'IN-14900K',
             'badge' => 'Sale',
@@ -99,7 +99,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($specs as $spec) {
-            $spec['product_id'] = $product->product_id;
+            $spec['product_id'] = $product->id;
             ProductSpecification::create($spec);
         }
     }
@@ -108,13 +108,13 @@ class ProductSeeder extends Seeder
     {
         $product = Product::create([
             'brand' => 'ASUS',
-            'product_name' => 'ROG Maximus Z790 Hero',
+            'name' => 'ROG Maximus Z790 Hero',
             'slug' => 'asus-rog-maximus-z790-hero',
             'description' => "The ROG Maximus Z790 Hero is built for Intel 13th & 14th Gen processors, featuring robust power delivery and premium audio.",
             'price' => 629.99,
             'sale_price' => null,
             'category_id' => 3,
-            'product_image' => '/images/products/z790-hero.svg',
+            'featured_image' => '/images/products/z790-hero.svg',
             'stock' => 4,
             'sku' => 'AS-Z790-HERO',
             'badge' => 'Best Seller',
@@ -139,7 +139,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($specs as $spec) {
-            $spec['product_id'] = $product->product_id;
+            $spec['product_id'] = $product->id;
             ProductSpecification::create($spec);
         }
     }
@@ -148,13 +148,13 @@ class ProductSeeder extends Seeder
     {
         $product = Product::create([
             'brand' => 'G.Skill',
-            'product_name' => 'Trident Z5 RGB DDR5-6000 32GB',
+            'name' => 'Trident Z5 RGB DDR5-6000 32GB',
             'slug' => 'gskill-trident-z5-rgb-ddr5-6000-32gb',
             'description' => "High-performance DDR5 memory kit with RGB lighting, optimized for Intel and AMD platforms.",
             'price' => 129.99,
             'sale_price' => 109.99,
             'category_id' => 4,
-            'product_image' => '/images/products/trident-z5.svg',
+            'featured_image' => '/images/products/trident-z5.svg',
             'stock' => 25,
             'sku' => 'GS-TZ5-32GB',
             'badge' => null,
@@ -176,7 +176,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($specs as $spec) {
-            $spec['product_id'] = $product->product_id;
+            $spec['product_id'] = $product->id;
             ProductSpecification::create($spec);
         }
     }

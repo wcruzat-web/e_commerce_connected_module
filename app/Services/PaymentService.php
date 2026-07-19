@@ -38,15 +38,13 @@ class PaymentService
         ]);
 
         foreach ($cart->items as $item) {
-            $pic = $item->product->product_image ?? '';
-            if ($pic && !str_starts_with($pic, 'http') && !str_starts_with($pic, '/')) {
-                $pic = asset('storage/products/' . $pic);
-            } elseif ($pic && !str_starts_with($pic, 'http')) {
+            $pic = $item->product->featured_image ?? '';
+            if ($pic && !str_starts_with($pic, 'http')) {
                 $pic = asset($pic);
             }
             $this->orderRepository->addItem($order, [
                 'product_id' => $item->product_id,
-                'product_name' => $item->product->product_name ?? 'Item',
+                'product_name' => $item->product->name ?? 'Item',
                 'product_image' => $pic,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price,

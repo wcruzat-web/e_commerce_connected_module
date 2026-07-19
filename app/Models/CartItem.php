@@ -1,6 +1,5 @@
 <?php
 
-// [AGNER] — original  |  [ESTEBAN] — FK local key updated to 'product_id'
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +29,6 @@ class CartItem extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id', 'product_id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }
