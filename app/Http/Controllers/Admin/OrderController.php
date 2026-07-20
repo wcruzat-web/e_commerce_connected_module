@@ -75,7 +75,10 @@ class OrderController extends Controller
     {
         $request->validate(['sync_status' => 'required|in:Pending,Synced,Failed']);
         $order = $this->orderRepository->find($id);
-        if ($order && $order->tracking) {
+        if (!$order) {
+            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+        }
+        if ($order->tracking) {
             $order->tracking->update(['sync_status' => $request->sync_status, 'last_updated' => now()]);
         }
         return response()->json(['success' => true]);

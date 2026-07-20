@@ -189,12 +189,16 @@ class ProductController extends \App\Http\Controllers\Controller
         $this->saveSpecs($product, $specs);
         $this->saveCompat($product, $compat);
 
-        DB::table('warehouse_stock')
-            ->where('product_id', $id)
-            ->update([
-                'quantity' => $validated['stock'],
-                'updated_at' => now(),
-            ]);
+        $primaryWarehouse = DB::table('warehouses')->first();
+        if ($primaryWarehouse) {
+            DB::table('warehouse_stock')
+                ->where('product_id', $id)
+                ->where('warehouse_id', $primaryWarehouse->warehouse_id)
+                ->update([
+                    'quantity' => $validated['stock'],
+                    'updated_at' => now(),
+                ]);
+        }
 
         return response()->json([
             'success' => true,
