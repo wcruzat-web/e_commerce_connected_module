@@ -48,3 +48,14 @@ Log of every change made on the `agner-dev` branch, so progress can be recalled 
 - **OOS sink to bottom:** Default (and every sort) orders out-of-stock items last, in-stock first.
 - **Controller touched (AGNER):** `WishlistController@index` now reads `sort` and applies `orderByDesc('in_stock')` plus the chosen secondary sort. This is your `[AGNER]` code, so in-scope.
 - **Not touched:** routes, JS, the in-stock Move/Delete buttons, and the icon-size/ellipsis fixes from 3.3.3.2.
+
+### ERPV3.3.4: Address Add & Edit Fixed
+- **Add route view fix:** `/add-address` rendered `view('customer.add-address')`, which doesn't exist → 404. Changed to the real form `view('pages.customer.addresses.add-address')` (file already present). "+ Add New Address" now opens the form.
+- **`address_type` validation fix:** `AddressController` store + update required `in:Shipping,Billing`, but the forms (and the list display + icon logic) use `Home`/`Work`/`Other` — so every submission failed validation silently. Aligned the rule to `in:Home,Work,Other`.
+- **Not touched:** route structure/other routes, the address views/forms, the index page, and the delete flow (all already correct). Both edited files are your `[AGNER]` code.
+
+### ERPV3.3.4.1: Custom address delete confirmation
+- Replaced the browser's native `confirm()` dialog on address delete with a custom animated modal (fade + scale-in).
+- New shared component `resources/views/components/confirm-modal.blade.php` (included in `layouts.customer`); JS in `resources/js/app.js` intercepts forms with `js-confirm-delete`, opens the modal, and its Delete button submits the form (preserving CSRF + `@method('DELETE')`). Cancel / backdrop click / `Esc` all close it.
+- Both delete forms — profile "Saved Addresses" (`profile-addresses`) and the addresses index (`address-list`) — now use `js-confirm-delete` instead of `onsubmit="return confirm(...)"`.
+- **Not touched:** the delete route/controller, add/edit forms, and the wishlist delete (already toast/ajax-based).

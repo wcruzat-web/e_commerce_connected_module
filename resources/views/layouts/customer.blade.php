@@ -50,6 +50,7 @@
 </div>
 
 @include('components.toast')
+@include('components.confirm-modal')
 
 </body>
 

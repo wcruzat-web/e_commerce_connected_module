@@ -111,6 +111,44 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.__flash.error) window.showToast(window.__flash.error, 'error');
     }
 
+    // ---------------------------------------------------------------
+    // Confirm modal (custom delete confirmation)
+    // ---------------------------------------------------------------
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmCard = document.getElementById('confirm-modal-card');
+    const confirmBackdrop = document.getElementById('confirm-backdrop');
+    const confirmOk = document.getElementById('confirm-ok');
+    const confirmCancel = document.getElementById('confirm-cancel');
+    let pendingForm = null;
+
+    const openConfirm = (form) => {
+        pendingForm = form;
+        confirmModal.classList.remove('opacity-0', 'pointer-events-none');
+        confirmModal.classList.add('opacity-100');
+        confirmCard.classList.remove('scale-95');
+        confirmCard.classList.add('scale-100');
+    };
+
+    const closeConfirm = () => {
+        confirmModal.classList.add('opacity-0', 'pointer-events-none');
+        confirmModal.classList.remove('opacity-100');
+        confirmCard.classList.add('scale-95');
+        confirmCard.classList.remove('scale-100');
+        pendingForm = null;
+    };
+
+    document.querySelectorAll('form.js-confirm-delete').forEach((form) => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            openConfirm(form);
+        });
+    });
+
+    confirmOk?.addEventListener('click', () => { if (pendingForm) pendingForm.submit(); });
+    confirmCancel?.addEventListener('click', closeConfirm);
+    confirmBackdrop?.addEventListener('click', closeConfirm);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pendingForm) closeConfirm(); });
+
     if (window.__lang) applyLanguage(window.__lang);
 
     // ---------------------------------------------------------------

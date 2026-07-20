@@ -116,7 +116,7 @@ Route::middleware('auth')->group(function () {
 
     // Addresses  [AGNER]
     Route::get('/addresses', [AddressController::class, 'index'])->name('addresses');
-    Route::get('/add-address', fn () => view('customer.add-address'))->name('add-address');
+    Route::get('/add-address', fn () => view('pages.customer.addresses.add-address'))->name('add-address');
     Route::post('/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::get('/addresses/{address}/edit', [AddressController::class, 'edit'])->name('addresses.edit');
     Route::put('/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
