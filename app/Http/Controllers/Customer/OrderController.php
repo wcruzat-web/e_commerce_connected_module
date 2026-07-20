@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\ProductReview;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -19,6 +20,10 @@ class OrderController extends Controller
 
         $orders = $customer->orders()
             ->with('items')
+            ->where(function ($q) {
+                $q->where('status', '!=', 'delivered')
+                  ->orWhere('customer_received', false);
+            })
             ->orderByRaw("FIELD(status, 'pending','processing','shipped','in_transit','out_for_delivery','delivered','cancelled')")
             ->latest('order_id')
             ->get();
@@ -37,7 +42,9 @@ class OrderController extends Controller
             ->latest('order_id')
             ->get();
 
-        return view('pages.customer.history.history', compact('orders'));
+        $reviewedProductIds = ProductReview::where('user_id', $customer->customer_id)->pluck('product_id')->toArray();
+
+        return view('pages.customer.history.history', compact('orders', 'reviewedProductIds'));
     }
 
     public function checkout(Request $request): RedirectResponse
