@@ -215,7 +215,7 @@ class ShopController extends Controller
             'image' => $p->featured_image
                 ? (str_starts_with($p->featured_image, 'http') ? $p->featured_image : asset($p->featured_image))
                 : 'https://placehold.co/200x200?text=No+Image',
-            'badge' => $p->badge ?? '',
+            'badge' => $p->badge && preg_match('/^Only\s+\d+\s+Left$/i', $p->badge) ? 'Only ' . (int) $p->stock . ' Left' : ($p->badge ?? ''),
             'badgeClass' => $p->badge === 'Sale' ? 'bg-red-500' : ($p->badge === 'Best Seller' ? 'bg-amber-500' : 'bg-blue-900'),
             'stock' => (int) $p->stock,
             'inStock' => $p->stock > 0,

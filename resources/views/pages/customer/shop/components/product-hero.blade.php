@@ -12,6 +12,7 @@
             <span class="bg-blue-900 text-white text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded">{{ $product['brand'] }}</span>
             <p class="text-xs font-mono text-gray-400 mt-2">SKU: {{ $product['sku'] }}</p>
             <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-1">{{ $product['name'] }}</h1>
+            <p class="text-xs mt-1 {{ $product['inStock'] ? 'text-green-600' : 'text-red-500' }}">{{ $product['inStock'] ? $product['stock'] . ' in stock' : 'Out of Stock' }}</p>
         </div>
 
         <div class="flex items-baseline space-x-3 border-y border-gray-100 py-4">
@@ -43,7 +44,7 @@
                 <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
                     <button type="button" onclick="var e=document.getElementById('qty-input');var s=document.getElementById('qty-span');var v=parseInt(e.value)-1;if(v<1)v=1;e.value=v;s.textContent=v" class="px-3 py-2 bg-gray-50 text-slate-700 font-extrabold text-sm hover:bg-gray-100 transition select-none">-</button>
                     <span id="qty-span" class="px-5 py-2 font-black text-sm w-12 text-center">1</span>
-                    <button type="button" onclick="var e=document.getElementById('qty-input');var s=document.getElementById('qty-span');var v=parseInt(e.value)+1;if(v>99)v=99;e.value=v;s.textContent=v" class="px-3 py-2 bg-gray-50 text-slate-700 font-extrabold text-sm hover:bg-gray-100 transition select-none">+</button>
+                    <button type="button" onclick="var e=document.getElementById('qty-input');var s=document.getElementById('qty-span');var v=parseInt(e.value)+1;if(v>{{ $product['stock'] }})v={{ $product['stock'] }};e.value=v;s.textContent=v" class="px-3 py-2 bg-gray-50 text-slate-700 font-extrabold text-sm hover:bg-gray-100 transition select-none">+</button>
                 </div>
                 <button type="submit"
                     {{ $product['inStock'] ? '' : 'disabled' }}
