@@ -1,4 +1,4 @@
-{{-- HAINZ — shop show page JS: review form, tab navigation (ERPV1.1) --}}
+{{-- HAINZ — shop show page JS: review form, tab navigation, wishlist toggle (ERPV1.1) --}}
 <script>
 function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -25,4 +25,27 @@ function setRating(val) {
         }
     });
 }
+document.querySelectorAll('.js-wish-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = form.querySelector('.js-wish-btn');
+        var svg = form.querySelector('.js-wish-svg');
+        var formData = new FormData(form);
+        fetch(form.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.added) {
+                btn.classList.remove('text-gray-400', 'hover:text-red-500');
+                btn.classList.add('text-red-500');
+                svg.setAttribute('fill', 'currentColor');
+                btn.setAttribute('title', 'Remove from Wishlist');
+            } else {
+                btn.classList.remove('text-red-500');
+                btn.classList.add('text-gray-400', 'hover:text-red-500');
+                svg.setAttribute('fill', 'none');
+                btn.setAttribute('title', 'Add to Wishlist');
+            }
+        });
+    });
+});
 </script>

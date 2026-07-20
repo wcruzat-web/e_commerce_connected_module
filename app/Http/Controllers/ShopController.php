@@ -82,6 +82,11 @@ class ShopController extends Controller
 
         $mapped = $this->mapProduct($product);
 
+        $wishlistIds = auth()->check()
+            ? auth()->user()->wishlists()->first()?->items()->pluck('product_id')->toArray() ?? []
+            : [];
+        $mapped['in_wishlist'] = in_array((int)$mapped['id'], $wishlistIds);
+
         return view('pages.customer.shop.show', ['product' => $mapped]);
     }
 
