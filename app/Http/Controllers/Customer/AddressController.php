@@ -30,7 +30,7 @@ class AddressController extends Controller
         $customer = $request->user();
 
         $data = $request->validate([
-            'address_type' => ['required', 'in:Shipping,Billing'],
+            'address_type' => ['required', 'in:Home,Work,Other'],
             'recipient_name' => ['required', 'string', 'max:255'],
             'phone_number' => ['nullable', 'string', 'max:50'],
             'street' => ['required', 'string', 'max:255'],
@@ -84,7 +84,7 @@ class AddressController extends Controller
         $addressModel = $customer->addresses()->findOrFail($address);
 
         $data = $request->validate([
-            'address_type' => ['required', 'in:Shipping,Billing'],
+            'address_type' => ['required', 'in:Home,Work,Other'],
             'recipient_name' => ['required', 'string', 'max:255'],
             'phone_number' => ['nullable', 'string', 'max:50'],
             'street' => ['required', 'string', 'max:255'],

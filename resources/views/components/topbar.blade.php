@@ -24,7 +24,7 @@
             </p>
         </div>
         @if(auth()->user()->profile_picture)
-            <img src="{{ auth()->user()->profile_picture }}" alt=""
+            <img src="{{ Str::startsWith(auth()->user()->profile_picture, ['http://', 'https://']) ? auth()->user()->profile_picture : asset(auth()->user()->profile_picture) }}" alt=""
                 class="w-10 h-10 rounded-full object-cover border shrink-0">
         @else
             <div class="w-10 h-10 rounded-full bg-sky-200 flex items-center justify-center shrink-0 font-bold text-sky-600 text-sm">

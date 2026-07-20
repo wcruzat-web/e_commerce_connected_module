@@ -5,7 +5,7 @@ import '../css/app.css';
    ========================================================================= */
 const I18N = {
     en: {
-        'nav.dashboard': 'Dashboard', 'nav.home': 'Home', 'nav.products': 'Products',
+        'nav.dashboard': 'Dashboard', 'nav.home': 'Home',
         'nav.wishlist': 'Wishlist', 'nav.cart': 'Cart', 'nav.orders': 'My Orders',
         'nav.history': 'Order History', 'nav.profile': 'Profile', 'nav.addresses': 'Addresses',
         'nav.payments': 'Payment Methods', 'nav.notifications': 'Notifications',
@@ -26,7 +26,7 @@ const I18N = {
         'set.productUpdates': 'Product Updates',
         'set.productDesc': 'Get notified when there is something new with your order',
         'set.save': 'Save Changes',
-        'wishlist.title': 'Wishlist', 'wishlist.moveAll': 'Move All to Cart',
+        'wishlist.title': 'Wishlist',
         'wishlist.removeSel': 'Remove Selected', 'wishlist.moveSel': 'Move Selected to Cart',
         'wishlist.allItems': 'All Items',
         'toggle.notify_other_updates': 'Other Updates',
@@ -40,7 +40,7 @@ const I18N = {
         'dash.manage': 'Manage', 'dash.addPay': '+ Add Payment Method',
     },
     fil: {
-        'nav.dashboard': 'Dashboard', 'nav.home': 'Tahanan', 'nav.products': 'Mga Produkto',
+        'nav.dashboard': 'Dashboard', 'nav.home': 'Tahanan',
         'nav.wishlist': 'Wishlist', 'nav.cart': 'Cart', 'nav.orders': 'Mga Order',
         'nav.history': 'Kasaysayan', 'nav.profile': 'Profile', 'nav.addresses': 'Mga Address',
         'nav.payments': 'Mga Pamamaraan ng Bayad', 'nav.notifications': 'Mga Notipikasyon',
@@ -110,6 +110,44 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.__flash.success) window.showToast(window.__flash.success, 'success');
         if (window.__flash.error) window.showToast(window.__flash.error, 'error');
     }
+
+    // ---------------------------------------------------------------
+    // Confirm modal (custom delete confirmation)
+    // ---------------------------------------------------------------
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmCard = document.getElementById('confirm-modal-card');
+    const confirmBackdrop = document.getElementById('confirm-backdrop');
+    const confirmOk = document.getElementById('confirm-ok');
+    const confirmCancel = document.getElementById('confirm-cancel');
+    let pendingForm = null;
+
+    const openConfirm = (form) => {
+        pendingForm = form;
+        confirmModal.classList.remove('opacity-0', 'pointer-events-none');
+        confirmModal.classList.add('opacity-100');
+        confirmCard.classList.remove('scale-95');
+        confirmCard.classList.add('scale-100');
+    };
+
+    const closeConfirm = () => {
+        confirmModal.classList.add('opacity-0', 'pointer-events-none');
+        confirmModal.classList.remove('opacity-100');
+        confirmCard.classList.add('scale-95');
+        confirmCard.classList.remove('scale-100');
+        pendingForm = null;
+    };
+
+    document.querySelectorAll('form.js-confirm-delete').forEach((form) => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            openConfirm(form);
+        });
+    });
+
+    confirmOk?.addEventListener('click', () => { if (pendingForm) pendingForm.submit(); });
+    confirmCancel?.addEventListener('click', closeConfirm);
+    confirmBackdrop?.addEventListener('click', closeConfirm);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pendingForm) closeConfirm(); });
 
     if (window.__lang) applyLanguage(window.__lang);
 
@@ -266,10 +304,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    document.querySelector('.js-move-all')?.addEventListener('click', async () => {
-        await runSequentially([...document.querySelectorAll('form.js-wishlist-move')]);
-        location.reload();
-    });
+    const selectAllBtn = document.querySelector('.js-select-all');
+    if (selectAllBtn) {
+        const wishChecks = () => [...document.querySelectorAll('.js-wish-check')];
+        const selectAllLabel = selectAllBtn.querySelector('.js-select-all-label');
+        const syncSelectAllLabel = () => {
+            const all = wishChecks();
+            const everyChecked = all.length > 0 && all.every((c) => c.checked);
+            if (selectAllLabel) selectAllLabel.textContent = everyChecked ? 'Unselect All' : 'Select All';
+        };
+        selectAllBtn.addEventListener('click', () => {
+            const all = wishChecks();
+            const everyChecked = all.length > 0 && all.every((c) => c.checked);
+            all.forEach((c) => (c.checked = !everyChecked));
+            syncSelectAllLabel();
+        });
+        wishChecks().forEach((c) => c.addEventListener('change', syncSelectAllLabel));
+    }
 
     document.querySelector('.js-move-selected')?.addEventListener('click', async () => {
         await runSequentially(selectedForms('form.js-wishlist-move'));

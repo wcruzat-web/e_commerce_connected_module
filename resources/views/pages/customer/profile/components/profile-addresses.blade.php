@@ -80,8 +80,7 @@
                     </a>
 
                     <form method="POST" action="{{ route('addresses.destroy', $address->address_id) }}"
-                        class="w-1/2"
-                        onsubmit="return confirm('Delete this address?');">
+                        class="w-1/2 js-confirm-delete">
                         @csrf
                         @method('DELETE')
                         <button type="submit"

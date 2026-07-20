@@ -46,7 +46,7 @@ class PaymentMethodController extends Controller
 
         if (($data['payment_type'] ?? '') === 'GCash') {
             $data['account_name'] = $data['gcash_name'];
-            $data['masked_account_number'] = '+63' . $data['gcash_number'];
+            $data['masked_account_number'] = '+63' . preg_replace('/\D/', '', $data['gcash_number']);
         }
 
         unset($data['gcash_name'], $data['gcash_number']);
@@ -86,7 +86,7 @@ class PaymentMethodController extends Controller
 
         if (($data['payment_type'] ?? '') === 'GCash') {
             $data['account_name'] = $data['gcash_name'];
-            $data['masked_account_number'] = '+63' . $data['gcash_number'];
+            $data['masked_account_number'] = '+63' . preg_replace('/\D/', '', $data['gcash_number']);
         }
 
         unset($data['gcash_name'], $data['gcash_number']);
@@ -120,7 +120,7 @@ class PaymentMethodController extends Controller
             $messages['expiry_date.required'] = 'Enter the expiry date.';
         } elseif ($request->payment_type === 'GCash') {
             $rules['gcash_name'] = ['required', 'string', 'max:255'];
-            $rules['gcash_number'] = ['required', 'string', 'max:10'];
+            $rules['gcash_number'] = ['required', 'string', 'max:12'];
 
             $messages['gcash_name.required'] = 'Enter the GCash name.';
             $messages['gcash_number.required'] = 'Enter the GCash number.';
@@ -161,9 +161,9 @@ class PaymentMethodController extends Controller
             }
 
             if ($type === 'GCash') {
-                $gcashNum = $request->gcash_number;
-                if ($gcashNum && !preg_match('/^\d{10}$/', $gcashNum)) {
-                    $v->errors()->add('gcash_number', 'GCash number must be exactly 10 digits.');
+                $gcashNum = preg_replace('/\D/', '', (string) $request->gcash_number);
+                if ($gcashNum === '' || !preg_match('/^9\d{9}$/', $gcashNum)) {
+                    $v->errors()->add('gcash_number', 'Enter a valid GCash number (10 digits starting with 9).');
                 }
             }
         });
