@@ -5,7 +5,7 @@ import '../css/app.css';
    ========================================================================= */
 const I18N = {
     en: {
-        'nav.dashboard': 'Dashboard', 'nav.home': 'Home', 'nav.products': 'Products',
+        'nav.dashboard': 'Dashboard', 'nav.home': 'Home',
         'nav.wishlist': 'Wishlist', 'nav.cart': 'Cart', 'nav.orders': 'My Orders',
         'nav.history': 'Order History', 'nav.profile': 'Profile', 'nav.addresses': 'Addresses',
         'nav.payments': 'Payment Methods', 'nav.notifications': 'Notifications',
@@ -40,7 +40,7 @@ const I18N = {
         'dash.manage': 'Manage', 'dash.addPay': '+ Add Payment Method',
     },
     fil: {
-        'nav.dashboard': 'Dashboard', 'nav.home': 'Tahanan', 'nav.products': 'Mga Produkto',
+        'nav.dashboard': 'Dashboard', 'nav.home': 'Tahanan',
         'nav.wishlist': 'Wishlist', 'nav.cart': 'Cart', 'nav.orders': 'Mga Order',
         'nav.history': 'Kasaysayan', 'nav.profile': 'Profile', 'nav.addresses': 'Mga Address',
         'nav.payments': 'Mga Pamamaraan ng Bayad', 'nav.notifications': 'Mga Notipikasyon',
