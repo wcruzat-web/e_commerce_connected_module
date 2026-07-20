@@ -9,7 +9,7 @@
     <div class="flex items-start justify-between mb-5">
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Product Display Management</h1>
-        <p class="text-sm text-slate-400 mt-1">List product . Last updated <span id="lastUpdated">Dec 18, 2025</span></p>
+        <p class="text-sm text-slate-400 mt-1">List product . Last updated <span id="lastUpdated">{{ now()->format('M d, Y') }}</span></p>
       </div>
       <div class="flex items-center gap-2">
         <button id="exportBtn" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-slate-600 hover:bg-gray-50 transition">Export</button>
