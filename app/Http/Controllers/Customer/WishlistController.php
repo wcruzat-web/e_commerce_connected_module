@@ -43,7 +43,7 @@ class WishlistController extends Controller
                 break;
         }
 
-        $items = $query->get();
+        $items = $query->paginate(10);
 
         return view('pages.customer.wishlist.wishlist', compact('items', 'sort'));
     }

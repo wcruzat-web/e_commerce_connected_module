@@ -94,3 +94,7 @@
         @endforelse
 
     </div>
+
+    <div class="mt-6">
+        {{ $items->withQueryString()->links() }}
+    </div>

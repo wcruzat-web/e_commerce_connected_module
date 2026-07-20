@@ -17,13 +17,21 @@ class OrderController extends Controller
         /** @var Customer $customer */
         $customer = $request->user();
 
+        $status = $request->input('status', 'all');
+
         $orders = $customer->orders()
             ->with('items')
+            ->when($status === 'processing', function ($q) {
+                $q->whereIn('status', ['pending','processing','shipped','in_transit','out_for_delivery']);
+            })
+            ->when($status === 'delivered', function ($q) {
+                $q->where('status', 'delivered');
+            })
             ->orderByRaw("FIELD(status, 'pending','processing','shipped','in_transit','out_for_delivery','delivered','cancelled')")
             ->latest('order_id')
-            ->get();
+            ->paginate(7);
 
-        return view('pages.customer.orders.orders', compact('orders'));
+        return view('pages.customer.orders.orders', compact('orders', 'status'));
     }
 
     public function history(Request $request): View
@@ -31,13 +39,24 @@ class OrderController extends Controller
         /** @var Customer $customer */
         $customer = $request->user();
 
+        $search = $request->input('search');
+
         $orders = $customer->orders()
             ->delivered()
             ->with('items')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($q2) use ($search) {
+                    $q2->where('order_number', 'like', "%{$search}%")
+                       ->orWhere('order_id', $search)
+                       ->orWhereHas('items', function ($qi) use ($search) {
+                           $qi->where('product_name', 'like', "%{$search}%");
+                       });
+                });
+            })
             ->latest('order_id')
-            ->get();
+            ->paginate(7);
 
-        return view('pages.customer.history.history', compact('orders'));
+        return view('pages.customer.history.history', compact('orders', 'search'));
     }
 
     public function checkout(Request $request): RedirectResponse

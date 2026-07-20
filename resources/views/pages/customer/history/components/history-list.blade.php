@@ -58,4 +58,6 @@
 
     </div>
 
-    <p id="no-orders" class="hidden text-center text-gray-400 py-16">No orders match your search.</p>
+    <div class="mt-6">
+        {{ $orders->withQueryString()->links() }}
+    </div>

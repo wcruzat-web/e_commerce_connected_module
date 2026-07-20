@@ -3,7 +3,7 @@
         <div class="flex gap-10 font-semibold">
 
             <button class="border-b-2 border-sky-500 pb-1">
-                <span data-i18n="wishlist.allItems">All Items</span> ({{ $items->count() }})
+                <span data-i18n="wishlist.allItems">All Items</span> ({{ $items->total() }})
             </button>
 
             <button class="text-gray-500">
