@@ -131,16 +131,22 @@ class ProductController extends \App\Http\Controllers\Controller
         $this->saveSpecs($product, $specs);
         $this->saveCompat($product, $compat);
 
-        $primaryWarehouse = DB::table('warehouses')->first();
-        if ($primaryWarehouse) {
-            DB::table('warehouse_stock')->insert([
-                'warehouse_id' => $primaryWarehouse->warehouse_id,
-                'product_id' => $product->id,
-                'quantity' => $validated['stock'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $primaryWarehouse = DB::table('warehouses')->orderBy('warehouse_id', 'asc')->first();
+        if (!$primaryWarehouse) {
+            $product->delete();
+            return response()->json([
+                'success' => false,
+                'message' => 'No warehouses found. Please create a warehouse before adding products.',
+            ], 422);
         }
+
+        DB::table('warehouse_stock')->insert([
+            'warehouse_id' => $primaryWarehouse->warehouse_id,
+            'product_id' => $product->id,
+            'quantity' => $validated['stock'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
