@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Api;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\ProductSpecification;
 use App\Models\ProductCompatibility;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -71,7 +70,6 @@ class ProductController extends \App\Http\Controllers\Controller
         if ($product->category) {
             $cat = Category::firstOrCreate(['name' => $product->category], ['slug' => str()->slug($product->category)]);
             $product->category_id = $cat->id;
-            $product->save();
         }
     }
 
@@ -124,6 +122,7 @@ class ProductController extends \App\Http\Controllers\Controller
 
         // ESTEBAN — added: sync free-text category to category_id FK (V2.7)
         $this->syncCategoryId($product);
+        $product->save();
 
         // ESTEBAN — added: Specifications and Compatibility save (V2.6)
         $specs = json_decode($request->input('specs', '[]'), true) ?? [];
@@ -186,9 +185,9 @@ class ProductController extends \App\Http\Controllers\Controller
         $product->stock = $validated['stock'];
         $product->badge = $request->input('badge', '');
         $product->sale_price = $request->input('badge') === 'Sale' ? $request->input('sale_price') : null;
-        $product->save();
 
         $this->syncCategoryId($product);
+        $product->save();
 
         $specs = json_decode($request->input('specs', '[]'), true) ?? [];
         $compat = json_decode($request->input('compat', '[]'), true) ?? [];

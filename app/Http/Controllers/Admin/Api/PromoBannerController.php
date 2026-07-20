@@ -31,12 +31,14 @@ class PromoBannerController extends \App\Http\Controllers\Controller
                 'subtitle' => $validated['subtitle'],
                 'is_active' => true,
             ]);
+            $statusCode = 200;
         } else {
             $banner = PromoBanner::create([
                 'title' => $validated['title'],
                 'subtitle' => $validated['subtitle'],
                 'is_active' => true,
             ]);
+            $statusCode = 201;
         }
 
         PromoBanner::where('banner_id', '!=', $banner->banner_id)->delete();
@@ -44,7 +46,7 @@ class PromoBannerController extends \App\Http\Controllers\Controller
         return response()->json([
             'success' => true,
             'banner' => $banner,
-        ], 201);
+        ], $statusCode);
     }
 
     public function destroy(int $id): JsonResponse
