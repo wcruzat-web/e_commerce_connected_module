@@ -26,7 +26,7 @@ const I18N = {
         'set.productUpdates': 'Product Updates',
         'set.productDesc': 'Get notified when there is something new with your order',
         'set.save': 'Save Changes',
-        'wishlist.title': 'Wishlist', 'wishlist.moveAll': 'Move All to Cart',
+        'wishlist.title': 'Wishlist',
         'wishlist.removeSel': 'Remove Selected', 'wishlist.moveSel': 'Move Selected to Cart',
         'wishlist.allItems': 'All Items',
         'toggle.notify_other_updates': 'Other Updates',
@@ -266,10 +266,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    document.querySelector('.js-move-all')?.addEventListener('click', async () => {
-        await runSequentially([...document.querySelectorAll('form.js-wishlist-move')]);
-        location.reload();
-    });
+    const selectAllBtn = document.querySelector('.js-select-all');
+    if (selectAllBtn) {
+        const wishChecks = () => [...document.querySelectorAll('.js-wish-check')];
+        const selectAllLabel = selectAllBtn.querySelector('.js-select-all-label');
+        const syncSelectAllLabel = () => {
+            const all = wishChecks();
+            const everyChecked = all.length > 0 && all.every((c) => c.checked);
+            if (selectAllLabel) selectAllLabel.textContent = everyChecked ? 'Unselect All' : 'Select All';
+        };
+        selectAllBtn.addEventListener('click', () => {
+            const all = wishChecks();
+            const everyChecked = all.length > 0 && all.every((c) => c.checked);
+            all.forEach((c) => (c.checked = !everyChecked));
+            syncSelectAllLabel();
+        });
+        wishChecks().forEach((c) => c.addEventListener('change', syncSelectAllLabel));
+    }
 
     document.querySelector('.js-move-selected')?.addEventListener('click', async () => {
         await runSequentially(selectedForms('form.js-wishlist-move'));

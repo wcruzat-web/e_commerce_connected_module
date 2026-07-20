@@ -13,9 +13,10 @@
         </div>
 
         <button
-            class="js-move-all bg-sky-500 hover:bg-sky-600 text-white px-5 py-3 rounded font-semibold flex items-center gap-2 transition hover:-translate-y-0.5">
-            <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/shopping-cart.svg"
-                class="w-4 h-4" alt=""> <span data-i18n="wishlist.moveAll">Move All to Cart</span>
+            class="js-select-all border border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white px-5 py-3 rounded font-semibold flex items-center gap-2 transition hover:-translate-y-0.5">
+            <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/list-checks.svg"
+                class="w-4 h-4" alt="">
+            <span class="js-select-all-label">Select All</span>
         </button>
 
     </div>
