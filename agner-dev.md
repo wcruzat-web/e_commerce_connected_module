@@ -16,3 +16,9 @@ Log of every change made on the `agner-dev` branch, so progress can be recalled 
 - **Removed** the orphaned i18n label `nav.products` (English + Filipino) from `resources/js/app.js`, since it was used only by that sidebar button.
 - **Kept** the `products.index` route (`routes/web.php:160`) and `ShopController` — still required by the header (category links + search), shop breadcrumb/filters, cart "Start Shopping", orders, history, and order-confirmation pages.
 - **Not touched:** admin sidebar (`components/admin/sidebar.blade.php`), all other nav items, routes, controllers, and views.
+
+### ERPV3.3.2: Profile Picture Bug Fixed
+- **Root cause:** The `public/storage` symlink was missing, so uploaded pictures (saved to `storage/app/public/profiles/`) were unreachable (404). The topbar also rendered `profile_picture` as a relative URL (`storage/...`), which 404s on any sub-route like `/profile`.
+- **Fix 1 — storage symlink:** Created `public/storage → storage/app/public` via `php artisan storage:link`. Uploaded files are now served; the user's earlier upload is immediately visible without re-uploading.
+- **Fix 2 — topbar:** `resources/views/components/topbar.blade.php` now renders the picture with `asset()` (plus an `http(s)` check so Google avatars stay absolute), matching the profile form. Topbar updates when the picture is changed in Profile.
+- **Not changed:** `ProfileController` (upload logic was already correct — the file + DB were saved), `Customer` model, the profile form, and all other features.
