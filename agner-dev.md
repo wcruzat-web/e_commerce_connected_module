@@ -59,3 +59,23 @@ Log of every change made on the `agner-dev` branch, so progress can be recalled 
 - New shared component `resources/views/components/confirm-modal.blade.php` (included in `layouts.customer`); JS in `resources/js/app.js` intercepts forms with `js-confirm-delete`, opens the modal, and its Delete button submits the form (preserving CSRF + `@method('DELETE')`). Cancel / backdrop click / `Esc` all close it.
 - Both delete forms — profile "Saved Addresses" (`profile-addresses`) and the addresses index (`address-list`) — now use `js-confirm-delete` instead of `onsubmit="return confirm(...)"`.
 - **Not touched:** the delete route/controller, add/edit forms, and the wishlist delete (already toast/ajax-based).
+
+### ERPV3.3.4.2: Google OAuth hardening
+- **Production login fixed:** Removed the `redirectUriIsAllowed()` / `loopbackBaseUrl()` bounce that redirected any non-localhost host to `127.0.0.1`, which broke Google login on a real domain. Replaced with `syncRedirectUri()` — honors an explicit `GOOGLE_REDIRECT_URI` (production) and otherwise falls back to the current host (local dev). Only `app/Http/Controllers/Auth/GoogleController.php` changed.
+- **Null/empty-email guard:** `callback()` now rejects Google accounts with no email (phone-only) or an unverified email before `updateOrCreate`, instead of creating a broken null-email record that collided every such login onto one row. `email_verified` is read from the raw Socialite response (`getRaw()['email_verified']`), since it isn't a mapped User property.
+- **Local profile edits preserved:** On subsequent logins the callback no longer overwrites `first_name`/`last_name` from Google; it only refreshes `profile_picture`, `email_verified_at`, `last_login`, and reactivates `Inactive` accounts. First-time creation still seeds the name from Google.
+- **Not touched:** `config/services.php` (redirect still env-driven), the `google.redirect`/`google.callback` routes, `ChangePasswordController`/`ProfileController` `auth_via` gating, and all views.
+- **Known follow-ups (not done, out of scope):** persist an `auth_provider` column instead of the session-only `auth_via` flag; add a "set a password" flow so Google users aren't locked out of password login.
+
+### ERPV3.3.4.3: Google login silent-reload diagnosed + error now visible
+- **Root cause:** `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` were absent from `.env`, so `GoogleController::redirect()` hit the `hasGoogleCredentials()` guard and bounced back to `login` — which looked like a silent page reload (no error was shown).
+- **`.env` scaffolding:** Added `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI` (empty, with a guidance comment). `GOOGLE_REDIRECT_URI` can stay blank in dev — `syncRedirectUri()` auto-detects the current host.
+- **Visible error:** Added a generic `session('error')` red banner to `resources/views/auth/login.blade.php` (your `[AGNER]` auth view) so "Google login is not configured" and other flash errors now display instead of reloading silently.
+- **Not touched:** `GoogleController` logic, routes, `config/services.php`.
+- **Still required (user action):** a real OAuth client must be created in Google Cloud Console and the correct redirect URI authorized — see chat notes. Claude cannot generate the client ID/secret.
+
+### ERPV3.3.4.4: Google OAuth redirect-URI empty-string bug fixed
+- **Bug:** `syncRedirectUri()` returned early whenever `config('services.google.redirect')` differed from the `app.url` default. Because an empty `GOOGLE_REDIRECT_URI` env var resolves to `""` (not `null`), the `services.php` fallback never applied, so the configured value was `""` and the method bounced out without ever setting the real callback URI — OAuth would have sent an empty redirect and failed.
+- **Fix:** Guard now uses `filled($configured) && $configured !== $default` so an empty/missing value correctly falls back to `request()->getSchemeAndHttpHost().'/auth/google/callback'`. A real explicit `GOOGLE_REDIRECT_URI` is still trusted as-is.
+- **Verified:** `php artisan config:show services.google` confirms the client ID/secret load from `.env`; controller passes `php -l`.
+- **Note:** Real client credentials were added to `.env` (values omitted here on purpose — secrets must not be committed). Default dev host is `http://localhost:8000`, so the authorized redirect URI is `http://localhost:8000/auth/google/callback`.
