@@ -10,10 +10,11 @@
                 <label class="text-sm text-gray-600">GCash Number</label>
                 <div class="flex mt-2">
                     <span class="inline-flex items-center px-3 py-3 text-sm rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-gray-500 font-medium">+63</span>
-                    <input type="text" name="gcash_number"
+                    <input type="text" id="gcashNumber" name="gcash_number" inputmode="numeric"
                         value="{{ old('gcash_number', '') }}"
-                        placeholder="9123456789" maxlength="10"
+                        placeholder="912 345 6789" maxlength="12"
                         class="w-full px-4 py-2.5 text-sm rounded-r-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent {{ $errors->has('gcash_number') ? 'border-red-400' : '' }}">
                 </div>
+                <p class="text-xs text-gray-400 mt-1">10-digit Philippine mobile number, must start with 9.</p>
             </div>
         </div>

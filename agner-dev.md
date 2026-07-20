@@ -79,3 +79,10 @@ Log of every change made on the `agner-dev` branch, so progress can be recalled 
 - **Fix:** Guard now uses `filled($configured) && $configured !== $default` so an empty/missing value correctly falls back to `request()->getSchemeAndHttpHost().'/auth/google/callback'`. A real explicit `GOOGLE_REDIRECT_URI` is still trusted as-is.
 - **Verified:** `php artisan config:show services.google` confirms the client ID/secret load from `.env`; controller passes `php -l`.
 - **Note:** Real client credentials were added to `.env` (values omitted here on purpose — secrets must not be committed). Default dev host is `http://localhost:8000`, so the authorized redirect URI is `http://localhost:8000/auth/google/callback`.
+
+### ERPV3.3.6: GCash number input formatting + validation
+- **Frontend (`add-payment-gcash-fields.blade.php`):** GCash Number input now `inputmode="numeric"`, `id="gcashNumber"`, `maxlength="12"`, placeholder `912 345 6789`, plus hint "10-digit Philippine mobile number, must start with 9." (was a plain `type="text"`, `maxlength="10"`, placeholder `9123456789` — you could type letters/anything).
+- **Frontend (`add-payment-scripts.blade.php`):** New handler on `#gcashNumber` strips non-digits, caps at 10 digits, and auto-formats as `912 345 6789` (3-3-4) as you type. On submit it strips the spaces so the backend gets clean digits.
+- **Backend (`PaymentMethodController`):** `gcash_number` rule max raised `10` → `12`. Validation tightened from "exactly 10 digits" to a valid PH mobile number `^9\d{9}$` (10 digits starting with 9) → "Enter a valid GCash number (10 digits starting with 9)." `store`/`update` now strip non-digits before building `masked_account_number` (`+63…`).
+- **Why:** You could previously type `123567890` (9 digits, wrong leading digit) and the weak check only counted digits. Now the field formats itself and rejects anything that isn't a real PH GCash number.
+- **Not touched:** card fields/Visa-Mastercard validation, routes, `SavedPaymentMethod` model, `payment-methods` list/other views, the other changelog files. Controller passes `php -l`.
