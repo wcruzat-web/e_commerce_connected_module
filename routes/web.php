@@ -38,7 +38,16 @@ use Illuminate\Support\Str;
 | Landing
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => view('auth.login'));
+Route::get('/', function () {
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        if (in_array($role, ['super_admin', 'admin'])) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('shop');
+    }
+    return view('auth.login');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +56,11 @@ Route::get('/', fn () => view('auth.login'));
 */
 Route::get('/login', function () {
     if (auth()->check()) {
-        return redirect()->route('home');
+        $role = auth()->user()->role;
+        if (in_array($role, ['super_admin', 'admin'])) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('shop');
     }
     return view('auth.login');
 })->name('login');
@@ -293,6 +306,7 @@ Route::middleware('auth')->group(function () {
 */
 Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard/notifications', [AdminDashboardController::class, 'notifications'])->name('admin.dashboard.notifications');
     Route::get('/dashboard/print', [AdminDashboardController::class, 'print'])->name('admin.dashboard.print');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');

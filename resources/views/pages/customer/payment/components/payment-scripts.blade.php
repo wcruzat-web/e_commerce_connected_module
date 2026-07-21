@@ -23,8 +23,12 @@
                 document.getElementById('gcashNumber').value = fillData.number || '';
             } else {
                 document.getElementById('cardholderName').value = fillData.account || '';
-                document.getElementById('cardNumber').value = fillData.number || '';
-                document.getElementById('expiryDate').value = fillData.expiry || '';
+                var cn = document.getElementById('cardNumber');
+                cn.value = fillData.number || '';
+                cn.dispatchEvent(new Event('input'));
+                var ex = document.getElementById('expiryDate');
+                ex.value = fillData.expiry || '';
+                ex.dispatchEvent(new Event('input'));
                 document.getElementById('cvv').value = fillData.cvv || '';
             }
         }
@@ -115,6 +119,24 @@
                 document.getElementById('gcashNumber').value = '';
             });
         }
+
+        // Auto-format card number: space every 4 digits
+        document.getElementById('cardNumber').addEventListener('input', function () {
+            var raw = this.value.replace(/\D/g, '').slice(0, 16);
+            this.value = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
+        });
+
+        // Auto-format expiry: add slash after MM
+        document.getElementById('expiryDate').addEventListener('input', function () {
+            var raw = this.value.replace(/\D/g, '').slice(0, 4);
+            if (raw.length >= 3) {
+                this.value = raw.slice(0, 2) + '/' + raw.slice(2);
+            } else if (raw.length === 2 && this.value.length === 3 && this.value[2] === '/') {
+                // let the slash stay when user types MM/
+            } else {
+                this.value = raw;
+            }
+        });
 
         setInterval(async function() {
             try {
