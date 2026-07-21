@@ -31,23 +31,14 @@
                 @endforeach
             </div>
 
-            <div class="flex items-center gap-2 text-xs mt-5 pt-5 border-t border-gray-100 text-emerald-600 font-medium">
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check-circle.svg" class="w-4 h-4" alt="">
-                Order Placed
-                <span class="w-10 h-px bg-emerald-200"></span>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/truck.svg" class="w-4 h-4" alt="">
-                Shipped
-                <span class="w-10 h-px bg-emerald-200"></span>
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/package-check.svg" class="w-4 h-4" alt="">
-                Delivered
-            </div>
+            
         </div>
         @empty
         <div class="flex flex-col items-center justify-center text-center py-20 animate-fade-up">
             <div class="w-28 h-28 rounded-full bg-emerald-50 flex items-center justify-center mb-6">
                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/archive.svg" class="w-14 h-14" alt="">
             </div>
-            <h3 class="text-xl font-bold text-gray-900">No order history yet</h3>
+            <h3 class="text-xl font-bold text-black-900">No order history yet</h3>
             <p class="text-gray-500 mt-2 max-w-sm">Delivered orders will be archived here so you can look back on what you've bought.</p>
             <a href="{{ route('products.index') }}"
                class="mt-6 inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold transition hover:-translate-y-0.5">
