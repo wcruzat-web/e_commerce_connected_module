@@ -94,7 +94,7 @@ class ShopController extends Controller
     {
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'comment' => 'required|string|max:2000',
+            'comment' => 'nullable|string|max:2000',
             'rating' => 'required|integer|min:1|max:5',
         ]);
 
