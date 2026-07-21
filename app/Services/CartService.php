@@ -79,7 +79,7 @@ class CartService
         $items = $cart->items;
         $subtotal = $items->sum('subtotal');
         $shippingFee = $subtotal >= 3000 ? 0 : 120;
-        $tax = round($subtotal * 0.08, 2);
+        $tax = round($subtotal * 0.12, 2);
 
         $discount = 0;
         $couponCode = null;

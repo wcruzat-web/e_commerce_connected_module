@@ -127,6 +127,7 @@ Route::middleware('auth')->group(function () {
 
     // Cart  [CRUZAT — restored original CartController]
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::get('/cart/summary', [CartController::class, 'summaryJson'])->name('cart.summary');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/voucher', [CartController::class, 'applyVoucher'])->name('cart.voucher.apply');
     Route::post('/cart/voucher/remove', [CartController::class, 'removeVoucher'])->name('cart.voucher.remove');

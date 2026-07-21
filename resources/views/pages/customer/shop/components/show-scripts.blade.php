@@ -1,5 +1,19 @@
 {{-- HAINZ — shop show page JS: review form, tab navigation, wishlist toggle (ERPV1.1) --}}
 <script>
+function toastNotify(type, message) {
+    var container = document.getElementById('toastContainer');
+    if (!container) return;
+    var colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600', warning: 'bg-yellow-500 text-black' };
+    var toast = document.createElement('div');
+    toast.className = (colors[type] || 'bg-gray-700') + ' text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 transition-opacity duration-300';
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(function() { toast.style.opacity = '1'; });
+    setTimeout(function() {
+        toast.style.opacity = '0';
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+}
 function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.getElementById('tab-' + tab).classList.remove('hidden');
@@ -39,13 +53,16 @@ document.querySelectorAll('.js-wish-form').forEach(function(form) {
                 btn.classList.add('text-red-500');
                 svg.setAttribute('fill', 'currentColor');
                 btn.setAttribute('title', 'Remove from Wishlist');
+                toastNotify('success', 'Added to wishlist');
             } else {
                 btn.classList.remove('text-red-500');
                 btn.classList.add('text-gray-400', 'hover:text-red-500');
                 svg.setAttribute('fill', 'none');
                 btn.setAttribute('title', 'Add to Wishlist');
+                toastNotify('info', 'Removed from wishlist');
             }
-        });
+        })
+        .catch(function() { toastNotify('error', 'Network error'); });
     });
 });
 </script>

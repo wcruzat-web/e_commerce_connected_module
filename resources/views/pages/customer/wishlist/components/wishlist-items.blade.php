@@ -11,7 +11,8 @@
                     type="checkbox"
                     class="w-6 h-6 js-wish-check accent-sky-500">
 
-                <img src="{{ $item->product_image ?: 'https://picsum.photos/seed/p'.$item->product_id.'/200/200' }}" alt="{{ $item->product_name }}"
+                @php $liveImg = $item->product?->image_url; @endphp
+                <img src="{{ $liveImg ?: ($item->product_image ?: 'https://picsum.photos/seed/p'.$item->product_id.'/200/200') }}" alt="{{ $item->product_name }}"
                     class="w-16 h-16 rounded-lg object-cover border">
 
                 <div class="min-w-0">

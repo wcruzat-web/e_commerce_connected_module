@@ -36,11 +36,19 @@
             c.classList.add('border-gray-200');
             var radio = c.querySelector('input[type="radio"]');
             if (radio) radio.checked = false;
+            var outer = c.querySelector('.rounded-full.border-2');
+            if (outer) { outer.classList.remove('border-cyan-500'); outer.classList.add('border-gray-300'); }
+            var dot = c.querySelector('.w-2\\.5.h-2\\.5');
+            if (dot) dot.classList.remove('bg-cyan-500');
         });
         card.classList.remove('border-gray-200');
         card.classList.add('border-cyan-500', 'bg-cyan-50/40');
         var radio = card.querySelector('input[type="radio"]');
         if (radio) radio.checked = true;
+        var outer = card.querySelector('.rounded-full.border-2');
+        if (outer) { outer.classList.remove('border-gray-300'); outer.classList.add('border-cyan-500'); }
+        var dot = card.querySelector('.w-2\\.5.h-2\\.5');
+        if (dot) dot.classList.add('bg-cyan-500');
 
         var type = card.dataset.type;
         var fillData = {
@@ -107,7 +115,23 @@
                 document.getElementById('gcashNumber').value = '';
             });
         }
+
+        setInterval(async function() {
+            try {
+                const r = await fetch('{{ route("cart.summary") }}');
+                if (r.ok) updateSummary(await r.json());
+            } catch {}
+        }, 300);
     });
+
+    function savedPaymentExists(rawNumber, excludeSelected) {
+        const clean = rawNumber.replace(/\D/g, '');
+        return Array.from(document.querySelectorAll('.payment-method-card')).some(function (card) {
+            if (excludeSelected && card.querySelector('input[type="radio"]')?.checked) return false;
+            var cardClean = (card.dataset.number || '').replace(/\D/g, '');
+            return cardClean.length > 0 && cardClean === clean;
+        });
+    }
 
     document.getElementById('placeOrderBtn').addEventListener('click', function () {
         const method = document.getElementById('paymentMethod').value;
@@ -118,6 +142,7 @@
             const number = document.getElementById('gcashNumber').value.trim();
             if (!name) return toastNotify('error', 'Please enter the GCash name.');
             if (!/^\d{10}$/.test(number)) return toastNotify('error', 'GCash number must be exactly 10 digits.');
+            if (savedPaymentExists(number, true)) return toastNotify('error', 'Payment already exists.');
             form.submit();
             return;
         }
@@ -129,6 +154,7 @@
 
         if (!name) return toastNotify('error', 'Please enter the cardholder name.');
         if (!luhnCheck(cardNumber.replace(/\s/g, ''))) return toastNotify('error', 'Invalid card number.');
+        if (savedPaymentExists(cardNumber, true)) return toastNotify('error', 'Payment already exists.');
         if (!isValidExpiry(expiry)) return toastNotify('error', 'Invalid or expired date.');
         if (!isValidCVV(cvv)) return toastNotify('error', 'Invalid CVV.');
 

@@ -41,10 +41,10 @@
             <div class="space-y-4">
                 @foreach ($order->items as $item)
                 <div class="flex items-center gap-4">
-                    <img src="{{ $item->product_image ?: 'https://picsum.photos/seed/order'.$item->order_item_id.'/200/200' }}"
+                    @php $prodImg = $item->product?->image_url ?: $item->product_image; @endphp
+                    <img src="{{ $prodImg ?: 'https://picsum.photos/seed/order'.$item->order_item_id.'/200/200' }}"
                          alt="{{ $item->product_name }}"
-                         class="w-16 h-16 object-cover rounded-xl border border-gray-100"
-                         onerror="this.onerror=null;this.src='https://picsum.photos/seed/order{{ $item->order_item_id }}/200/200';">
+                         class="w-16 h-16 object-cover rounded-xl border border-gray-100">
                     <div class="flex-1 min-w-0">
                         <h3 class="font-semibold text-gray-900 truncate">{{ $item->product_name }}</h3>
                         <p class="text-sm text-gray-500">Qty: {{ $item->quantity }} &nbsp;·&nbsp; ₱{{ number_format($item->unit_price, 2) }}</p>

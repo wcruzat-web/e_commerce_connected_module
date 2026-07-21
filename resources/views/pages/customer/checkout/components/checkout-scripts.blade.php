@@ -198,7 +198,7 @@
             }
         }
 
-        const shipEl = document.querySelector('.summary-shipping');
+        const shipEl = document.getElementById('summaryShipping');
         if (shipEl) {
             if (summary.shippingFee === 0) {
                 if (summary.isFreeShipping) {
@@ -446,6 +446,13 @@
         @if(isset($summary) && $summary->voucherStatus && $summary->voucherStatus !== 'valid' && $summary->voucherMessage)
             toastNotify('error', @json($summary->voucherMessage));
         @endif
+
+        setInterval(async function() {
+            try {
+                const r = await fetch('{{ route("cart.summary") }}');
+                if (r.ok) updateSummary(await r.json());
+            } catch {}
+        }, 300);
     });
 
     function toastNotify(type, message) {

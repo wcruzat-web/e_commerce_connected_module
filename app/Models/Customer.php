@@ -99,4 +99,11 @@ class Customer extends Authenticatable
     {
         return Attribute::get(fn () => trim($this->first_name.' '.$this->last_name));
     }
+
+    public function getProfilePictureUrlAttribute(): ?string
+    {
+        if (!$this->profile_picture) return null;
+        if (str_starts_with($this->profile_picture, 'http')) return $this->profile_picture;
+        return asset($this->profile_picture);
+    }
 }

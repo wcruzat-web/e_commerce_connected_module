@@ -36,7 +36,7 @@ class PaymentMethodController extends Controller
         /** @var Customer $customer */
         $customer = $request->user();
 
-        $data = $this->validatePaymentMethod($request);
+        $data = $this->validatePaymentMethod($request, $customer);
 
         $isDefault = (bool) ($data['is_default'] ?? false);
 
@@ -75,7 +75,7 @@ class PaymentMethodController extends Controller
         $customer = $request->user();
         $method = $customer->paymentMethods()->findOrFail($paymentMethod);
 
-        $data = $this->validatePaymentMethod($request);
+        $data = $this->validatePaymentMethod($request, $customer, $method->payment_method_id);
 
         $isDefault = (bool) ($data['is_default'] ?? false);
 
@@ -97,7 +97,7 @@ class PaymentMethodController extends Controller
             ->with('success', 'Payment method updated.');
     }
 
-    private function validatePaymentMethod(Request $request): array
+    private function validatePaymentMethod(Request $request, Customer $customer, ?int $excludeId = null): array
     {
         $rules = [
             'payment_type' => ['required', 'in:Visa,Mastercard,GCash'],
@@ -128,7 +128,7 @@ class PaymentMethodController extends Controller
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
-        $validator->after(function ($v) use ($request) {
+        $validator->after(function ($v) use ($request, $customer, $excludeId) {
             $type = $request->payment_type;
 
             if (in_array($type, ['Visa', 'Mastercard'])) {
@@ -138,6 +138,17 @@ class PaymentMethodController extends Controller
                     $v->errors()->add('masked_account_number', 'Card number too short.');
                 } elseif ($number && !$this->luhnCheck($number)) {
                     $v->errors()->add('masked_account_number', 'Invalid card number.');
+                }
+
+                if ($number) {
+                    $existing = $customer->paymentMethods()
+                        ->where('payment_type', $type)
+                        ->when($excludeId, fn($q) => $q->where('payment_method_id', '<>', $excludeId))
+                        ->get()
+                        ->first(fn($m) => preg_replace('/\D/', '', $m->masked_account_number) === $number);
+                    if ($existing) {
+                        $v->errors()->add('masked_account_number', 'This card number is already saved.');
+                    }
                 }
 
                 $expiry = $request->expiry_date;
@@ -164,6 +175,18 @@ class PaymentMethodController extends Controller
                 $gcashNum = preg_replace('/\D/', '', (string) $request->gcash_number);
                 if ($gcashNum === '' || !preg_match('/^9\d{9}$/', $gcashNum)) {
                     $v->errors()->add('gcash_number', 'Enter a valid GCash number (10 digits starting with 9).');
+                }
+
+                if ($gcashNum) {
+                    $fullNumber = '+63' . $gcashNum;
+                    $existing = $customer->paymentMethods()
+                        ->where('payment_type', 'GCash')
+                        ->when($excludeId, fn($q) => $q->where('payment_method_id', '<>', $excludeId))
+                        ->where('masked_account_number', $fullNumber)
+                        ->exists();
+                    if ($existing) {
+                        $v->errors()->add('gcash_number', 'This GCash number is already saved.');
+                    }
                 }
             }
         });

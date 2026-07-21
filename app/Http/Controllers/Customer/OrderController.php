@@ -21,7 +21,7 @@ class OrderController extends Controller
         $status = $request->input('status', 'all');
 
         $orders = $customer->orders()
-            ->with('items')
+            ->with('items.product')
             ->when($status === 'processing', function ($q) {
                 $q->whereIn('status', ['pending','processing','shipped','in_transit','out_for_delivery']);
             })
@@ -44,7 +44,7 @@ class OrderController extends Controller
 
         $orders = $customer->orders()
             ->delivered()
-            ->with('items')
+            ->with('items.product')
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($q2) use ($search) {
                     $q2->where('order_number', 'like', "%{$search}%")

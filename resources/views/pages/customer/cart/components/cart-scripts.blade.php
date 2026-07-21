@@ -224,5 +224,12 @@
                 shippingFee: {{ $summary->shippingFee }},
             });
         @endif
+
+        setInterval(async function() {
+            try {
+                const r = await fetch('{{ route("cart.summary") }}');
+                if (r.ok) updateSummary(await r.json());
+            } catch {}
+        }, 300);
     });
 </script>
