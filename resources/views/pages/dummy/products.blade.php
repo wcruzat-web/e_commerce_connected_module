@@ -38,7 +38,7 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-3">{{ $p->name }}</td>
                             <td class="px-4 py-3 text-gray-500">{{ $p->sku }}</td>
-                            <td class="px-4 py-3">${{ number_format($p->price, 2) }}</td>
+                            <td class="px-4 py-3">₱{{ number_format($p->price, 2) }}</td>
                             <td class="px-4 py-3">{{ $p->stock }}</td>
                             <td class="px-4 py-3">{{ $p->specifications_count }}</td>
                             <td class="px-4 py-3">{{ $p->compatibilities_count }}</td>

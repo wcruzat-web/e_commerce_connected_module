@@ -23,12 +23,29 @@ class WishlistController extends Controller
     {
         $customer = $request->user();
 
-        $items = $customer->wishlistItems()
-            ->with('wishlist')
-            ->orderByDesc('wishlist_item_id')
-            ->get();
+        $sort = $request->input('sort', 'recent');
 
-        return view('pages.customer.wishlist.wishlist', compact('items'));
+        $query = $customer->wishlistItems()->with('wishlist');
+
+        // Out-of-stock items always sink to the bottom
+        $query->orderByDesc('in_stock');
+
+        switch ($sort) {
+            case 'price_asc':
+                $query->orderBy('unit_price');
+                break;
+            case 'price_desc':
+                $query->orderByDesc('unit_price');
+                break;
+            case 'recent':
+            default:
+                $query->orderByDesc('wishlist_item_id');
+                break;
+        }
+
+        $items = $query->paginate(10);
+
+        return view('pages.customer.wishlist.wishlist', compact('items', 'sort'));
     }
 
     public function store(Request $request): RedirectResponse|JsonResponse

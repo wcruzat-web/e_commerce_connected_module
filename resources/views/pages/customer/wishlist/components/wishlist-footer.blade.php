@@ -9,13 +9,15 @@
         <div class="flex gap-4">
 
             <button
-                class="js-remove-selected border border-red-400 text-red-500 px-5 py-2 rounded hover:bg-red-50 transition">
-                <span data-i18n="wishlist.removeSel">Remove Selected</span>
+                class="js-remove-selected border border-red-400 text-red-500 px-5 py-2 rounded hover:bg-red-50 transition flex items-center gap-2">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/trash-2.svg"
+                    class="w-4 h-4" alt=""> <span data-i18n="wishlist.removeSel">Remove Selected</span>
             </button>
 
             <button
-                class="js-move-selected bg-sky-500 hover:bg-sky-600 text-white px-5 py-2 rounded transition">
-                <span data-i18n="wishlist.moveSel">Move Selected to Cart</span>
+                class="js-move-selected bg-sky-500 hover:bg-sky-600 text-white px-5 py-2 rounded transition flex items-center gap-2">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/shopping-cart.svg"
+                    class="w-4 h-4" alt=""> <span data-i18n="wishlist.moveSel">Move Selected to Cart</span>
             </button>
 
         </div>

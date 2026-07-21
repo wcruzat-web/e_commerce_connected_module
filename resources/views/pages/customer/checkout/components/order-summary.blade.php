@@ -8,14 +8,14 @@
 <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
     <h2 class="text-sm font-semibold text-gray-900 mb-4">Order Summary</h2>
 
-    @php
-        $hasVoucher = !empty($summary->couponCode);
-    @endphp
-
     <div class="space-y-2.5 text-sm">
         <div class="flex items-center justify-between">
-            <span class="text-gray-500">Items ({{ $summary->itemsCount }})</span>
-            <span class="font-medium text-gray-900">₱{{ number_format($summary->subtotal, 2) }}</span>
+            <span class="text-gray-500">Items</span>
+            <span id="summaryItemCount" class="font-medium text-gray-900">{{ $summary->itemsCount }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-500">Subtotal</span>
+            <span id="summarySubtotal" class="font-medium text-gray-900">₱{{ number_format($summary->subtotal, 2) }}</span>
         </div>
         <div class="flex items-center justify-between">
             <span class="flex items-center gap-1.5 text-gray-500">
@@ -27,33 +27,22 @@
                 </svg>
                 Shipping
             </span>
-            @if((float)$summary->shippingFee === 0.0)
-                <div class="flex flex-col items-end">
+            <div id="summaryShipping" class="flex flex-col items-end">
+                @if((float)$summary->shippingFee === 0.0)
                     <span class="font-medium text-gray-900">₱0.00</span>
                     <span class="text-[11px] font-bold text-green-600">{{ $summary->isFreeShipping ? 'FREE (Voucher)' : 'FREE' }}</span>
-                </div>
-            @else
-                <span class="font-medium text-gray-900">₱{{ number_format($summary->shippingFee, 2) }}</span>
-            @endif
+                @else
+                    <span class="font-medium text-gray-900">₱{{ number_format($summary->shippingFee, 2) }}</span>
+                @endif
+            </div>
         </div>
-        @if($hasVoucher)
-            <div class="flex items-center justify-between">
-                <span class="text-gray-500">Voucher</span>
-                <div class="text-right">
-                    <span class="font-medium text-gray-900">{{ $summary->couponCode }}</span>
-                    <div class="text-xs text-gray-500">{{ $summary->couponLabel }}</div>
-                </div>
-            </div>
-        @endif
-        @if((float) $summary->discount > 0)
-            <div class="flex items-center justify-between">
-                <span class="text-gray-500">Discount</span>
-                <span class="font-medium text-emerald-600">-₱{{ number_format($summary->discount, 2) }}</span>
-            </div>
-        @endif
+        <div id="discountRow" class="flex items-center justify-between {{ (float) $summary->discount > 0 ? '' : 'hidden' }}">
+            <span class="text-gray-500">Discount <span id="summaryDiscountLabel" class="text-xs text-gray-400">{{ $summary->discount > 0 ? '(' . $summary->couponLabel . ')' : '' }}</span></span>
+            <span id="summaryDiscount" class="font-medium text-emerald-600">-₱{{ number_format($summary->discount, 2) }}</span>
+        </div>
         <div class="flex items-center justify-between">
-            <span class="text-gray-500">Tax (8%)</span>
-            <span class="font-medium text-gray-900">₱{{ number_format($summary->tax, 2) }}</span>
+            <span class="text-gray-500">Tax (12%)</span>
+            <span id="summaryTax" class="font-medium text-gray-900">₱{{ number_format($summary->tax, 2) }}</span>
         </div>
     </div>
 
@@ -61,7 +50,7 @@
 
     <div class="flex items-center justify-between mb-5">
         <span class="text-sm font-semibold text-gray-900">Grand Total</span>
-        <span class="text-lg font-bold text-gray-900">₱{{ number_format($summary->grandTotal, 2) }}</span>
+        <span id="summaryGrandTotal" class="text-lg font-bold text-gray-900">₱{{ number_format($summary->grandTotal, 2) }}</span>
     </div>
 
     <p class="flex items-center gap-1.5 text-xs text-gray-400">

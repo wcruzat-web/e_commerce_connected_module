@@ -94,6 +94,7 @@
     async function applyVoucher() {
         const input = document.getElementById('voucherInput');
         const msgEl = document.getElementById('voucherMsg');
+        const appliedMsg = document.getElementById('voucherAppliedMsg');
         const code = input?.value.trim().toUpperCase();
         if (!code) return;
 
@@ -105,8 +106,8 @@
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Applying...';
-        msgEl.textContent = '';
-        msgEl.className = 'mt-3 text-xs min-h-[14px]';
+        if (msgEl) { msgEl.textContent = ''; msgEl.className = 'mt-3 text-xs min-h-[14px]'; }
+        if (appliedMsg) { appliedMsg.textContent = ''; }
 
         try {
             const response = await fetch('{{ route("cart.voucher.apply") }}', {
@@ -141,8 +142,7 @@
             const message = error?.name === 'AbortError'
                 ? 'Voucher request timed out. Please try again.'
                 : (error?.message || 'Network error. Please try again.');
-            msgEl.textContent = message;
-            msgEl.className = 'mt-3 text-xs text-red-500 min-h-[14px]';
+            if (msgEl) { msgEl.textContent = message; msgEl.className = 'mt-3 text-xs text-red-500 min-h-[14px]'; }
             toastNotify('error', message);
         } finally {
             clearTimeout(timeoutId);
@@ -153,8 +153,9 @@
 
     function removeVoucher() {
         const msg = document.getElementById('voucherMsg');
-        msg.textContent = '';
-        msg.className = 'mt-3 text-xs min-h-[14px]';
+        const appliedMsg = document.getElementById('voucherAppliedMsg');
+        if (msg) { msg.textContent = ''; msg.className = 'mt-3 text-xs min-h-[14px]'; }
+        if (appliedMsg) { appliedMsg.textContent = ''; }
 
         fetch('{{ route("cart.voucher.remove") }}', {
             method: 'POST',
@@ -197,7 +198,7 @@
             }
         }
 
-        const shipEl = document.querySelector('.summary-shipping');
+        const shipEl = document.getElementById('summaryShipping');
         if (shipEl) {
             if (summary.shippingFee === 0) {
                 if (summary.isFreeShipping) {
@@ -438,9 +439,20 @@
             defaultCard.closest('.address-card').click();
         }
 
+        @if(isset($summary) && $summary->voucherStatus === 'valid')
+            showVoucherApplied(@json($summary));
+        @endif
+
         @if(isset($summary) && $summary->voucherStatus && $summary->voucherStatus !== 'valid' && $summary->voucherMessage)
             toastNotify('error', @json($summary->voucherMessage));
         @endif
+
+        setInterval(async function() {
+            try {
+                const r = await fetch('{{ route("cart.summary") }}');
+                if (r.ok) updateSummary(await r.json());
+            } catch {}
+        }, 300);
     });
 
     function toastNotify(type, message) {
