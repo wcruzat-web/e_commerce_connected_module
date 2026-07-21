@@ -82,6 +82,10 @@
             toastNotify('error', '{{ session('payment_error') }}');
         @endif
 
+        @if(isset($summary) && $summary->voucherStatus === 'valid')
+            showVoucherApplied(@json($summary));
+        @endif
+
         @if(isset($summary) && $summary->voucherStatus && $summary->voucherStatus !== 'valid' && $summary->voucherMessage)
             toastNotify('error', @json($summary->voucherMessage));
         @endif
@@ -134,6 +138,7 @@
     async function applyVoucher() {
         const input = document.getElementById('voucherInput');
         const msg = document.getElementById('voucherMsg');
+        const appliedMsg = document.getElementById('voucherAppliedMsg');
         const code = input?.value.trim().toUpperCase();
         if (!code) return;
 
@@ -146,8 +151,8 @@
 
         btn.disabled = true;
         btn.textContent = 'Applying...';
-        msg.textContent = '';
-        msg.className = 'mt-2 text-xs';
+        if (msg) { msg.textContent = ''; msg.className = 'mt-2 text-xs'; }
+        if (appliedMsg) { appliedMsg.textContent = ''; }
 
         try {
             const response = await fetch('{{ route("cart.voucher.apply") }}', {
@@ -183,8 +188,7 @@
                 ? 'Voucher request timed out. Please try again.'
                 : (error?.message || 'Network error');
             toastNotify('error', message);
-            msg.textContent = message;
-            msg.className = 'mt-2 text-xs text-red-600';
+            if (msg) { msg.textContent = message; msg.className = 'mt-2 text-xs text-red-600'; }
         } finally {
             clearTimeout(timeoutId);
             btn.disabled = false;
@@ -194,8 +198,9 @@
 
     function removeVoucher() {
         const msg = document.getElementById('voucherMsg');
-        msg.textContent = '';
-        msg.className = 'mt-2 text-xs';
+        const appliedMsg = document.getElementById('voucherAppliedMsg');
+        if (msg) { msg.textContent = ''; msg.className = 'mt-2 text-xs'; }
+        if (appliedMsg) { appliedMsg.textContent = ''; }
 
         fetch('{{ route("cart.voucher.remove") }}', {
             method: 'POST',
