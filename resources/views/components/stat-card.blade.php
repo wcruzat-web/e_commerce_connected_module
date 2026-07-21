@@ -18,7 +18,11 @@
 
         <div class="w-12 h-12 rounded-full {{ $color }} flex items-center justify-center overflow-hidden">
 
-            <img src="{{ $icon }}" alt="" class="w-6 h-6">
+            @if(str_starts_with($icon, '<svg'))
+                {!! $icon !!}
+            @else
+                <img src="{{ $icon }}" alt="" class="w-6 h-6">
+            @endif
 
         </div>
 

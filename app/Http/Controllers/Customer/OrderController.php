@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\ProductReview;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -56,7 +57,9 @@ class OrderController extends Controller
             ->latest('order_id')
             ->paginate(7);
 
-        return view('pages.customer.history.history', compact('orders', 'search'));
+        $reviewedProductIds = ProductReview::where('user_id', $customer->customer_id)->pluck('product_id')->toArray();
+
+        return view('pages.customer.history.history', compact('orders', 'search', 'reviewedProductIds'));
     }
 
     public function checkout(Request $request): RedirectResponse
