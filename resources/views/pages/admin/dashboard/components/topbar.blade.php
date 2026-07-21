@@ -1,21 +1,4 @@
 {{-- CRUZAT — dashboard topbar: ERP sync status, notifications, user info --}}
-{{--
-    ERP MODULE: Admin Dashboard
-    COMPONENT: Topbar
-    DESCRIPTION: Top bar with ERP sync status, notifications, and user info.
-    TODO (Backend): Replace static $newNotifications with $notifications
-                    from DashboardController. The data structure should include
-                    'icon', 'icon_color', 'title', 'time', 'unread' per item.
-                    $erpSyncStatus and Auth::user()->name/role also need wiring.
---}}
-
-@php
-    $newNotifications = [
-        ['icon' => 'alert-triangle', 'icon_color' => 'text-red-500', 'title' => 'Low stock: RTX 4090 (2 units left)', 'time' => '2m ago'],
-        ['icon' => 'shopping-cart', 'icon_color' => 'text-amber-500', 'title' => 'New order: Sarah Chen — ₱42,639 (Processing)', 'time' => '5m ago'],
-        ['icon' => 'refresh-cw', 'icon_color' => 'text-green-500', 'title' => 'ERP sync completed successfully', 'time' => '15m ago'],
-    ];
-@endphp
 
 <div class="bg-white border-b border-gray-200 px-4 lg:px-6 py-3 flex items-center justify-between relative">
     {{-- Mobile hamburger --}}
@@ -44,7 +27,8 @@
                     <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
-                @if(count($newNotifications) > 0)
+                @php $unread = array_filter($notifications ?? [], fn($n) => $n['unread']); @endphp
+                @if(count($unread) > 0)
                 <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-red-500"></span>
                 @endif
             </button>
@@ -53,10 +37,10 @@
             <div id="notificationsDropdown" class="hidden absolute right-0 top-full mt-3 w-80 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
                 <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                     <p class="text-sm font-semibold text-gray-900">Notifications</p>
-                    <span class="text-[11px] font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{{ count($newNotifications) }} new</span>
+                    <span class="text-[11px] font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{{ count($unread) }} new</span>
                 </div>
                 <div class="max-h-64 overflow-y-auto">
-                    @foreach ($newNotifications as $n)
+                    @foreach (array_slice($unread, 0, 5) as $n)
                         <div class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
                             @include('pages.admin.dashboard.components.notification-icon', ['icon' => $n['icon'], 'class' => $n['icon_color']])
                             <div class="flex-1 min-w-0">

@@ -82,7 +82,7 @@
                         <span class="text-gray-900 font-medium">₱{{ number_format($cat['amount']) }} <span class="text-gray-400">{{ $cat['pct'] }}%</span></span>
                     </div>
                     <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full {{ $catColors[$i % count($catColors)] }}" style="width: {{ $cat['pct'] * 2.2 }}%"></div>
+                        <div class="h-full rounded-full {{ $catColors[$i % count($catColors)] }}" style="width: {{ min($cat['pct'], 100) }}%"></div>
                     </div>
                 </div>
             @empty

@@ -29,7 +29,7 @@ class OrderController extends Controller
     public function show(int $id): JsonResponse
     {
         $order = $this->orderRepository->findWithItems($id);
-        return response()->json($order->load('customer', 'items.product', 'tracking'));
+        return response()->json($order->load('customer', 'items.product'));
     }
 
     public function updatePayment(Request $request, int $id): JsonResponse
@@ -74,8 +74,8 @@ class OrderController extends Controller
     public function updateTracking(Request $request, int $id): JsonResponse
     {
         $request->validate(['sync_status' => 'required|in:Pending,Synced,Failed']);
-        $order = $this->orderRepository->find($id);
-        if ($order && $order->tracking) {
+        $order = $this->orderRepository->update($id, []);
+        if ($order->tracking) {
             $order->tracking->update(['sync_status' => $request->sync_status, 'last_updated' => now()]);
         }
         return response()->json(['success' => true]);

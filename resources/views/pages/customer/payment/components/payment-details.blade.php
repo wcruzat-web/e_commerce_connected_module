@@ -66,74 +66,75 @@
         </button>
     @endif
 
-    <div id="manualPaymentSection" class="{{ $paymentMethods->count() ? 'hidden' : '' }}">
-        {{-- Payment method tabs --}}
-        <div id="paymentMethodTabs" class="flex flex-wrap gap-3 mb-6">
-    @php $methods = ['visa' => 'Visa', 'mastercard' => 'Mastercard', 'gcash' => 'G-Cash']; @endphp
-            @foreach ($methods as $key => $label)
-                <button
-                    type="button"
-                    onclick="selectPaymentMethod('{{ $key }}')"
-                    data-method="{{ $key }}"
-                    class="payment-method-btn flex-1 min-w-[100px] text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors
-                        {{ $key === $defaultType ? 'border-cyan-500 text-cyan-500' : 'border-gray-200 text-gray-500' }}"
-                >
-                    {{ $label }}
-                </button>
-            @endforeach
-        </div>
+    <form method="POST" action="{{ route('payment.process') }}" id="paymentForm" class="space-y-4">
+        @csrf
+        <input type="hidden" name="payment_method" id="paymentMethod" value="{{ $defaultType }}">
 
-        <form method="POST" action="{{ route('payment.process') }}" id="paymentForm" class="space-y-4">
-            @csrf
-            <input type="hidden" name="payment_method" id="paymentMethod" value="{{ $defaultType }}">
+        <div id="manualPaymentSection" class="{{ $paymentMethods->count() ? 'hidden' : '' }}">
+            {{-- Payment method tabs --}}
+            <div id="paymentMethodTabs" class="flex flex-wrap gap-3 mb-6">
+        @php $methods = ['visa' => 'Visa', 'mastercard' => 'Mastercard', 'gcash' => 'G-Cash']; @endphp
+                @foreach ($methods as $key => $label)
+                    <button
+                        type="button"
+                        onclick="selectPaymentMethod('{{ $key }}')"
+                        data-method="{{ $key }}"
+                        class="payment-method-btn flex-1 min-w-[100px] text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors
+                            {{ $key === $defaultType ? 'border-cyan-500 text-cyan-500' : 'border-gray-200 text-gray-500' }}"
+                    >
+                        {{ $label }}
+                    </button>
+                @endforeach
+            </div>
 
             <div id="cardFields" class="space-y-4 {{ $defaultType === 'gcash' ? 'hidden' : '' }}">
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1.5">Cardholder Name</label>
-                <input type="text" name="cardholder_name" id="cardholderName" placeholder="Alex Morgan" value="{{ old('cardholder_name', $defaultMethod->account_name ?? '') }}"
-                    class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                @error('cardholder_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1.5">Card Number</label>
-                <input type="text" name="card_number" id="cardNumber" placeholder="0123 4567 8901 2345" maxlength="19" value="{{ old('card_number', $defaultCardNumber) }}"
-                    class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                @error('card_number') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Expiry Date</label>
-                    <input type="text" name="expiry_date" id="expiryDate" placeholder="MM/YY" maxlength="5" value="{{ old('expiry_date', $defaultExpiry) }}"
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Cardholder Name</label>
+                    <input type="text" name="cardholder_name" id="cardholderName" placeholder="Alex Morgan" value="{{ old('cardholder_name', $defaultMethod->account_name ?? '') }}"
                         class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                    @error('expiry_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    @error('cardholder_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
+
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">CVV</label>
-                    <input type="password" name="cvv" id="cvv" placeholder="•••" maxlength="4" value="{{ old('cvv', $defaultCvv) }}"
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Card Number</label>
+                    <input type="text" name="card_number" id="cardNumber" placeholder="0123 4567 8901 2345" maxlength="19" value="{{ old('card_number', $defaultCardNumber) }}"
                         class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                    @error('cvv') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    @error('card_number') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1.5">Expiry Date</label>
+                        <input type="text" name="expiry_date" id="expiryDate" placeholder="MM/YY" maxlength="5" value="{{ old('expiry_date', $defaultExpiry) }}"
+                            class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                        @error('expiry_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1.5">CVV</label>
+                        <input type="password" name="cvv" id="cvv" placeholder="•••" maxlength="4" value="{{ old('cvv', $defaultCvv) }}"
+                            class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                        @error('cvv') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="gcashFields" class="space-y-4 {{ $defaultType !== 'gcash' ? 'hidden' : '' }}">
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1.5">GCash Name</label>
-                <input type="text" name="gcash_name" id="gcashName" placeholder="Alex Morgan" value="{{ old('gcash_name', $defaultMethod->account_name ?? '') }}"
-                    class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                @error('gcash_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1.5">GCash Number</label>
-                <div class="flex">
-                    <span class="inline-flex items-center px-3 py-2.5 text-sm rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-gray-500 font-medium">+63</span>
-                    <input type="text" name="gcash_number" id="gcashNumber" placeholder="9123456789" maxlength="10" value="{{ old('gcash_number', $defaultGcashNumber) }}"
-                        class="w-full px-4 py-2.5 text-sm rounded-r-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+            <div id="gcashFields" class="space-y-4 {{ $defaultType !== 'gcash' ? 'hidden' : '' }}">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">GCash Name</label>
+                    <input type="text" name="gcash_name" id="gcashName" placeholder="Alex Morgan" value="{{ old('gcash_name', $defaultMethod->account_name ?? '') }}"
+                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                    @error('gcash_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
-                @error('gcash_number') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">GCash Number</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 py-2.5 text-sm rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-gray-500 font-medium">+63</span>
+                        <input type="text" name="gcash_number" id="gcashNumber" placeholder="9123456789" maxlength="10" value="{{ old('gcash_number', $defaultGcashNumber) }}"
+                            class="w-full px-4 py-2.5 text-sm rounded-r-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                    </div>
+                    @error('gcash_number') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
             </div>
         </div>
 
@@ -152,5 +153,4 @@
             </button>
         </div>
     </form>
-    </div>
 </div>
