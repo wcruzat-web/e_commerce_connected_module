@@ -45,6 +45,8 @@
 
     <title>@yield('title', 'ERP Admin')</title>
 
+    <link rel="icon" type="image/png" href="{{ asset('shopease-logo.png') }}">
+
     {{-- ============================================================
         Outfit Font
     ============================================================ --}}
