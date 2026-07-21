@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardService
 {
@@ -104,5 +105,81 @@ class DashboardService
                     'max' => 0,
                 ];
             })->toArray();
+    }
+
+    public function getNotifications(): array
+    {
+        $notifications = [];
+        $now = now();
+
+        // Low stock alerts
+        $lowStock = Product::where('stock', '<=', 5)->where('stock', '>', 0)->orderBy('stock')->take(5)->get();
+        foreach ($lowStock as $p) {
+            $notifications[] = [
+                'icon' => 'alert-triangle',
+                'icon_color' => 'text-red-500',
+                'title' => "Low stock: {$p->name} ({$p->stock} units left)",
+                'time' => $p->updated_at->diffForHumans(),
+                'unread' => true,
+                'created_at' => $p->updated_at,
+            ];
+        }
+
+        // Out of stock alerts
+        $outOfStock = Product::where('stock', 0)->take(5)->get();
+        foreach ($outOfStock as $p) {
+            $notifications[] = [
+                'icon' => 'alert-triangle',
+                'icon_color' => 'text-red-500',
+                'title' => "Out of stock: {$p->name}",
+                'time' => $p->updated_at->diffForHumans(),
+                'unread' => true,
+                'created_at' => $p->updated_at,
+            ];
+        }
+
+        // New pending orders
+        $pendingOrders = Order::whereIn('status', ['pending', 'processing'])->latest()->take(5)->get();
+        foreach ($pendingOrders as $o) {
+            $notifications[] = [
+                'icon' => 'shopping-cart',
+                'icon_color' => 'text-amber-500',
+                'title' => "New order: {$o->shipping_name} — ₱" . number_format($o->grand_total, 2) . " (" . ucfirst($o->status) . ")",
+                'time' => $o->created_at->diffForHumans(),
+                'unread' => $o->created_at->gt($now->subDay()),
+                'created_at' => $o->created_at,
+            ];
+        }
+
+        // Recently shipped orders
+        $shippedOrders = Order::where('status', 'shipped')->latest()->take(5)->get();
+        foreach ($shippedOrders as $o) {
+            $notifications[] = [
+                'icon' => 'package',
+                'icon_color' => 'text-blue-500',
+                'title' => "Order shipped: {$o->shipping_name} — Shipped",
+                'time' => $o->updated_at->diffForHumans(),
+                'unread' => $o->updated_at->gt($now->subDay()),
+                'created_at' => $o->updated_at,
+            ];
+        }
+
+        // Recently delivered orders
+        $deliveredOrders = Order::where('status', 'delivered')->latest()->take(5)->get();
+        foreach ($deliveredOrders as $o) {
+            $notifications[] = [
+                'icon' => 'check-circle',
+                'icon_color' => 'text-green-500',
+                'title' => "Order delivered: {$o->shipping_name} — Delivered",
+                'time' => $o->updated_at->diffForHumans(),
+                'unread' => $o->updated_at->gt($now->subDay()),
+                'created_at' => $o->updated_at,
+            ];
+        }
+
+        // Sort by created_at descending, take newest 20
+        usort($notifications, fn ($a, $b) => $b['created_at']->timestamp <=> $a['created_at']->timestamp);
+
+        return array_slice($notifications, 0, 20);
     }
 }

@@ -23,8 +23,12 @@
                 document.getElementById('gcashNumber').value = fillData.number || '';
             } else {
                 document.getElementById('cardholderName').value = fillData.account || '';
-                document.getElementById('cardNumber').value = fillData.number || '';
-                document.getElementById('expiryDate').value = fillData.expiry || '';
+                var cn = document.getElementById('cardNumber');
+                cn.value = fillData.number || '';
+                cn.dispatchEvent(new Event('input'));
+                var ex = document.getElementById('expiryDate');
+                ex.value = fillData.expiry || '';
+                ex.dispatchEvent(new Event('input'));
                 document.getElementById('cvv').value = fillData.cvv || '';
             }
         }
@@ -36,11 +40,19 @@
             c.classList.add('border-gray-200');
             var radio = c.querySelector('input[type="radio"]');
             if (radio) radio.checked = false;
+            var outer = c.querySelector('.rounded-full.border-2');
+            if (outer) { outer.classList.remove('border-cyan-500'); outer.classList.add('border-gray-300'); }
+            var dot = c.querySelector('.w-2\\.5.h-2\\.5');
+            if (dot) dot.classList.remove('bg-cyan-500');
         });
         card.classList.remove('border-gray-200');
         card.classList.add('border-cyan-500', 'bg-cyan-50/40');
         var radio = card.querySelector('input[type="radio"]');
         if (radio) radio.checked = true;
+        var outer = card.querySelector('.rounded-full.border-2');
+        if (outer) { outer.classList.remove('border-gray-300'); outer.classList.add('border-cyan-500'); }
+        var dot = card.querySelector('.w-2\\.5.h-2\\.5');
+        if (dot) dot.classList.add('bg-cyan-500');
 
         var type = card.dataset.type;
         var fillData = {
@@ -82,6 +94,10 @@
             toastNotify('error', '{{ session('payment_error') }}');
         @endif
 
+        @if(isset($summary) && $summary->voucherStatus === 'valid')
+            showVoucherApplied(@json($summary));
+        @endif
+
         @if(isset($summary) && $summary->voucherStatus && $summary->voucherStatus !== 'valid' && $summary->voucherMessage)
             toastNotify('error', @json($summary->voucherMessage));
         @endif
@@ -103,7 +119,41 @@
                 document.getElementById('gcashNumber').value = '';
             });
         }
+
+        // Auto-format card number: space every 4 digits
+        document.getElementById('cardNumber').addEventListener('input', function () {
+            var raw = this.value.replace(/\D/g, '').slice(0, 16);
+            this.value = raw.replace(/(\d{4})(?=\d)/g, '$1 ');
+        });
+
+        // Auto-format expiry: add slash after MM
+        document.getElementById('expiryDate').addEventListener('input', function () {
+            var raw = this.value.replace(/\D/g, '').slice(0, 4);
+            if (raw.length >= 3) {
+                this.value = raw.slice(0, 2) + '/' + raw.slice(2);
+            } else if (raw.length === 2 && this.value.length === 3 && this.value[2] === '/') {
+                // let the slash stay when user types MM/
+            } else {
+                this.value = raw;
+            }
+        });
+
+        setInterval(async function() {
+            try {
+                const r = await fetch('{{ route("cart.summary") }}');
+                if (r.ok) updateSummary(await r.json());
+            } catch {}
+        }, 300);
     });
+
+    function savedPaymentExists(rawNumber, excludeSelected) {
+        const clean = rawNumber.replace(/\D/g, '');
+        return Array.from(document.querySelectorAll('.payment-method-card')).some(function (card) {
+            if (excludeSelected && card.querySelector('input[type="radio"]')?.checked) return false;
+            var cardClean = (card.dataset.number || '').replace(/\D/g, '');
+            return cardClean.length > 0 && cardClean === clean;
+        });
+    }
 
     document.getElementById('placeOrderBtn').addEventListener('click', function () {
         const method = document.getElementById('paymentMethod').value;
@@ -114,6 +164,7 @@
             const number = document.getElementById('gcashNumber').value.trim();
             if (!name) return toastNotify('error', 'Please enter the GCash name.');
             if (!/^\d{10}$/.test(number)) return toastNotify('error', 'GCash number must be exactly 10 digits.');
+            if (savedPaymentExists(number, true)) return toastNotify('error', 'Payment already exists.');
             form.submit();
             return;
         }
@@ -125,6 +176,7 @@
 
         if (!name) return toastNotify('error', 'Please enter the cardholder name.');
         if (!luhnCheck(cardNumber.replace(/\s/g, ''))) return toastNotify('error', 'Invalid card number.');
+        if (savedPaymentExists(cardNumber, true)) return toastNotify('error', 'Payment already exists.');
         if (!isValidExpiry(expiry)) return toastNotify('error', 'Invalid or expired date.');
         if (!isValidCVV(cvv)) return toastNotify('error', 'Invalid CVV.');
 
@@ -134,6 +186,7 @@
     async function applyVoucher() {
         const input = document.getElementById('voucherInput');
         const msg = document.getElementById('voucherMsg');
+        const appliedMsg = document.getElementById('voucherAppliedMsg');
         const code = input?.value.trim().toUpperCase();
         if (!code) return;
 
@@ -146,8 +199,8 @@
 
         btn.disabled = true;
         btn.textContent = 'Applying...';
-        msg.textContent = '';
-        msg.className = 'mt-2 text-xs';
+        if (msg) { msg.textContent = ''; msg.className = 'mt-2 text-xs'; }
+        if (appliedMsg) { appliedMsg.textContent = ''; }
 
         try {
             const response = await fetch('{{ route("cart.voucher.apply") }}', {
@@ -183,8 +236,7 @@
                 ? 'Voucher request timed out. Please try again.'
                 : (error?.message || 'Network error');
             toastNotify('error', message);
-            msg.textContent = message;
-            msg.className = 'mt-2 text-xs text-red-600';
+            if (msg) { msg.textContent = message; msg.className = 'mt-2 text-xs text-red-600'; }
         } finally {
             clearTimeout(timeoutId);
             btn.disabled = false;
@@ -194,8 +246,9 @@
 
     function removeVoucher() {
         const msg = document.getElementById('voucherMsg');
-        msg.textContent = '';
-        msg.className = 'mt-2 text-xs';
+        const appliedMsg = document.getElementById('voucherAppliedMsg');
+        if (msg) { msg.textContent = ''; msg.className = 'mt-2 text-xs'; }
+        if (appliedMsg) { appliedMsg.textContent = ''; }
 
         fetch('{{ route("cart.voucher.remove") }}', {
             method: 'POST',

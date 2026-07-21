@@ -30,7 +30,18 @@ class CartController extends Controller
 
         $customer = Auth::user();
         $cart = $this->cartService->getOrCreateCart($customer->customer_id);
-        $item = $this->cartService->addItem($cart, $request->product_id, $request->quantity);
+
+        try {
+            $item = $this->cartService->addItem($cart, $request->product_id, $request->quantity);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'ok' => false,
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
@@ -82,6 +93,15 @@ class CartController extends Controller
             'message' => $result['message'],
             'summary' => $summary,
         ]);
+    }
+
+    public function summaryJson()
+    {
+        $customer = Auth::user();
+        $cart = $this->cartService->getOrCreateCart($customer->customer_id);
+        $summary = $this->cartService->getSummary($cart);
+
+        return response()->json($summary);
     }
 
     public function removeVoucher(Request $request)

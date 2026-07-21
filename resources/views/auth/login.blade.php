@@ -25,6 +25,13 @@
 
         {{-- Login Card --}}
         <div class="bg-white rounded-2xl p-8 shadow-[0_0_45px_rgba(0,187,255,0.25)]">
+            {{-- Generic error flash (e.g. "Google login is not configured") --}}
+            @if(session('error'))
+                <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <h3 class="text-lg font-bold text-gray-900">Login to your account</h3>
             <p class="text-xs text-gray-400 mt-1 mb-6">Enter your credentials to access your account</p>
 

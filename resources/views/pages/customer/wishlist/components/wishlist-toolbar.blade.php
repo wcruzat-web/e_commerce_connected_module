@@ -3,7 +3,7 @@
         <div class="flex gap-10 font-semibold">
 
             <button class="border-b-2 border-sky-500 pb-1">
-                <span data-i18n="wishlist.allItems">All Items</span> ({{ $items->count() }})
+                <span data-i18n="wishlist.allItems">All Items</span> ({{ $items->total() }})
             </button>
 
             <button class="text-gray-500">
@@ -18,14 +18,13 @@
                 Sort by:
             </span>
 
-            <select
-                class="border rounded px-3 py-1">
-
-                <option>
-                    Recently Added
-                </option>
-
-            </select>
+            <form method="GET" action="{{ route('wishlist') }}">
+                <select name="sort" class="border rounded px-3 py-1" onchange="this.form.submit()">
+                    <option value="recent" {{ $sort === 'recent' ? 'selected' : '' }}>Recently Added</option>
+                    <option value="price_asc" {{ $sort === 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
+                    <option value="price_desc" {{ $sort === 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
+                </select>
+            </form>
 
         </div>
 
