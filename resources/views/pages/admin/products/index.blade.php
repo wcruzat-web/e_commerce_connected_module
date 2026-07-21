@@ -53,7 +53,7 @@
           <datalist id="categoryList"></datalist>
         </div>
         <div>
-          <label class="text-xs font-medium text-slate-500">Price ($)</label>
+          <label class="text-xs font-medium text-slate-500">Price (₱)</label>
           <input required id="pPrice" type="number" step="0.01" min="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="1599">
         </div>
         <div>
@@ -72,7 +72,7 @@
           </div>
         </div>
         <div id="originalPriceWrapper" class="hidden">
-          <label class="text-xs font-medium text-slate-500">Original Price ($)</label>
+          <label class="text-xs font-medium text-slate-500">Original Price (₱)</label>
           <input id="pOriginalPrice" type="number" step="0.01" min="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300" placeholder="1999">
         </div>
       </div>
@@ -341,7 +341,7 @@ function renderTable() {
       </td>
       <td class="py-3 pr-4 text-slate-500">${p.sku}</td>
       <td class="py-3 pr-4"><span class="text-xs font-medium px-2 py-1 rounded-full ${catCls}">${p.category}</span></td>
-      <td class="py-3 pr-4 font-medium text-slate-700">$${p.price.toLocaleString()}</td>
+      <td class="py-3 pr-4 font-medium text-slate-700">₱${p.price.toLocaleString()}</td>
       <td class="py-3 pr-4 text-slate-600">${p.stock}</td>
       <td class="py-3 pr-4"><span class="text-xs font-medium px-2 py-1 rounded-full ${status.cls}">${status.label}</span></td>
       <td class="py-3 pr-2">
@@ -468,7 +468,7 @@ function previewProduct(id) {
       </div>
       <div class="flex items-center justify-between text-sm pt-1 border-t border-gray-100 mt-1">
         <span class="text-slate-400">Price</span>
-        <span class="font-semibold text-slate-800">$${p.price.toLocaleString()}</span>
+        <span class="font-semibold text-slate-800">₱${p.price.toLocaleString()}</span>
       </div>
       <div class="flex items-center justify-between text-sm">
         <span class="text-slate-400">Stock on hand</span>

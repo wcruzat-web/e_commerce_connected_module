@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Api;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\ProductSpecification;
 use App\Models\ProductCompatibility;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -71,7 +70,6 @@ class ProductController extends \App\Http\Controllers\Controller
         if ($product->category) {
             $cat = Category::firstOrCreate(['name' => $product->category], ['slug' => str()->slug($product->category)]);
             $product->category_id = $cat->id;
-            $product->save();
         }
     }
 
@@ -124,6 +122,7 @@ class ProductController extends \App\Http\Controllers\Controller
 
         // ESTEBAN — added: sync free-text category to category_id FK (V2.7)
         $this->syncCategoryId($product);
+        $product->save();
 
         // ESTEBAN — added: Specifications and Compatibility save (V2.6)
         $specs = json_decode($request->input('specs', '[]'), true) ?? [];
@@ -131,16 +130,22 @@ class ProductController extends \App\Http\Controllers\Controller
         $this->saveSpecs($product, $specs);
         $this->saveCompat($product, $compat);
 
-        $primaryWarehouse = DB::table('warehouses')->first();
-        if ($primaryWarehouse) {
-            DB::table('warehouse_stock')->insert([
-                'warehouse_id' => $primaryWarehouse->warehouse_id,
-                'product_id' => $product->id,
-                'quantity' => $validated['stock'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $primaryWarehouse = DB::table('warehouses')->orderBy('warehouse_id', 'asc')->first();
+        if (!$primaryWarehouse) {
+            $product->delete();
+            return response()->json([
+                'success' => false,
+                'message' => 'No warehouses found. Please create a warehouse before adding products.',
+            ], 422);
         }
+
+        DB::table('warehouse_stock')->insert([
+            'warehouse_id' => $primaryWarehouse->warehouse_id,
+            'product_id' => $product->id,
+            'quantity' => $validated['stock'],
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -180,21 +185,25 @@ class ProductController extends \App\Http\Controllers\Controller
         $product->stock = $validated['stock'];
         $product->badge = $request->input('badge', '');
         $product->sale_price = $request->input('badge') === 'Sale' ? $request->input('sale_price') : null;
-        $product->save();
 
         $this->syncCategoryId($product);
+        $product->save();
 
         $specs = json_decode($request->input('specs', '[]'), true) ?? [];
         $compat = json_decode($request->input('compat', '[]'), true) ?? [];
         $this->saveSpecs($product, $specs);
         $this->saveCompat($product, $compat);
 
-        DB::table('warehouse_stock')
-            ->where('product_id', $id)
-            ->update([
-                'quantity' => $validated['stock'],
-                'updated_at' => now(),
-            ]);
+        $primaryWarehouse = DB::table('warehouses')->first();
+        if ($primaryWarehouse) {
+            DB::table('warehouse_stock')
+                ->where('product_id', $id)
+                ->where('warehouse_id', $primaryWarehouse->warehouse_id)
+                ->update([
+                    'quantity' => $validated['stock'],
+                    'updated_at' => now(),
+                ]);
+        }
 
         return response()->json([
             'success' => true,

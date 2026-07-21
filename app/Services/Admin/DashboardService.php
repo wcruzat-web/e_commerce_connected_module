@@ -37,7 +37,7 @@ class DashboardService
 
         return $orders->map(function ($order) {
             $itemNames = $order->items->map(function ($item) {
-                return $item->product->name ?? 'Product #' . $item->product_id;
+                return $item->product?->name ?? 'Product #' . $item->product_id;
             })->implode(', ');
 
             $customerName = $order->shipping_name;

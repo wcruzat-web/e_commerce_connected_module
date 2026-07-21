@@ -74,7 +74,7 @@
     <div class="bg-white rounded-xl border border-gray-200 p-4">
       <div class="flex items-center justify-between mb-3">
         <div class="font-semibold text-slate-800 text-sm">Warehouse Sync Status</div>
-        <span id="warehouseActiveCount" class="text-xs font-medium bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full">3/4 Active</span>
+        <span id="warehouseActiveCount" class="text-xs font-medium bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full">—</span>
       </div>
       <div id="warehouseList" class="flex flex-col divide-y divide-gray-100"></div>
     </div>
