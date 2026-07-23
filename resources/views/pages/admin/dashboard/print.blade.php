@@ -9,7 +9,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ShopEase Report - {{ now()->format('F d, Y') }}</title>
+    <title>{{ config('app.name', 'ShopEase') }} Report - {{ now()->format('F d, Y') }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Outfit', Arial, sans-serif; color: #111; padding: 40px; background: #fff; }
@@ -56,7 +56,7 @@
 </head>
 <body>
     <button class="print-btn no-print" onclick="window.print()">Print Report</button>
-    <h1>ShopEase Admin Report</h1>
+    <h1>{{ config('app.name', 'ShopEase') }} Admin Report</h1>
     <p class="sub">{{ now()->format('F d, Y') }}</p>
 
     <div class="grid-4">

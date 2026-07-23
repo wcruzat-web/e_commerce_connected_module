@@ -25,19 +25,9 @@
         </div>
         <select id="categoryFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-300">
           <option value="All">All</option>
-          <option value="GPU">GPU</option>
-          <option value="CPU">CPU</option>
-          <option value="Motherboard">Motherboard</option>
-          <option value="Memory">Memory</option>
-          <option value="Cooling">Cooling</option>
         </select>
         <select id="brandFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-300">
           <option value="All Brands">All Brands</option>
-          <option value="NVIDIA">NVIDIA</option>
-          <option value="Intel">Intel</option>
-          <option value="ASUS">ASUS</option>
-          <option value="Corsair">Corsair</option>
-          <option value="NZXT">NZXT</option>
         </select>
         <select id="stockFilter" class="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-300">
           <option value="All">All Stock</option>
