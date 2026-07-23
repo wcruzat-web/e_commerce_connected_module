@@ -38,7 +38,16 @@ use Illuminate\Support\Str;
 | Landing
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => view('auth.login'));
+Route::get('/', function () {
+    if (auth()->check()) {
+        $role = auth()->user()->role;
+        if (in_array($role, ['super_admin', 'admin'])) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('shop');
+    }
+    return view('auth.login');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +56,11 @@ Route::get('/', fn () => view('auth.login'));
 */
 Route::get('/login', function () {
     if (auth()->check()) {
-        return redirect()->route('home');
+        $role = auth()->user()->role;
+        if (in_array($role, ['super_admin', 'admin'])) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('shop');
     }
     return view('auth.login');
 })->name('login');
@@ -116,7 +129,7 @@ Route::middleware('auth')->group(function () {
 
     // Addresses  [AGNER]
     Route::get('/addresses', [AddressController::class, 'index'])->name('addresses');
-    Route::get('/add-address', fn () => view('customer.add-address'))->name('add-address');
+    Route::get('/add-address', fn () => view('pages.customer.addresses.add-address'))->name('add-address');
     Route::post('/addresses', [AddressController::class, 'store'])->name('addresses.store');
     Route::get('/addresses/{address}/edit', [AddressController::class, 'edit'])->name('addresses.edit');
     Route::put('/addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
@@ -127,6 +140,7 @@ Route::middleware('auth')->group(function () {
 
     // Cart  [CRUZAT — restored original CartController]
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::get('/cart/summary', [CartController::class, 'summaryJson'])->name('cart.summary');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::post('/cart/voucher', [CartController::class, 'applyVoucher'])->name('cart.voucher.apply');
     Route::post('/cart/voucher/remove', [CartController::class, 'removeVoucher'])->name('cart.voucher.remove');
@@ -292,6 +306,7 @@ Route::middleware('auth')->group(function () {
 */
 Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard/notifications', [AdminDashboardController::class, 'notifications'])->name('admin.dashboard.notifications');
     Route::get('/dashboard/print', [AdminDashboardController::class, 'print'])->name('admin.dashboard.print');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');

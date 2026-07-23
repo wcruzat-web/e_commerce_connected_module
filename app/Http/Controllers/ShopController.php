@@ -82,6 +82,11 @@ class ShopController extends Controller
 
         $mapped = $this->mapProduct($product);
 
+        $wishlistIds = auth()->check()
+            ? auth()->user()->wishlists()->first()?->items()->pluck('product_id')->toArray() ?? []
+            : [];
+        $mapped['in_wishlist'] = in_array((int)$mapped['id'], $wishlistIds);
+
         return view('pages.customer.shop.show', ['product' => $mapped]);
     }
 
@@ -89,7 +94,7 @@ class ShopController extends Controller
     {
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'comment' => 'required|string|max:2000',
+            'comment' => 'nullable|string|max:2000',
             'rating' => 'required|integer|min:1|max:5',
         ]);
 
@@ -210,7 +215,7 @@ class ShopController extends Controller
             'image' => $p->featured_image
                 ? (str_starts_with($p->featured_image, 'http') ? $p->featured_image : asset($p->featured_image))
                 : 'https://placehold.co/200x200?text=No+Image',
-            'badge' => $p->badge ?? '',
+            'badge' => $p->badge && preg_match('/^Only\s+\d+\s+Left$/i', $p->badge) ? 'Only ' . (int) $p->stock . ' Left' : ($p->badge ?? ''),
             'badgeClass' => $p->badge === 'Sale' ? 'bg-red-500' : ($p->badge === 'Best Seller' ? 'bg-amber-500' : 'bg-blue-900'),
             'stock' => (int) $p->stock,
             'inStock' => $p->stock > 0,

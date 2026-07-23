@@ -17,7 +17,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ShopEase</title>
+<title>ShopEase — @yield('title', 'My Account')</title>
+<link rel="icon" type="image/png" href="{{ asset('shopease-logo.png') }}">
 
 <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}';</script>
 
@@ -50,6 +51,7 @@
 </div>
 
 @include('components.toast')
+@include('components.confirm-modal')
 
 </body>
 

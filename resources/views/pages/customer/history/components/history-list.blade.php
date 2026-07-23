@@ -18,15 +18,33 @@
             <div class="space-y-4">
                 @foreach ($order->items as $item)
                 <div class="flex items-center gap-4">
-                    <img src="{{ $item->product_image ?: 'https://picsum.photos/seed/order'.$item->order_item_id.'/200/200' }}"
+                    @php $prodImg = $item->product?->image_url ?: $item->product_image; @endphp
+                    <img src="{{ $prodImg ?: 'https://picsum.photos/seed/order'.$item->order_item_id.'/200/200' }}"
                          alt="{{ $item->product_name }}"
-                         class="w-16 h-16 object-cover rounded-xl border border-gray-100"
-                         onerror="this.onerror=null;this.src='https://picsum.photos/seed/order{{ $item->order_item_id }}/200/200';">
+                         class="w-16 h-16 object-cover rounded-xl border border-gray-100">
                     <div class="flex-1 min-w-0">
                         <h3 class="font-semibold text-gray-900 truncate">{{ $item->product_name }}</h3>
                         <p class="text-sm text-gray-500">Qty: {{ $item->quantity }} &nbsp;·&nbsp; ₱{{ number_format($item->unit_price, 2) }}</p>
                     </div>
-                    <p class="font-bold text-gray-900 shrink-0">₱{{ number_format($item->unit_price * $item->quantity, 2) }}</p>
+                    <div class="flex items-center gap-3 shrink-0">
+                        <p class="font-bold text-gray-900">₱{{ number_format($item->unit_price * $item->quantity, 2) }}</p>
+                        @if(in_array($item->product_id, $reviewedProductIds))
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-yellow-50 text-yellow-600 border border-yellow-200">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Rated
+                            </span>
+                        @elseif($order->customer_received)
+                            <button type="button" onclick="openRateModal({{ $item->product_id }}, '{{ $item->product_name }}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition hover:-translate-y-0.5">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Review
+                            </button>
+                        @else
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-400 border border-gray-200">
+                                <svg class="w-3 h-3 text-gray-300" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Mark as received to review
+                            </span>
+                        @endif
+                    </div>
                 </div>
                 @endforeach
             </div>
@@ -58,4 +76,113 @@
 
     </div>
 
+    <div class="mt-6">
+        {{ $orders->withQueryString()->links() }}
+    </div>
+
     <p id="no-orders" class="hidden text-center text-gray-400 py-16">No orders match your search.</p>
+
+    {{-- Rating Modal --}}
+    <div id="rateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40" onclick="if(event.target===this)closeRateModal()">
+        <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">Rate Product</h3>
+                <button type="button" onclick="closeRateModal()" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <p id="rateProductName" class="text-sm text-gray-500 mb-4"></p>
+            <form id="rateForm" method="POST" action="{{ route('shop.review') }}">
+                @csrf
+                <input type="hidden" name="product_id" id="rateProductId">
+                <input type="hidden" name="rating" id="rateRating" value="0">
+                <div class="flex items-center gap-1 mb-4">
+                    @for ($i = 1; $i <= 5; $i++)
+                    <button type="button" onclick="setRate({{ $i }})" class="rate-star text-3xl text-gray-300 hover:text-yellow-400 transition" data-star="{{ $i }}">&#9733;</button>
+                    @endfor
+                </div>
+                <textarea name="comment" rows="3" placeholder="Share your experience (optional)" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-sky-400 mb-4"></textarea>
+                <button type="submit" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 rounded-xl transition">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function toastNotify(type, message) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600', warning: 'bg-yellow-500 text-black' };
+        var toast = document.createElement('div');
+        toast.className = (colors[type] || 'bg-gray-700') + ' text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 transition-opacity duration-300';
+        toast.textContent = message;
+        container.appendChild(toast);
+        requestAnimationFrame(function() { toast.style.opacity = '1'; });
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    }
+    function openRateModal(productId, productName) {
+        document.getElementById('rateProductId').value = productId;
+        document.getElementById('rateProductName').textContent = productName;
+        document.getElementById('rateRating').value = 0;
+        document.querySelectorAll('.rate-star').forEach(function(s) { s.classList.remove('text-yellow-400'); s.classList.add('text-gray-300'); });
+        document.getElementById('rateModal').classList.remove('hidden');
+        document.getElementById('rateModal').classList.add('flex');
+    }
+    function closeRateModal() {
+        document.getElementById('rateModal').classList.add('hidden');
+        document.getElementById('rateModal').classList.remove('flex');
+    }
+    function setRate(val) {
+        document.getElementById('rateRating').value = val;
+        document.querySelectorAll('.rate-star').forEach(function(s) {
+            var star = parseInt(s.getAttribute('data-star'));
+            if (star <= val) {
+                s.classList.remove('text-gray-300');
+                s.classList.add('text-yellow-400');
+            } else {
+                s.classList.remove('text-yellow-400');
+                s.classList.add('text-gray-300');
+            }
+        });
+    }
+    document.getElementById('rateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var rating = document.getElementById('rateRating').value;
+        if (rating === '0') { toastNotify('error', 'Please select a rating.'); return; }
+
+        var form = this;
+        var formData = new FormData(form);
+        var btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                closeRateModal();
+                toastNotify('success', 'Review submitted successfully!');
+                var productId = document.getElementById('rateProductId').value;
+                document.querySelectorAll('button[onclick*="openRateModal(' + productId + '")]').forEach(function(b) {
+                    var parent = b.parentNode;
+                    var span = document.createElement('span');
+                    span.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-yellow-50 text-yellow-600 border border-yellow-200';
+                    span.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Rated';
+                    parent.replaceChild(span, b);
+                });
+            }
+        })
+        .catch(function() {
+            toastNotify('error', 'Something went wrong. Please try again.');
+        })
+        .finally(function() {
+            btn.disabled = false;
+            if (!form.classList.contains('submitted')) btn.textContent = 'Submit Review';
+            form.classList.add('submitted');
+        });
+    });
+    </script>

@@ -10,4 +10,12 @@
     function trackOrder() {
         window.location.href = '{{ route('tracking') }}';
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(async function() {
+            try {
+                await fetch('{{ route("cart.summary") }}');
+            } catch {}
+        }, 300);
+    });
 </script>

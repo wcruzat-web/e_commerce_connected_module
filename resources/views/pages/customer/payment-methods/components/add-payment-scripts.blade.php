@@ -48,4 +48,31 @@ document.querySelectorAll('#payment-method-options .payment-option').forEach(fun
         } catch(e) {}
     }
 })();
+
+(function () {
+    var gcashInput = document.getElementById('gcashNumber');
+    if (!gcashInput) return;
+
+    function formatGcash(raw) {
+        var digits = (raw || '').replace(/\D/g, '').slice(0, 10);
+        var parts = [];
+        if (digits.length > 0) parts.push(digits.slice(0, 3));
+        if (digits.length > 3) parts.push(digits.slice(3, 6));
+        if (digits.length > 6) parts.push(digits.slice(6, 10));
+        return parts.join(' ');
+    }
+
+    gcashInput.addEventListener('input', function () {
+        gcashInput.value = formatGcash(gcashInput.value);
+    });
+
+    var form = document.getElementById('paymentForm');
+    if (form) {
+        form.addEventListener('submit', function () {
+            if (gcashInput.value) {
+                gcashInput.value = gcashInput.value.replace(/\D/g, '');
+            }
+        });
+    }
+})();
 </script>

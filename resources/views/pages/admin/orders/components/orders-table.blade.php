@@ -35,7 +35,14 @@
                     onclick="openOrderModal({{ $order->order_id }})">
                     <td class="px-5 py-3">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gray-200 shrink-0"></div>
+                            @php $c = $order->customer; @endphp
+                            @if($c && $c->profile_picture_url)
+                                <img src="{{ $c->profile_picture_url }}" alt="" class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
+                                    {{ $c ? strtoupper(substr($c->first_name, 0, 1)).strtoupper(substr($c->last_name, 0, 1)) : '?' }}
+                                </div>
+                            @endif
                             <span class="font-medium text-gray-900">{{ $customerName }}</span>
                         </div>
                     </td>

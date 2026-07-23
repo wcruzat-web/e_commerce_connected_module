@@ -9,7 +9,7 @@
             </svg>
             <h2 class="text-sm font-semibold text-gray-900">Voucher Applied</h2>
         </div>
-        <div id="voucherMsg" class="mb-3"></div>
+        <p id="voucherAppliedMsg" class="text-xs text-red-500 mb-3 min-h-[14px]"></p>
         <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl p-4">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">

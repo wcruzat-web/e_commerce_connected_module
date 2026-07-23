@@ -36,7 +36,7 @@
                 <table class="w-full text-sm">
                     <thead>
                         <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
-                            <th class="text-left px-4 py-3 font-medium">Name</th>
+                            <th class="text-left px-4 py-3 font-medium">User</th>
                             <th class="text-left px-4 py-3 font-medium">Email</th>
                             <th class="text-left px-4 py-3 font-medium">Role</th>
                             <th class="text-left px-4 py-3 font-medium">Status</th>
@@ -46,7 +46,21 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse($users as $user)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-4 py-3 font-medium text-gray-900">{{ $user->first_name }} {{ $user->last_name }}</td>
+                            <td class="px-4 py-3">
+                                <div class="flex items-center gap-3">
+                                    @if($user->profile_picture_url)
+                                        <img src="{{ $user->profile_picture_url }}" alt="" class="w-9 h-9 rounded-full object-cover border border-gray-200 shrink-0">
+                                    @else
+                                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center text-blue-600 text-xs font-bold shrink-0">
+                                            {{ strtoupper(substr($user->first_name, 0, 1)) }}{{ strtoupper(substr($user->last_name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div class="font-medium text-gray-900 text-sm">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        <div class="text-xs text-gray-400">{{ $user->phone_number ?? '—' }}</div>
+                                    </div>
+                                </div>
+                            </td>
                             <td class="px-4 py-3 text-gray-600">{{ $user->email }}</td>
                             <td class="px-4 py-3">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $user->role === 'super_admin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700') }}">

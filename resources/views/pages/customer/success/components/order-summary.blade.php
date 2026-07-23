@@ -16,8 +16,8 @@
 
     <div class="space-y-2.5 text-sm">
         <div class="flex items-center justify-between">
-            <span class="text-gray-500">Items ({{ $order->items->sum('quantity') }})</span>
-            <span class="font-medium text-gray-900">₱{{ number_format($order->subtotal, 2) }}</span>
+            <span class="text-gray-500">Items (<span id="summaryItemCount">{{ $order->items->sum('quantity') }}</span>)</span>
+            <span id="summarySubtotal" class="font-medium text-gray-900">₱{{ number_format($order->subtotal, 2) }}</span>
         </div>
         <div class="flex items-center justify-between">
             <span class="flex items-center gap-1.5 text-gray-500">
@@ -29,33 +29,22 @@
                 </svg>
                 Shipping
             </span>
-            @if((float)$shippingFee === 0.0)
-                <div class="flex flex-col items-end">
+            <div id="summaryShipping" class="flex flex-col items-end">
+                @if((float)$shippingFee === 0.0)
                     <span class="font-medium text-gray-900">₱0.00</span>
                     <span class="text-[11px] font-bold text-green-600">{{ $order->coupon_code && $coupon?->isFreeShipping() ? 'FREE (Voucher)' : 'FREE' }}</span>
-                </div>
-            @else
-                <span class="font-medium text-gray-900">₱{{ number_format($shippingFee, 2) }}</span>
-            @endif
+                @else
+                    <span class="font-medium text-gray-900">₱{{ number_format($shippingFee, 2) }}</span>
+                @endif
+            </div>
         </div>
-        @if($order->coupon_code)
-            <div class="flex items-center justify-between">
-                <span class="text-gray-500">Voucher</span>
-                <div class="text-right">
-                    <span class="font-medium text-gray-900">{{ $order->coupon_code }}</span>
-                    <div class="text-xs text-gray-500">{{ $voucherLabel }}</div>
-                </div>
-            </div>
-        @endif
-        @if((float) $order->discount > 0)
-            <div class="flex items-center justify-between">
-                <span class="text-gray-500">Discount</span>
-                <span class="font-medium text-emerald-600">-₱{{ number_format($order->discount, 2) }}</span>
-            </div>
-        @endif
+        <div id="discountRow" class="flex items-center justify-between {{ (float) $order->discount > 0 ? '' : 'hidden' }}">
+            <span class="text-gray-500">Discount <span id="summaryDiscountLabel" class="text-xs text-gray-400">{{ $order->discount > 0 ? '(' . $voucherLabel . ')' : '' }}</span></span>
+            <span id="summaryDiscount" class="font-medium text-emerald-600">-₱{{ number_format($order->discount, 2) }}</span>
+        </div>
         <div class="flex items-center justify-between">
-            <span class="text-gray-500">Tax (8%)</span>
-            <span class="font-medium text-gray-900">₱{{ number_format($order->tax, 2) }}</span>
+            <span class="text-gray-500">Tax (12%)</span>
+            <span id="summaryTax" class="font-medium text-gray-900">₱{{ number_format($order->tax, 2) }}</span>
         </div>
     </div>
 
@@ -63,7 +52,7 @@
 
     <div class="flex items-center justify-between mb-1">
         <span class="text-sm font-semibold text-gray-900">Grand Total</span>
-        <span class="text-lg font-bold text-gray-900">₱{{ number_format($order->grand_total, 2) }}</span>
+        <span id="summaryGrandTotal" class="text-lg font-bold text-gray-900">₱{{ number_format($order->grand_total, 2) }}</span>
     </div>
 
     <p class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">

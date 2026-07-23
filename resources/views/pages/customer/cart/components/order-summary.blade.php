@@ -24,17 +24,21 @@
                 </svg>
                 Shipping
             </span>
-            @if((float)$summary->shippingFee === 0.0)
-                <div class="flex flex-col items-end">
+            <div id="summaryShipping" class="flex flex-col items-end">
+                @if((float)$summary->shippingFee === 0.0)
                     <span class="font-medium text-gray-900">₱0.00</span>
                     <span class="text-[11px] font-bold text-green-600">FREE</span>
-                </div>
-            @else
-                <span class="font-medium text-gray-900">₱{{ number_format($summary->shippingFee, 2) }}</span>
-            @endif
+                @else
+                    <span class="font-medium text-gray-900">₱{{ number_format($summary->shippingFee, 2) }}</span>
+                @endif
+            </div>
+        </div>
+        <div id="discountRow" class="flex items-center justify-between {{ (float) $summary->discount > 0 ? '' : 'hidden' }}">
+            <span class="text-gray-500">Discount <span id="summaryDiscountLabel" class="text-xs text-gray-400">{{ $summary->discount > 0 ? '(' . $summary->couponLabel . ')' : '' }}</span></span>
+            <span id="summaryDiscount" class="font-medium text-emerald-600">-₱{{ number_format($summary->discount, 2) }}</span>
         </div>
         <div class="flex items-center justify-between">
-            <span class="text-gray-500">Tax (8%)</span>
+            <span class="text-gray-500">Tax (12%)</span>
             <span id="summaryTax" class="font-medium text-gray-900">₱{{ number_format($summary->tax, 2) }}</span>
         </div>
     </div>
