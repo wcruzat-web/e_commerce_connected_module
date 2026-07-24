@@ -1,12 +1,18 @@
 <?php
 
-use App\Http\Controllers\Admin\ExternalSimulatorController;
+use App\Http\Controllers\External\ExternalSimulatorController;
+use App\Http\Controllers\External\FinanceSimulatorController;
+use App\Http\Controllers\External\SalesSimulatorController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin/external')->middleware(['auth', 'role:super_admin'])->group(function () {
+Route::prefix('external')->group(function () {
 
-    Route::get('/simulator', [ExternalSimulatorController::class, 'index'])->name('admin.external.simulator');
-    Route::get('/simulator/logs', [ExternalSimulatorController::class, 'logs'])->name('admin.external.simulator.logs');
-    Route::get('/simulator/order/{order_number}', [ExternalSimulatorController::class, 'lookupOrder'])->name('admin.external.simulator.lookup');
-    Route::get('/simulator/list', [ExternalSimulatorController::class, 'listData'])->name('admin.external.simulator.list');
+    Route::get('/finance', [FinanceSimulatorController::class, 'index']);
+    Route::get('/finance/orders', [FinanceSimulatorController::class, 'listPendingOrders']);
+
+    Route::get('/sales', [SalesSimulatorController::class, 'index']);
+    Route::get('/sales/orders', [SalesSimulatorController::class, 'listPaidOrders']);
+
+    Route::get('/order/{order_number}', [ExternalSimulatorController::class, 'lookupOrder']);
+    Route::get('/logs', [ExternalSimulatorController::class, 'logs']);
 });

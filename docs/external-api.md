@@ -34,14 +34,16 @@
 | GET | `/api/external/sales/orders` | Sales Bearer token | List paid orders |
 | PATCH | `/api/external/sales/orders/{order}` | Sales Bearer token | Update fulfillment status |
 
-### Simulator UI (`routes/external.php`)
+### Standalone ERP UI Pages (`routes/external.php`)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/admin/external/simulator` | Simulator page |
-| GET | `/admin/external/simulator/list` | JSON list data for polling |
-| GET | `/admin/external/simulator/logs` | Webhook log entries |
-| GET | `/admin/external/simulator/order/{order_number}` | Order detail lookup |
+| GET | `/external/finance` | Finance & Accounting module page |
+| GET | `/external/finance/orders` | Finance JSON list data for polling |
+| GET | `/external/sales` | Sales & Customer Support module page |
+| GET | `/external/sales/orders` | Sales JSON list data for polling |
+| GET | `/external/order/{order_number}` | Order detail lookup (shared) |
+| GET | `/external/logs` | Webhook log entries (shared) |
 
 ## Data Ownership
 
