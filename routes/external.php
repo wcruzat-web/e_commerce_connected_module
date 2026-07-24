@@ -14,5 +14,4 @@ Route::prefix('external')->group(function () {
     Route::get('/sales/orders', [SalesSimulatorController::class, 'listPaidOrders']);
 
     Route::get('/order/{order_number}', [ExternalSimulatorController::class, 'lookupOrder']);
-    Route::get('/logs', [ExternalSimulatorController::class, 'logs']);
 });

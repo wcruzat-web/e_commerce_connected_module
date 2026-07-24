@@ -4,15 +4,11 @@ namespace App\Http\Controllers\Api\External;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Services\External\WebhookService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FinanceController extends Controller
 {
-    public function __construct(
-        private WebhookService $webhookService,
-    ) {}
 
     public function store(string $orderNumber, Request $request): JsonResponse
     {
@@ -36,8 +32,6 @@ class FinanceController extends Controller
                 'last_updated' => now(),
             ]);
         }
-
-        $this->webhookService->paymentConfirmed($order);
 
         return response()->json([
             'success' => true,

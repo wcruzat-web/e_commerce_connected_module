@@ -3,50 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales & Customer Support — ERP</title>
+    <title>Sales & Fulfillment — ERP</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Outfit', sans-serif; }
+        * { font-family: 'Inter', system-ui, sans-serif; }
+        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; transition: all 0.15s; color: #94a3b8; }
+        .sidebar-link:hover { background: #1e293b; color: #f1f5f9; }
+        .sidebar-link.active { background: #1e293b; color: #f1f5f9; }
+        .sidebar-link svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 0.625rem 0.875rem; font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+        .data-table td { padding: 0.625rem 0.875rem; font-size: 0.8125rem; border-bottom: 1px solid #f1f5f9; }
+        .data-table tr:hover td { background: #f8fafc; }
+        .data-table .selected td { background: #eff6ff; }
+        .badge { display: inline-flex; align-items: center; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 600; }
+        .stat-card { background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem 1.25rem; }
+        .stat-label { font-size: 0.75rem; font-weight: 500; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-top: 0.25rem; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; overflow: hidden; }
+        .card-header { padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; }
+        .card-header h3 { font-size: 0.8125rem; font-weight: 600; color: #0f172a; }
+        .card-body { padding: 0.5rem; }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-[#f1f5f9]">
     <div class="flex min-h-screen">
-        {{-- Sidebar --}}
-        <aside class="w-64 bg-indigo-900 text-white flex flex-col shrink-0">
-            <div class="px-5 py-6 border-b border-indigo-800">
-                <h1 class="text-lg font-bold tracking-tight">ERP SYSTEM</h1>
-                <p class="text-xs text-indigo-300 mt-0.5">Sales & Customer Support</p>
+        <aside class="w-60 bg-[#0f172a] text-white flex flex-col shrink-0">
+            <div class="px-5 py-5 border-b border-[#1e293b]">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded bg-[#8b5cf6] flex items-center justify-center text-xs font-bold">E</div>
+                    <div>
+                        <h1 class="text-sm font-bold tracking-tight">ERP System</h1>
+                        <p class="text-[10px] text-[#64748b] mt-px">Sales Module</p>
+                    </div>
+                </div>
             </div>
-            <nav class="flex-1 px-3 py-4 space-y-1">
-                <a href="{{ url('/external/sales') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-indigo-800 text-white">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+            <nav class="flex-1 px-3 py-3 space-y-0.5">
+                <a href="{{ url('/external/sales') }}" class="sidebar-link active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
                     Fulfillment Queue
                 </a>
-                <a href="{{ url('/external/logs') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-indigo-200 hover:bg-indigo-800 hover:text-white transition-colors" target="_blank">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                    Webhook Logs
-                </a>
+
             </nav>
-            <div class="px-4 py-4 border-t border-indigo-800">
-                <p class="text-xs text-indigo-400">Connected via API</p>
-                <p class="text-xs text-indigo-300 mt-0.5">Module: SALES</p>
+            <div class="px-4 py-3 border-t border-[#1e293b]">
+                <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                    <span class="text-[11px] text-[#64748b]">API Connected</span>
+                </div>
+                <p class="text-[10px] text-[#475569] mt-0.5">Module: SALES</p>
             </div>
         </aside>
 
-        {{-- Main --}}
-        <div class="flex-1 min-w-0">
-            <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-bold text-gray-900">@yield('title', 'Sales & Customer Support')</h2>
-                    <p class="text-xs text-gray-400 mt-0.5">ERP Integration Module</p>
+        <div class="flex-1 min-w-0 flex flex-col">
+            <header class="bg-white border-b border-[#e2e8f0] px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-[#64748b]">ERP / Sales</span>
+                    <span class="text-xs text-[#94a3b8]">/</span>
+                    <span class="text-xs font-semibold text-[#0f172a]">@yield('title', 'Fulfillment Queue')</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
-                    <span class="text-xs text-gray-500">Web Service Active</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                    <span class="text-[11px] text-[#64748b]">Online</span>
                 </div>
             </header>
-            <main class="p-6">
+            <main class="flex-1 p-5">
                 @yield('content')
             </main>
         </div>

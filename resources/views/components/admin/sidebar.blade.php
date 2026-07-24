@@ -90,14 +90,6 @@
                 </svg>
                 <span class="sidebar-label">Users</span>
             </a>
-            <a href="{{ url('/external/finance') }}" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-blue-200 hover:bg-white/10 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
-                <span class="sidebar-label">Finance ERP</span>
-            </a>
-            <a href="{{ url('/external/sales') }}" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-blue-200 hover:bg-white/10 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
-                <span class="sidebar-label">Sales ERP</span>
-            </a>
             @endif
         </nav>
     </div>

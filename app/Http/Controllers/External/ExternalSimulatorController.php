@@ -4,7 +4,6 @@ namespace App\Http\Controllers\External;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\WebhookLog;
 use Illuminate\Http\JsonResponse;
 
 class ExternalSimulatorController extends Controller
@@ -16,11 +15,5 @@ class ExternalSimulatorController extends Controller
             ->firstOrFail();
 
         return response()->json($order);
-    }
-
-    public function logs(): JsonResponse
-    {
-        $logs = WebhookLog::latest()->take(50)->get();
-        return response()->json($logs);
     }
 }
