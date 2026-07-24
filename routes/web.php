@@ -74,7 +74,7 @@ Route::get('/register', function () {
 })->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
-Route::view('/forgot-password', 'auth.forgot-password')->name('forgot');
+Route::match(['get', 'post'], '/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'index'])->name('forgot');
 
 Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
