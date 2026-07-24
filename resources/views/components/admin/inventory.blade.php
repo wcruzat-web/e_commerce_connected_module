@@ -8,7 +8,7 @@
   <div class="flex items-start justify-between mb-5">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Inventory Monitoring <span class="font-semibold text-slate-500">Dashboard</span></h1>
-      <p class="text-sm text-slate-400 mt-1">Last synchronized: <span id="lastSyncText">Dec 18, 2025</span></p>
+      <p class="text-sm text-slate-400 mt-1">Last synchronized: <span id="lastSyncText">—</span></p>
     </div>
     <div class="flex items-center gap-2">
       <button id="exportReportBtn" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-slate-600 hover:bg-gray-50 transition">Export Report</button>

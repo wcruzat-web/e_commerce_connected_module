@@ -25,7 +25,7 @@
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h1 class="text-xl font-bold text-gray-900">Dashboard Overview</h1>
-                    <p class="text-sm text-gray-400 mt-0.5">June 2026 · Business Name</p>
+                    <p class="text-sm text-gray-400 mt-0.5">{{ now()->format('F Y') }} · {{ config('app.name', 'ShopEase') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <button type="button" onclick="viewSyncLogs()" class="flex items-center gap-2 border border-cyan-500 text-cyan-500 text-sm font-medium px-4 py-2 rounded-lg hover:bg-cyan-50 transition-colors">
