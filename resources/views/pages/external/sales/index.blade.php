@@ -53,7 +53,8 @@
 </div>
 
 <script>
-const BASE = '{{ url("/external") }}';
+const SALES_TOKEN = '{{ config("external-modules.sales.api_key") }}';
+const SALES_API = '/api/external/sales';
 
 const statusColors = {
     pending: '#f1f5f9,#475569',
@@ -143,18 +144,17 @@ function buildTableHtml(orders, selectedId) {
     return orders.map(o => {
         const sel = o.order_id == selectedId ? ' selected' : '';
         const sc = (statusColors[o.status] || '#f1f5f9,#475569').split(',');
-        const name = o.customer ? (o.customer.first_name || (o.customer.email || 'N/A')) : 'N/A';
         return `<tr class="sales-order-item${sel}" data-id="${o.order_id}" data-number="${o.order_number}" style="cursor:pointer">
             <td style="font-weight:500;color:#0f172a">${o.order_number}</td>
-            <td style="color:#475569">${name}</td>
-            <td style="text-align:right;font-weight:600;color:#0f172a">₱${Number(o.grand_total).toLocaleString()}</td>
+            <td style="color:#475569">${o.customer || 'N/A'}</td>
+            <td style="text-align:right;font-weight:600;color:#0f172a">₱${Number(o.total || o.grand_total).toLocaleString()}</td>
             <td style="text-align:center"><span class="badge" style="background:${sc[0]};color:${sc[1]}">${o.status.replace(/_/g,' ')}</span></td>
         </tr>`;
     }).join('');
 }
 
 function refreshSales() {
-    fetch(`${BASE}/sales/orders`).then(r => r.json()).then(data => {
+    fetch(`${SALES_API}/orders`, { headers: { 'Authorization': 'Bearer ' + SALES_TOKEN } }).then(r => r.json()).then(data => {
         const list = document.getElementById('sales-order-list');
         const current = list.querySelector('.sales-order-item.selected');
         const selId = current ? current.dataset.id : null;
@@ -177,7 +177,7 @@ document.getElementById('sales-order-list').addEventListener('click', function (
     if (!item) return;
     document.querySelectorAll('.sales-order-item').forEach(i => i.classList.remove('selected'));
     item.classList.add('selected');
-    fetch(`${BASE}/order/${item.dataset.number}`)
+    fetch(`${SALES_API}/orders/${item.dataset.number}`, { headers: { 'Authorization': 'Bearer ' + SALES_TOKEN } })
         .then(r => r.json())
         .then(o => renderDetail(o));
 });

@@ -22,15 +22,20 @@ class SalesController extends Controller
     {
         $orders = Order::where('payment_status', 'paid')
             ->with('customer')
-            ->get(['order_id', 'order_number', 'grand_total', 'status', 'created_at', 'shipping_name']);
+            ->get([
+                'order_id', 'order_number', 'grand_total', 'status',
+                'payment_status', 'created_at', 'shipping_name',
+            ]);
 
         return response()->json([
             'success' => true,
             'orders' => $orders->map(fn($o) => [
+                'order_id' => $o->order_id,
                 'order_number' => $o->order_number,
                 'customer' => $o->shipping_name,
                 'total' => $o->grand_total,
                 'status' => $o->status,
+                'payment_status' => $o->payment_status,
                 'created_at' => $o->created_at,
             ]),
         ]);

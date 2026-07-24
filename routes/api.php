@@ -12,6 +12,7 @@ Route::prefix('external')->group(function () {
 
     Route::middleware('external-auth:finance')->prefix('finance')->group(function () {
         Route::post('/orders/{order}/payments', [FinanceController::class, 'store']);
+        Route::get('/orders/{order}', [FinanceController::class, 'show']);
         Route::get('/orders', [FinanceController::class, 'index']);
     });
 

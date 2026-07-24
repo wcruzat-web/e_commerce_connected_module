@@ -106,7 +106,8 @@
 </div>
 
 <script>
-const BASE = '{{ url("/external") }}';
+const FINANCE_TOKEN = '{{ config("external-modules.finance.api_key") }}';
+const FINANCE_API = '/api/external/finance';
 
 function renderDetail(order) {
     const isPaid = order.payment_status === 'paid';
@@ -198,7 +199,7 @@ function buildTableHtml(orders, selectedId) {
 }
 
 function refreshFinance() {
-    fetch(`${BASE}/finance/orders`).then(r => r.json()).then(data => {
+    fetch(`${FINANCE_API}/orders`, { headers: { 'Authorization': 'Bearer ' + FINANCE_TOKEN } }).then(r => r.json()).then(data => {
         const list = document.getElementById('finance-order-list');
         const current = list.querySelector('.finance-order-item.selected');
         const selId = current ? current.dataset.id : null;
@@ -228,7 +229,7 @@ document.getElementById('finance-order-list').addEventListener('click', function
     if (!item) return;
     document.querySelectorAll('.finance-order-item').forEach(i => i.classList.remove('selected'));
     item.classList.add('selected');
-    fetch(`${BASE}/order/${item.dataset.number}`)
+    fetch(`${FINANCE_API}/orders/${item.dataset.number}`, { headers: { 'Authorization': 'Bearer ' + FINANCE_TOKEN } })
         .then(r => r.json())
         .then(o => renderDetail(o));
 });

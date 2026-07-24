@@ -42,18 +42,25 @@ class FinanceController extends Controller
 
     public function index(): JsonResponse
     {
-        $orders = Order::where('payment_status', 'pending')
-            ->with('customer')
-            ->get(['order_id', 'order_number', 'grand_total', 'created_at', 'shipping_name']);
+        $orders = Order::with('customer')
+            ->latest()
+            ->get([
+                'order_id', 'order_number', 'customer_id', 'grand_total',
+                'payment_status', 'status', 'created_at', 'shipping_name',
+            ]);
 
         return response()->json([
             'success' => true,
-            'orders' => $orders->map(fn($o) => [
-                'order_number' => $o->order_number,
-                'customer' => $o->shipping_name,
-                'total' => $o->grand_total,
-                'created_at' => $o->created_at,
-            ]),
+            'orders' => $orders,
         ]);
+    }
+
+    public function show(string $orderNumber): JsonResponse
+    {
+        $order = Order::with('items', 'customer', 'tracking')
+            ->where('order_number', $orderNumber)
+            ->firstOrFail();
+
+        return response()->json($order);
     }
 }
