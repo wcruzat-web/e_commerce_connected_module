@@ -30,6 +30,7 @@ class Order extends Model
         'coupon_code',
         'paid_at',
         'customer_received',
+        'finance_transaction_id',
     ];
 
     protected function casts(): array
@@ -57,21 +58,9 @@ class Order extends Model
         return $this->hasOne(OrderTracking::class, 'order_id', 'order_id');
     }
 
-    // [AGNER] scopes + helper for customer order views
-    public function scopeActive($query)
-    {
-        return $query->where('status', '!=', 'Delivered');
-    }
-
     // [AGNER]
     public function scopeDelivered($query)
     {
         return $query->where('status', 'Delivered');
-    }
-
-    // [AGNER]
-    public function isDelivered(): bool
-    {
-        return $this->status === 'Delivered';
     }
 }

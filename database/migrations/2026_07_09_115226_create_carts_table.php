@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->bigIncrements('cart_id');
             $table->unsignedBigInteger('customer_id');
+            $table->string('coupon_code', 50)->nullable();
             $table->timestamps();
 
             $table->foreign('customer_id')

@@ -8,12 +8,14 @@ use App\Models\Coupon;
 use App\Models\CouponUsage;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
+use App\Services\External\WebhookService;
 
 class PaymentService
 {
     public function __construct(
         private OrderRepository $orderRepository,
         private CartService $cartService,
+        private WebhookService $webhookService,
     ) {}
 
     public function processPayment(Cart $cart, PaymentDataDTO $data): Order
@@ -88,6 +90,8 @@ class PaymentService
             'last_updated' => now(),
             'sync_status' => 'Pending',
         ]);
+
+        $this->webhookService->orderCreated($order);
 
         return $this->orderRepository->loadItems($order);
     }

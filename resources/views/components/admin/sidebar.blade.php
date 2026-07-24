@@ -90,6 +90,14 @@
                 </svg>
                 <span class="sidebar-label">Users</span>
             </a>
+            <a href="{{ route('admin.external.simulator') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors {{ $route === 'admin.external.simulator' ? 'bg-white/10 text-white' : 'text-blue-200 hover:bg-white/10 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <span class="sidebar-label">Integration</span>
+            </a>
             @endif
         </nav>
     </div>
