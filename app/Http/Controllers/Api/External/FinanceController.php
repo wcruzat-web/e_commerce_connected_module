@@ -14,15 +14,14 @@ class FinanceController extends Controller
         private WebhookService $webhookService,
     ) {}
 
-    public function paymentConfirmed(Request $request): JsonResponse
+    public function store(string $orderNumber, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'order_number' => 'required|string|exists:orders,order_number',
             'finance_transaction_id' => 'required|string',
             'paid_at' => 'nullable|date',
         ]);
 
-        $order = Order::where('order_number', $validated['order_number'])->firstOrFail();
+        $order = Order::where('order_number', $orderNumber)->firstOrFail();
 
         $order->update([
             'payment_status' => 'paid',
@@ -47,7 +46,7 @@ class FinanceController extends Controller
         ]);
     }
 
-    public function listOrders(): JsonResponse
+    public function index(): JsonResponse
     {
         $orders = Order::where('payment_status', 'pending')
             ->with('customer')

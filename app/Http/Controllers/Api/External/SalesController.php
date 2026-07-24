@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
-    public function getOrder(string $orderNumber): JsonResponse
+    public function show(string $orderNumber): JsonResponse
     {
         $order = Order::with('items', 'customer', 'tracking')
             ->where('order_number', $orderNumber)
@@ -18,7 +18,7 @@ class SalesController extends Controller
         return response()->json($order);
     }
 
-    public function listOrders(): JsonResponse
+    public function index(): JsonResponse
     {
         $orders = Order::where('payment_status', 'paid')
             ->with('customer')
@@ -36,14 +36,13 @@ class SalesController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request): JsonResponse
+    public function update(string $orderNumber, Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'order_number' => 'required|string|exists:orders,order_number',
             'status' => 'required|in:processing,shipped,in_transit,out_for_delivery,delivered,cancelled',
         ]);
 
-        $order = Order::where('order_number', $validated['order_number'])->firstOrFail();
+        $order = Order::where('order_number', $orderNumber)->firstOrFail();
 
         if ($order->payment_status !== 'paid') {
             return response()->json([

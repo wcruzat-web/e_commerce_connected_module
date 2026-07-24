@@ -366,13 +366,13 @@ function markAsPaidFinance(orderNumber) {
     const feedback = document.getElementById('finance-feedback');
     feedback.innerHTML = '<span class="text-gray-500">Processing payment...</span>';
     const txnId = 'FA-' + Date.now().toString(16).toUpperCase();
-    fetch('/api/external/finance/payment-confirmed', {
+    fetch('/api/external/finance/orders/' + orderNumber + '/payments', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer {{ config("external-modules.finance.api_key") }}'
         },
-        body: JSON.stringify({ order_number: orderNumber, finance_transaction_id: txnId, paid_at: new Date().toISOString() })
+        body: JSON.stringify({ finance_transaction_id: txnId, paid_at: new Date().toISOString() })
     }).then(r => r.json()).then(data => {
         if (data.success) {
             feedback.innerHTML = `
@@ -395,13 +395,13 @@ function markAsPaidFinance(orderNumber) {
 function updateSalesStatus(orderNumber, status) {
     const feedback = document.getElementById('sales-feedback');
     feedback.innerHTML = '<span class="text-gray-500">Updating status...</span>';
-    fetch('/api/external/sales/update-status', {
-        method: 'POST',
+    fetch('/api/external/sales/orders/' + orderNumber, {
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer {{ config("external-modules.sales.api_key") }}'
         },
-        body: JSON.stringify({ order_number: orderNumber, status: status })
+        body: JSON.stringify({ status: status })
     }).then(r => r.json()).then(data => {
         if (data.success) {
             feedback.innerHTML = `<span class="text-green-600 font-medium text-sm">Status updated to "${status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}"</span>`;
