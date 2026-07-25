@@ -42,10 +42,6 @@
             <span class="text-gray-500">Discount <span id="summaryDiscountLabel" class="text-xs text-gray-400">{{ $order->discount > 0 ? '(' . $voucherLabel . ')' : '' }}</span></span>
             <span id="summaryDiscount" class="font-medium text-emerald-600">-₱{{ number_format($order->discount, 2) }}</span>
         </div>
-        <div class="flex items-center justify-between">
-            <span class="text-gray-500">Tax (12%)</span>
-            <span id="summaryTax" class="font-medium text-gray-900">₱{{ number_format($order->tax, 2) }}</span>
-        </div>
     </div>
 
     <div class="border-t border-gray-100 my-4"></div>

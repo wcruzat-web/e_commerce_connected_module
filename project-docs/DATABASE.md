@@ -125,7 +125,6 @@
 | order_number | string | Unique (ORD-XXXXX) |
 | status | string | Default "pending" |
 | subtotal | decimal(10,2) | |
-| tax | decimal(10,2) | |
 | grand_total | decimal(10,2) | |
 | shipping_name | string | |
 | shipping_email | string | |
@@ -225,7 +224,6 @@ Seeder files:
 | payment_method | string | "visa", "mastercard", "gcash" |
 | paid_at | timestamp | Set at order creation (payment processed time) |
 | subtotal | decimal(10,2) | |
-| tax | decimal(10,2) | |
 | grand_total | decimal(10,2) | |
 | shipping_name | string | |
 | shipping_email | string | |

@@ -118,9 +118,6 @@
         const subEl = document.getElementById('summarySubtotal');
         if (subEl) subEl.textContent = '₱' + s.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        const taxEl = document.getElementById('summaryTax');
-        if (taxEl) taxEl.textContent = '₱' + s.tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
         const totalEl = document.getElementById('summaryGrandTotal');
         if (totalEl) totalEl.textContent = '₱' + s.grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 

@@ -219,9 +219,6 @@
             }
         }
 
-        const taxEl = document.getElementById('summaryTax');
-        if (taxEl) taxEl.textContent = '₱' + summary.tax.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
         const totalEl = document.getElementById('summaryGrandTotal');
         if (totalEl) totalEl.textContent = '₱' + summary.grandTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }

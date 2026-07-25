@@ -29,7 +29,6 @@ class PaymentService
             'payment_method' => $data->paymentMethod,
             'paid_at' => now(),
             'subtotal' => $summary->subtotal,
-            'tax' => $summary->tax,
             'discount' => $summary->discount,
             'shipping_fee' => $summary->shippingFee,
             'grand_total' => $summary->grandTotal,
