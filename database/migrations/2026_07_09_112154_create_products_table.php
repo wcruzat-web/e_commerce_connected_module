@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('sale_price', 10, 2)->nullable();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('featured_image')->nullable();
             $table->integer('stock')->default(0);
             $table->string('sku')->unique();
@@ -24,6 +24,8 @@ return new class extends Migration
             $table->decimal('rating', 3, 2)->default(0);
             $table->integer('review_count')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_featured')->default(false);
+            $table->string('category', 100)->nullable();
             $table->timestamps();
         });
     }

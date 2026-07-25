@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products', 'id')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('customers', 'customer_id')->cascadeOnDelete();
             $table->text('comment')->nullable();
+            $table->tinyInteger('rating')->default(0);
             $table->timestamp('created_at')->useCurrent();
         });
     }

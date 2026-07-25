@@ -70,28 +70,17 @@
                     <p class="text-lg font-bold text-gray-900" id="modalTotal"></p>
                 </div>
 
-                <div class="border-t border-gray-200 pt-6 space-y-4">
-                    <h3 class="text-sm font-bold text-gray-900">Actions</h3>
-
-                    <div id="paymentActionBlock" class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Payment Status</span>
-                        <button type="button" id="markPaidBtn" onclick="markAsPaid()" class="text-sm font-medium px-4 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                            Mark as Paid
-                        </button>
-                        <span id="paidBadge" class="hidden text-sm font-medium px-3 py-1.5 rounded-full bg-green-100 text-green-700">Paid</span>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Fulfillment Status</span>
-                        <select id="fulfillmentSelect" name="status" class="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-200">
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="in_transit">In Transit</option>
-                            <option value="out_for_delivery">Out for Delivery</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-sm font-bold text-gray-900 mb-4">Status Overview</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Payment</span>
+                            <span id="modalPaymentBadge" class="text-sm font-medium px-3 py-1.5 rounded-full"></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Fulfillment</span>
+                            <span id="modalFulfillmentBadge" class="text-sm font-medium px-3 py-1.5 rounded-full"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -181,77 +170,26 @@
                     receivedBadge.textContent = 'Awaiting';
                 }
 
-                var isPaid = order.payment_status === 'paid';
-                var markBtn = document.getElementById('markPaidBtn');
-                var paidBadge = document.getElementById('paidBadge');
-                if (isPaid) {
-                    markBtn.classList.add('hidden');
-                    paidBadge.classList.remove('hidden');
-                } else {
-                    markBtn.classList.remove('hidden');
-                    paidBadge.classList.add('hidden');
-                }
+                var paymentBadge = document.getElementById('modalPaymentBadge');
+                var paymentColors = { paid: 'bg-green-100 text-green-700', pending: 'bg-amber-100 text-amber-600' };
+                paymentBadge.className = 'text-sm font-medium px-3 py-1.5 rounded-full ' + (paymentColors[order.payment_status] || 'bg-gray-100 text-gray-600');
+                paymentBadge.textContent = order.payment_status === 'paid' ? 'Paid' : 'Pending';
 
-                var fulfillmentSelect = document.getElementById('fulfillmentSelect');
-                fulfillmentSelect.disabled = !isPaid || customerReceived;
-                fulfillmentSelect.classList.toggle('opacity-50', !isPaid || customerReceived);
-                fulfillmentSelect.classList.toggle('cursor-not-allowed', !isPaid || customerReceived);
-                fulfillmentSelect.value = status;
+                var fulfillmentBadge = document.getElementById('modalFulfillmentBadge');
+                var fulfillmentColors = {
+                    pending: 'bg-gray-100 text-gray-600',
+                    processing: 'bg-amber-100 text-amber-600',
+                    shipped: 'bg-blue-100 text-blue-700',
+                    in_transit: 'bg-purple-100 text-purple-700',
+                    out_for_delivery: 'bg-orange-100 text-orange-600',
+                    delivered: 'bg-green-100 text-green-700',
+                    cancelled: 'bg-red-100 text-red-600'
+                };
+                fulfillmentBadge.className = 'text-sm font-medium px-3 py-1.5 rounded-full ' + (fulfillmentColors[order.status] || 'bg-gray-100 text-gray-600');
+                fulfillmentBadge.textContent = order.status.charAt(0).toUpperCase() + order.status.slice(1);
             })
             .catch(function () {
                 loading.textContent = 'Failed to load order details.';
             });
     }
-
-    function markAsPaid() {
-        if (!currentOrderId) return;
-        var btn = document.getElementById('markPaidBtn');
-        btn.disabled = true;
-        btn.textContent = 'Processing...';
-
-        fetch('/admin/orders/' + currentOrderId + '/payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCSRFToken() },
-            body: JSON.stringify({ payment_status: 'paid' })
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.success) {
-                btn.classList.add('hidden');
-                document.getElementById('paidBadge').classList.remove('hidden');
-                document.getElementById('modalPaymentInfo').textContent = 'Paid';
-
-                var badge = document.getElementById('modalStatusBadge');
-                badge.className = 'status-badge text-[11px] font-medium px-2.5 py-1 rounded-full bg-amber-100 text-amber-600';
-                badge.textContent = 'Processing';
-
-                var fulfillmentSelect = document.getElementById('fulfillmentSelect');
-                fulfillmentSelect.disabled = false;
-                fulfillmentSelect.classList.remove('opacity-50', 'cursor-not-allowed');
-                fulfillmentSelect.value = 'processing';
-
-                if (typeof reloadOrders === 'function') reloadOrders();
-            } else {
-                btn.disabled = false;
-                btn.textContent = 'Mark as Paid';
-            }
-        })
-        .catch(function () {
-            btn.disabled = false;
-            btn.textContent = 'Mark as Paid';
-        });
-    }
-
-    document.addEventListener('change', function (e) {
-        if (e.target.id === 'fulfillmentSelect' && currentOrderId) {
-            fetch('/admin/orders/' + currentOrderId + '/status', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': getCSRFToken() },
-                body: JSON.stringify({ status: e.target.value })
-            })
-            .then(function () {
-                if (typeof reloadOrders === 'function') reloadOrders();
-            });
-        }
-    });
 </script>

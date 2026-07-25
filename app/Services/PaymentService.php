@@ -8,7 +8,6 @@ use App\Models\Coupon;
 use App\Models\CouponUsage;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
-
 class PaymentService
 {
     public function __construct(

@@ -24,14 +24,12 @@ use App\Http\Controllers\Customer\SettingController;
 use App\Http\Controllers\Customer\WishlistController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ShopController;
-use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SuccessController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,8 +98,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/payment-methods/{paymentMethod}', [PaymentMethodController::class, 'update'])->name('payment-methods.update');
     Route::delete('/payment-methods/{paymentMethod}', [PaymentMethodController::class, 'destroy'])->name('payment-methods.destroy');
     Route::post('/payment-methods/{paymentMethod}/default', [PaymentMethodController::class, 'setDefault'])->name('payment-methods.default');
-    Route::get('/add-payment', [PaymentMethodController::class, 'create'])->name('add-payment');
-    Route::get('/edit-payment/{paymentMethod}', [PaymentMethodController::class, 'edit'])->name('edit-payment');
 
     // Wishlist  [AGNER]
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
@@ -179,124 +175,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/shop/restore-stock', [ShopController::class, 'restoreStock'])->name('shop.restore-stock');
     });
 
-    // Product CRUD  [HAINZ — dummy product management]
-    Route::get('/dummy/products', function () {
-        $products = App\Models\Product::withCount(['specifications', 'compatibilities'])->latest()->get();
-        return view('pages.dummy.products', compact('products'));
-    });
-    Route::get('/dummy/add-product', function () {
-        $categories = App\Models\Category::all();
-        return view('pages.dummy.add-product', compact('categories'));
-    });
-    Route::post('/dummy/add-product', function (Illuminate\Http\Request $request) {
-        $data = $request->validate([
-            'name' => 'required|string|max:150',
-            'sku' => 'required|string|max:100|unique:products,sku',
-            'brand' => 'nullable|string|max:100',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'stock' => 'nullable|integer|min:0',
-            'badge' => 'nullable|string|max:50',
-        ]);
-        $data['slug'] = Str::slug($request->name . '-' . uniqid());
-        $data['is_active'] = true;
-        if (empty($data['badge'])) $data['badge'] = null;
-        if ($request->hasFile('featured_image')) {
-            $data['featured_image'] = 'storage/' . $request->file('featured_image')->store('products', 'public');
-        }
-        $product = App\Models\Product::create($data);
-        return redirect("/dummy/add-specs/{$product->id}")->with('success', "Product '{$product->name}' added! Now add its specifications and compatibility.");
-    });
-    Route::get('/dummy/add-specs/{product}', function (App\Models\Product $product) {
-        $specCategories = ['Core Architectures', 'Performance', 'Memory', 'Connectivity', 'Thermal & Power', 'Physical'];
-        $compatCategories = ['Recommended PSU', 'Compatible Cases', 'Platform Support', 'Supported RAM', 'Motherboard Compatibility'];
-        return view('pages.dummy.add-specs', compact('product', 'specCategories', 'compatCategories'));
-    });
-    Route::post('/dummy/add-specs/{product}', function (Illuminate\Http\Request $request, App\Models\Product $product) {
-        $data = $request->validate([
-            'specs' => 'nullable|array',
-            'specs.*.category_name' => 'required|string|max:100',
-            'specs.*.label' => 'required|string|max:100',
-            'specs.*.value' => 'nullable|string|max:100',
-            'compatibilities' => 'nullable|array',
-            'compatibilities.*.category_name' => 'required|string|max:100',
-            'compatibilities.*.item_name' => 'required|string|max:150',
-        ]);
-        if ($request->has('specs')) {
-            foreach ($data['specs'] as $spec) {
-                $product->specifications()->create($spec);
-            }
-        }
-        if ($request->has('compatibilities')) {
-            foreach ($data['compatibilities'] as $compat) {
-                \App\Models\ProductCompatibility::create([
-                    'product_id' => $product->id,
-                    'category_name' => $compat['category_name'],
-                    'item_name' => $compat['item_name'],
-                ]);
-            }
-        }
-        return redirect('/shop')->with('success', 'Product added successfully!');
-    });
-    Route::get('/dummy/edit-product/{product}', function (App\Models\Product $product) {
-        $categories = App\Models\Category::all();
-        return view('pages.dummy.edit-product', compact('product', 'categories'));
-    });
-    Route::post('/dummy/edit-product/{product}', function (Illuminate\Http\Request $request, App\Models\Product $product) {
-        $data = $request->validate([
-            'name' => 'required|string|max:150',
-            'sku' => 'required|string|max:100|unique:products,sku,' . $product->id,
-            'brand' => 'nullable|string|max:100',
-            'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'nullable|integer|min:0',
-        ]);
-        $product->update($data);
-        return redirect("/dummy/products")->with('success', "Product '{$product->name}' updated!");
-    });
-    Route::get('/dummy/edit-specs/{product}', function (App\Models\Product $product) {
-        $product->load('specifications', 'compatibilities');
-        $specCategories = ['Core Architectures', 'Performance', 'Memory', 'Connectivity', 'Thermal & Power', 'Physical'];
-        $compatCategories = ['Recommended PSU', 'Compatible Cases', 'Platform Support', 'Supported RAM', 'Motherboard Compatibility'];
-        return view('pages.dummy.edit-specs', compact('product', 'specCategories', 'compatCategories'));
-    });
-    Route::post('/dummy/edit-specs/{product}', function (Illuminate\Http\Request $request, App\Models\Product $product) {
-        $data = $request->validate([
-            'specs' => 'nullable|array',
-            'specs.*.category_name' => 'required|string|max:100',
-            'specs.*.label' => 'required|string|max:100',
-            'specs.*.value' => 'nullable|string|max:100',
-            'compatibilities' => 'nullable|array',
-            'compatibilities.*.category_name' => 'required|string|max:100',
-            'compatibilities.*.item_name' => 'required|string|max:150',
-        ]);
-        $product->specifications()->delete();
-        if ($request->has('specs')) {
-            foreach ($data['specs'] as $spec) {
-                $product->specifications()->create($spec);
-            }
-        }
-        $product->compatibilities()->delete();
-        if ($request->has('compatibilities')) {
-            foreach ($data['compatibilities'] as $compat) {
-                \App\Models\ProductCompatibility::create([
-                    'product_id' => $product->id,
-                    'category_name' => $compat['category_name'],
-                    'item_name' => $compat['item_name'],
-                ]);
-            }
-        }
-        return redirect("/dummy/edit-specs/{$product->id}")->with('success', "Specifications and compatibility for '{$product->name}' updated!");
-    });
-    Route::delete('/dummy/products/{product}', function (App\Models\Product $product) {
-        $product->specifications()->delete();
-        $product->compatibilities()->delete();
-        $product->reviews()->delete();
-        \App\Models\CartItem::where('product_id', $product->id)->delete();
-        $product->delete();
-        return redirect('/dummy/products')->with('success', "Product '{$product->name}' deleted!");
-    });
 });
 
 /*
@@ -310,8 +188,6 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin,admin'])->group(fu
     Route::get('/dashboard/print', [AdminDashboardController::class, 'print'])->name('admin.dashboard.print');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
-    Route::post('/orders/{order}/payment', [AdminOrderController::class, 'updatePayment'])->name('admin.orders.payment');
-    Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.status');
     Route::post('/orders/{order}/tracking', [AdminOrderController::class, 'updateTracking'])->name('admin.orders.tracking');
     Route::view('/products', 'pages.admin.products.index')->name('admin.products');
     Route::view('/inventory', 'pages.admin.inventory.index')->name('admin.inventory');
@@ -355,3 +231,5 @@ Route::prefix('admin')->middleware(['auth', 'role:super_admin'])->group(function
     Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
     Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
 });
+
+require __DIR__.'/external.php';

@@ -18,8 +18,8 @@ class DashboardController extends Controller
         $stats = [
             'wishlist' => $customer->wishlistItems()->count(),
             'cart' => $customer->carts()->first()?->items()->count() ?? 0,
-            'pending' => $customer->orders()->whereNotIn('status', ['Delivered', 'Cancelled'])->count(),
-            'completed' => $customer->orders()->where('status', 'Delivered')->where('customer_received', true)->count(),
+            'pending' => $customer->orders()->where('status', '!=', 'Delivered')->where('status', '!=', 'Cancelled')->count(),
+            'completed' => $customer->orders()->delivered()->where('customer_received', true)->count(),
         ];
 
         $notifications = $customer->notifications()->latest()->take(5)->get();
