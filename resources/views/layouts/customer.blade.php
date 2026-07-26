@@ -20,7 +20,7 @@
 <title>ShopEase — @yield('title', 'My Account')</title>
 <link rel="icon" type="image/png" href="{{ asset('shopease-logo.png') }}">
 
-<script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}';</script>
+<script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}'; if (window.__theme !== 'Dark') document.documentElement.classList.remove('dark');</script>
 
 @vite(['resources/css/app.css','resources/js/app.js'])
 

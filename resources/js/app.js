@@ -423,6 +423,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { /* best-effort */ }
     };
 
+    // Sync dark class from server-rendered value
+    if (window.__theme === 'Dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+
     const themeSel = document.getElementById('theme');
     if (themeSel) {
         themeSel.addEventListener('change', (e) => {

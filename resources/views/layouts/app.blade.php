@@ -16,7 +16,7 @@
     <title>@yield('title', 'ShopEase')</title>
     <link rel="icon" type="image/png" href="{{ asset('shopease-logo.png') }}">
 
-    <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}';</script>
+    <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}'; if (window.__theme !== 'Dark') document.documentElement.classList.remove('dark');</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,10 +31,6 @@
     @include('components.header.header')
 
     @yield('content')
-
-    <footer class="bg-white border-t mt-12 py-6 text-center text-xs text-gray-400">
-        ShopEase — Est. 2026 Real-Time Order Synchronization
-    </footer>
 
     @include('components.toast')
 

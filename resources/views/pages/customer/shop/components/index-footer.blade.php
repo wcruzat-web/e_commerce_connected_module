@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="max-w-7xl mx-auto px-6 py-6 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center font-semibold">
-        <span class="text-slate-800 dark:text-white text-sm font-extrabold">NexaStore PC</span>
-        <span>&copy; 2026 NexaStore PC. All rights reserved.</span>
+        <span class="text-slate-800 dark:text-white text-sm font-extrabold">ShopEase</span>
+        <span>&copy; 2026 ShopEase. All rights reserved.</span>
     </div>
 </footer>

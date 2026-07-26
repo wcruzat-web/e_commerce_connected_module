@@ -31,7 +31,16 @@
 ============================================================ --}}
 
 <!DOCTYPE html>
-<html lang="en">
+@php
+    $__prefs = auth()->check()
+        ? auth()->user()->settings()->pluck('setting_value', 'setting_key')->toArray()
+        : [];
+    $__theme = $__prefs['theme'] ?? 'Light';
+    $__lang  = $__prefs['language'] ?? 'English';
+@endphp
+
+<html lang="{{ $__lang === 'Filipino' ? 'fil' : 'en' }}"
+      class="{{ $__theme === 'Dark' ? 'dark' : '' }}">
 
 <head>
 
@@ -46,6 +55,8 @@
     <title>@yield('title', 'ERP Admin')</title>
 
     <link rel="icon" type="image/png" href="{{ asset('shopease-logo.png') }}">
+
+    <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}'; if (window.__theme !== 'Dark') document.documentElement.classList.remove('dark');</script>
 
     {{-- ============================================================
         Outfit Font
@@ -74,7 +85,7 @@
 </head>
 
 <body
-    class="min-h-screen bg-[#F8F9FB] font-['Outfit'] antialiased">
+    class="min-h-screen bg-[#F8F9FB] dark:bg-gray-900 font-['Outfit'] antialiased">
 
     <main>
 
