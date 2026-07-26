@@ -80,7 +80,11 @@
                     </a>
 
                     <form method="POST" action="{{ route('addresses.destroy', $address->address_id) }}"
-                        class="w-1/2 js-confirm-delete">
+                        class="w-1/2 js-confirm"
+                        data-confirm-title="Delete Address"
+                        data-confirm-message="Are you sure you want to delete this address? This action cannot be undone."
+                        data-confirm-btn="Delete"
+                        data-confirm-theme="danger">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
