@@ -4,13 +4,13 @@
 
 @section('content')
 
-<div class="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8" style="font-family: 'Outfit', sans-serif;">
+<div class="min-h-screen bg-slate-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8" style="font-family: 'Outfit', sans-serif;">
     <div class="max-w-6xl mx-auto">
 
-        <nav class="text-sm text-gray-400 mb-6">
-            <a href="{{ route('cart') }}" class="hover:text-gray-600">Cart</a>
+        <nav class="text-sm text-gray-400 dark:text-gray-500 mb-6">
+            <a href="{{ route('cart') }}" class="hover:text-gray-600 dark:hover:text-gray-300">Cart</a>
             <span class="mx-2">&gt;</span>
-            <span class="text-gray-700 font-medium">Checkout</span>
+            <span class="text-gray-700 dark:text-gray-200 font-medium">Checkout</span>
         </nav>
 
         @include('pages.customer.cart.components.checkout-stepper', ['activeStep' => 'checkout'])

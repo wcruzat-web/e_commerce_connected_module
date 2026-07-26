@@ -19,7 +19,7 @@
 <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}';</script>
 @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
 
 {{-- CHANGES HERE: replaced inline store header with your CRUZAT header component --}}
 @include('components.header.header')
@@ -28,7 +28,7 @@
     @yield('content')
 </main>
 
-<footer class="bg-white border-t mt-12 py-6 text-center text-sm text-gray-500">
+<footer class="bg-white dark:bg-gray-800 border-t dark:border-gray-700 mt-12 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
     ShopEase — dummy storefront (Inventory/Sales module placeholder).
 </footer>
 

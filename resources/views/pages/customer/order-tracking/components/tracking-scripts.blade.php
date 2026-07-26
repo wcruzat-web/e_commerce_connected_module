@@ -1,4 +1,9 @@
 {{-- CRUZAT — tracking-scripts: 3-second polling, DOM swap, receipt refresh (ERPV0.2.2, ERPV0.2.4) --}}
+<style>
+    .dark #chatModal .bg-gray-100 { background-color: #374151; }
+    .dark #chatModal .text-gray-800 { color: #e5e7eb; }
+    .dark #chatModal .text-gray-500 { color: #9ca3af; }
+</style>
 <script>
     function toastNotify(type, message) {
         var container = document.getElementById('toastContainer');

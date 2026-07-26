@@ -6,13 +6,13 @@
     ROUTE: POST /payment (payment.process)
 --}}
 
-<div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl p-5 shadow-sm h-fit">
+<div class="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm h-fit">
     <div class="flex items-center gap-2 mb-5">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-700 dark:text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="1" y="4" width="22" height="16" rx="2"></rect>
             <line x1="1" y1="10" x2="23" y2="10"></line>
         </svg>
-        <h2 class="text-sm font-semibold text-gray-900">Payment Details</h2>
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Payment Details</h2>
     </div>
 
     {{-- Saved payment methods --}}
@@ -25,7 +25,7 @@
                     $pmNumber = $pmIsCard ? $pm->masked_account_number : preg_replace('/^\+63/', '', $pm->masked_account_number);
                     $pmExpiry = $pmIsCard && $pm->expiry_date ? $pm->expiry_date->format('m/y') : '';
                 @endphp
-                <label class="payment-method-card block border border-gray-200 rounded-xl p-4 cursor-pointer transition-colors hover:border-cyan-300 {{ $pm->is_default ? 'border-cyan-500 bg-cyan-50/40' : '' }}"
+                <label class="payment-method-card block border border-gray-200 dark:border-gray-600 rounded-xl p-4 cursor-pointer transition-colors hover:border-cyan-300 {{ $pm->is_default ? 'border-cyan-500 bg-cyan-50/40 dark:bg-cyan-900/20' : '' }}"
                        data-type="{{ $pmType }}"
                        data-account="{{ $pm->account_name }}"
                        data-number="{{ $pmNumber }}"
@@ -38,15 +38,15 @@
                                 @if($pm->is_default)
                                     <span class="text-[10px] font-semibold bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full">DEFAULT</span>
                                 @endif
-                                <span class="text-[10px] font-medium text-gray-400 uppercase">{{ $pm->payment_type }}</span>
+                                <span class="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase">{{ $pm->payment_type }}</span>
                             </div>
-                            <p class="text-xs text-gray-500">{{ $pm->account_name }}</p>
-                            <p class="text-xs text-gray-400">{{ $pmIsCard ? "**** **** **** " . substr(str_replace(' ', '', $pmNumber), -4) : "+63" . $pmNumber }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $pm->account_name }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500">{{ $pmIsCard ? "**** **** **** " . substr(str_replace(' ', '', $pmNumber), -4) : "+63" . $pmNumber }}</p>
                             @if($pmIsCard && $pmExpiry)
-                                <p class="text-xs text-gray-400">Expires {{ $pmExpiry }}</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500">Expires {{ $pmExpiry }}</p>
                             @endif
                         </div>
-                        <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 {{ $pm->is_default ? 'border-cyan-500' : 'border-gray-300' }}">
+                        <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 {{ $pm->is_default ? 'border-cyan-500' : 'border-gray-300 dark:border-gray-600' }}">
                             <div class="w-2.5 h-2.5 rounded-full {{ $pm->is_default ? 'bg-cyan-500' : '' }}"></div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
 
     @if($paymentMethods->count())
         <button type="button" id="addPaymentBtn"
-            class="w-full flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl py-3 text-sm font-medium text-gray-500 hover:border-cyan-400 hover:text-cyan-500 transition-colors mb-4">
+            class="w-full flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl py-3 text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-cyan-400 hover:text-cyan-500 transition-colors mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -80,7 +80,7 @@
                         onclick="selectPaymentMethod('{{ $key }}')"
                         data-method="{{ $key }}"
                         class="payment-method-btn flex-1 min-w-[100px] text-sm font-medium px-4 py-2.5 rounded-lg border transition-colors
-                            {{ $key === $defaultType ? 'border-cyan-500 text-cyan-500' : 'border-gray-200 text-gray-500' }}"
+                            {{ $key === $defaultType ? 'border-cyan-500 text-cyan-500' : 'border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400' }}"
                     >
                         {{ $label }}
                     </button>
@@ -89,49 +89,49 @@
 
             <div id="cardFields" class="space-y-4 {{ $defaultType === 'gcash' ? 'hidden' : '' }}">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Cardholder Name</label>
+                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Cardholder Name</label>
                     <input type="text" name="cardholder_name" id="cardholderName" placeholder="Alex Morgan" value="{{ old('cardholder_name', $defaultMethod->account_name ?? '') }}"
-                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                    @error('cardholder_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                    @error('cardholder_name') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Card Number</label>
+                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Card Number</label>
                     <input type="text" name="card_number" id="cardNumber" placeholder="0123 4567 8901 2345" maxlength="19" value="{{ old('card_number', $defaultCardNumber) }}"
-                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                    @error('card_number') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                    @error('card_number') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1.5">Expiry Date</label>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Expiry Date</label>
                         <input type="text" name="expiry_date" id="expiryDate" placeholder="MM/YY" maxlength="5" value="{{ old('expiry_date', $defaultExpiry) }}"
-                            class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                        @error('expiry_date') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                        @error('expiry_date') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1.5">CVV</label>
+                        <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">CVV</label>
                         <input type="password" name="cvv" id="cvv" placeholder="•••" maxlength="4" value="{{ old('cvv', $defaultCvv) }}"
-                            class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                        @error('cvv') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                            class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                        @error('cvv') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
             <div id="gcashFields" class="space-y-4 {{ $defaultType !== 'gcash' ? 'hidden' : '' }}">
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">GCash Name</label>
+                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">GCash Name</label>
                     <input type="text" name="gcash_name" id="gcashName" placeholder="Alex Morgan" value="{{ old('gcash_name', $defaultMethod->account_name ?? '') }}"
-                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
-                    @error('gcash_name') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                    @error('gcash_name') <p class="text-xs text-red-500 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">GCash Number</label>
+                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">GCash Number</label>
                     <div class="flex">
-                        <span class="inline-flex items-center px-3 py-2.5 text-sm rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-gray-500 font-medium">+63</span>
+                        <span class="inline-flex items-center px-3 py-2.5 text-sm rounded-l-lg border border-r-0 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-medium">+63</span>
                         <input type="text" name="gcash_number" id="gcashNumber" placeholder="9123456789" maxlength="10" value="{{ old('gcash_number', $defaultGcashNumber) }}"
-                            class="w-full px-4 py-2.5 text-sm rounded-r-lg border border-gray-200 bg-gray-100 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
+                            class="w-full px-4 py-2.5 text-sm rounded-r-lg border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">
                     </div>
                     @error('gcash_number') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -140,7 +140,7 @@
 
         <div class="flex items-center gap-3 pt-2">
             <button type="button" onclick="window.history.back()"
-                class="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                class="flex items-center gap-2 px-5 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>

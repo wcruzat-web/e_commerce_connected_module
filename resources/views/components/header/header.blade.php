@@ -66,15 +66,15 @@
                     </svg>
                 </button>
                 <div id="megaMenu" class="hidden opacity-0 translate-y-2 transition-all duration-150 absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[min(90vw,860px)]" style="display:none;">
-                    <div class="bg-white border-2 border-blue-900 rounded-2xl shadow-xl p-6">
+                    <div class="bg-white dark:bg-gray-800 border-2 border-blue-900 dark:border-gray-600 rounded-2xl shadow-xl p-6">
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6">
                             @foreach ($mmCategories as $mmCat)
                                 @if ($mmCat->products->count())
                                 <div>
-                                    <h4 class="text-sm font-bold text-blue-900 mb-2.5">{{ $mmCat->name }}</h4>
+                                    <h4 class="text-sm font-bold text-blue-900 dark:text-blue-300 mb-2.5">{{ $mmCat->name }}</h4>
                                     <ul class="space-y-1.5">
                                         @foreach ($mmCat->products as $mmProd)
-                                            <li><a href="{{ route('products.show', $mmProd->id) }}" class="text-xs text-gray-500 hover:text-cyan-500 transition-colors">{{ $mmProd->name }}</a></li>
+                                            <li><a href="{{ route('products.show', $mmProd->id) }}" class="text-xs text-gray-500 dark:text-gray-300 hover:text-cyan-500 transition-colors">{{ $mmProd->name }}</a></li>
                                         @endforeach
                                     </ul>
                                 </div>
@@ -82,9 +82,9 @@
                             @endforeach
                         </div>
                         @if ($topProduct)
-                        <div class="border-t border-blue-100 mt-5 pt-4 flex flex-wrap items-center gap-2">
-                            <span class="text-xs font-semibold text-blue-900">Trending:</span>
-                            <a href="{{ route('products.show', $topProduct->id) }}" class="text-[11px] font-medium text-blue-900 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-50 transition-colors">{{ $topProduct->name }} ({{ $topProduct->total_sold }} sold)</a>
+                        <div class="border-t border-blue-100 dark:border-gray-700 mt-5 pt-4 flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-semibold text-blue-900 dark:text-blue-300">Trending:</span>
+                            <a href="{{ route('products.show', $topProduct->id) }}" class="text-[11px] font-medium text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-gray-600 rounded-full px-3 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors">{{ $topProduct->name }} ({{ $topProduct->total_sold }} sold)</a>
                         </div>
                         @endif
                     </div>
@@ -124,14 +124,14 @@
                                 <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                         </button>
-                        <div id="profileMenu" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <div id="profileMenu" class="hidden absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-2 z-50">
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                 My Profile
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                <button type="submit" class="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                                     Logout
                                 </button>

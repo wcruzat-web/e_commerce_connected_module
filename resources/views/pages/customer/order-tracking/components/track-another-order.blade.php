@@ -1,5 +1,5 @@
-<div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-    <h2 class="text-sm font-semibold text-gray-800 mb-3">Track Another Order</h2>
+<div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm">
+    <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3">Track Another Order</h2>
 
     <form method="POST" action="{{ route('orders.track') }}" class="flex items-center gap-3">
         @csrf
@@ -16,7 +16,7 @@
                 id="trackInput"
                 placeholder="Order ID or Tracking Number"
                 value="{{ old('order_number') }}"
-                class="w-full pl-11 pr-4 py-3 text-sm rounded-xl border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                class="w-full pl-11 pr-4 py-3 text-sm rounded-xl border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
             >
         </div>
         <button

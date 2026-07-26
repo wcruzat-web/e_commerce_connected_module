@@ -1,5 +1,5 @@
 {{-- HAINZ — product-hero: product detail hero with gallery, price, badge, specs-at-a-glance (ERPV1.1) --}}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm">
     <div class="relative flex flex-col justify-center items-center border border-gray-100 rounded-xl p-6 bg-gray-50/50">
         @unless($product['inStock'])
             <span class="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Out of Stock</span>
@@ -11,7 +11,7 @@
         <div>
             <span class="bg-blue-900 text-white text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded">{{ $product['brand'] }}</span>
             <p class="text-xs font-mono text-gray-400 mt-2">SKU: {{ $product['sku'] }}</p>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-1">{{ $product['name'] }}</h1>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight mt-1">{{ $product['name'] }}</h1>
             <p class="text-xs mt-1 {{ $product['inStock'] ? 'text-green-600' : 'text-red-500' }}">{{ $product['inStock'] ? $product['stock'] . ' in stock' : 'Out of Stock' }}</p>
         </div>
 
@@ -19,7 +19,7 @@
             @if($product['original_price'])
                 <span class="text-lg text-gray-400 line-through">₱{{ number_format($product['original_price']) }}</span>
             @endif
-            <span class="text-3xl font-black text-slate-900">₱{{ number_format($product['price']) }}</span>
+            <span class="text-3xl font-black text-slate-900 dark:text-white">₱{{ number_format($product['price']) }}</span>
         </div>
 
         @if(!empty($product['atAGlance']))
@@ -29,7 +29,7 @@
                     @foreach ($product['atAGlance'] as $item)
                         <div class="border border-gray-200 rounded-xl p-3 text-center bg-gray-50/50">
                             <span class="block text-[10px] text-gray-400 font-bold uppercase">{{ $item['label'] }}</span>
-                            <span class="text-xs font-black text-slate-800">{{ $item['value'] }}</span>
+                            <span class="text-xs font-black text-slate-800 dark:text-gray-200">{{ $item['value'] }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -41,8 +41,8 @@
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product['id'] }}">
                 <input type="hidden" name="quantity" id="qty-input" value="1">
-                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-                    <button type="button" onclick="var e=document.getElementById('qty-input');var s=document.getElementById('qty-span');var v=parseInt(e.value)-1;if(v<1)v=1;e.value=v;s.textContent=v" class="px-3 py-2 bg-gray-50 text-slate-700 font-extrabold text-sm hover:bg-gray-100 transition select-none">-</button>
+                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-gray-700 shadow-sm">
+                    <button type="button" onclick="var e=document.getElementById('qty-input');var s=document.getElementById('qty-span');var v=parseInt(e.value)-1;if(v<1)v=1;e.value=v;s.textContent=v" class="px-3 py-2 bg-gray-50 dark:bg-gray-700 text-slate-700 dark:text-gray-200 font-extrabold text-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition select-none">-</button>
                     <span id="qty-span" class="px-5 py-2 font-black text-sm w-12 text-center">1</span>
                     <button type="button" onclick="var e=document.getElementById('qty-input');var s=document.getElementById('qty-span');var v=parseInt(e.value)+1;if(v>{{ $product['stock'] }})v={{ $product['stock'] }};e.value=v;s.textContent=v" class="px-3 py-2 bg-gray-50 text-slate-700 font-extrabold text-sm hover:bg-gray-100 transition select-none">+</button>
                 </div>
