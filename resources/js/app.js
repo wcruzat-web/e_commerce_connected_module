@@ -88,41 +88,72 @@ window.applyLanguage = applyLanguage;
 
 document.addEventListener('DOMContentLoaded', () => {
     // ---------------------------------------------------------------
-    // Toasts
+    // Toasts (bottom-right with icons)
     // ---------------------------------------------------------------
-    const container = document.getElementById('toast-container');
+    const toastContainer = document.getElementById('toastContainer');
+
+    const TOAST_ICONS = {
+        success: '<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+        error: '<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+        info: '<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+    };
+
+    const TOAST_BG = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-sky-500' };
 
     window.showToast = (message, type = 'success') => {
-        if (!container || !message) return;
-        const bg = type === 'error' ? 'bg-red-500' : 'bg-sky-600';
+        if (!toastContainer || !message) return;
         const el = document.createElement('div');
-        el.className = `${bg} text-white px-4 py-3 rounded-lg shadow-lg text-sm transition transform translate-x-4 opacity-0`;
-        el.textContent = message;
-        container.appendChild(el);
-        requestAnimationFrame(() => el.classList.remove('translate-x-4', 'opacity-0'));
+        el.className = 'flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg text-sm text-white transition-all duration-300 translate-y-4 opacity-0 max-w-sm';
+        el.style.backgroundColor = 'var(--toast-bg, #10b981)';
+        const bg = TOAST_BG[type] || TOAST_BG.success;
+        el.setAttribute('style', `background: ${bg === 'bg-emerald-500' ? '#10b981' : bg === 'bg-red-500' ? '#ef4444' : '#0ea5e9'};`);
+        el.innerHTML = `${TOAST_ICONS[type] || TOAST_ICONS.success}<span>${message}</span>`;
+        toastContainer.prepend(el);
+        requestAnimationFrame(() => el.classList.remove('translate-y-4', 'opacity-0'));
         setTimeout(() => {
-            el.classList.add('opacity-0', 'translate-x-4');
+            el.classList.add('opacity-0', 'translate-y-4');
             setTimeout(() => el.remove(), 300);
-        }, 3000);
+        }, 3500);
     };
 
     if (window.__flash) {
         if (window.__flash.success) window.showToast(window.__flash.success, 'success');
         if (window.__flash.error) window.showToast(window.__flash.error, 'error');
+        if (window.__flash.info) window.showToast(window.__flash.info, 'info');
     }
 
     // ---------------------------------------------------------------
-    // Confirm modal (custom delete confirmation)
+    // Generic confirmation modal
     // ---------------------------------------------------------------
     const confirmModal = document.getElementById('confirm-modal');
     const confirmCard = document.getElementById('confirm-modal-card');
     const confirmBackdrop = document.getElementById('confirm-backdrop');
     const confirmOk = document.getElementById('confirm-ok');
     const confirmCancel = document.getElementById('confirm-cancel');
+    const confirmTitle = document.getElementById('confirm-title');
+    const confirmMessage = document.getElementById('confirm-message');
+    const confirmIcon = document.getElementById('confirm-icon');
     let pendingForm = null;
 
-    const openConfirm = (form) => {
+    const setConfirmTheme = (theme) => {
+        const isDanger = theme === 'danger';
+        confirmIcon.className = `w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isDanger ? 'bg-red-100' : 'bg-sky-100'}`;
+        const iconSvg = confirmIcon.querySelector('svg');
+        if (iconSvg) {
+            iconSvg.setAttribute('class', `w-5 h-5 ${isDanger ? 'text-red-500' : 'text-sky-500'}`);
+            iconSvg.innerHTML = isDanger
+                ? '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>'
+                : '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+        }
+        confirmOk.className = `px-5 py-2.5 rounded-xl text-white transition font-medium text-sm shadow-sm ${isDanger ? 'bg-red-500 hover:bg-red-600' : 'bg-sky-500 hover:bg-sky-600'}`;
+    };
+
+    const openConfirm = (form, options = {}) => {
         pendingForm = form;
+        confirmTitle.textContent = options.title || 'Confirm Action';
+        confirmMessage.textContent = options.message || 'Are you sure you want to proceed?';
+        confirmOk.textContent = options.btnText || 'Delete';
+        setConfirmTheme(options.theme || 'danger');
         confirmModal.classList.remove('opacity-0', 'pointer-events-none');
         confirmModal.classList.add('opacity-100');
         confirmCard.classList.remove('scale-95');
@@ -137,10 +168,16 @@ document.addEventListener('DOMContentLoaded', () => {
         pendingForm = null;
     };
 
-    document.querySelectorAll('form.js-confirm-delete').forEach((form) => {
+    // Handle forms with data-confirm-* attributes
+    document.querySelectorAll('form.js-confirm-delete, form.js-confirm').forEach((form) => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            openConfirm(form);
+            openConfirm(form, {
+                title: form.dataset.confirmTitle || 'Confirm Action',
+                message: form.dataset.confirmMessage || 'Are you sure you want to proceed?',
+                btnText: form.dataset.confirmBtn || 'Delete',
+                theme: form.dataset.confirmTheme || 'danger',
+            });
         });
     });
 
