@@ -36,13 +36,15 @@
 
             @php
                 use Illuminate\Support\Facades\DB;
-                $headerCategories = \App\Models\Product::where('is_active', 1)
+                $allCategories = \App\Models\Product::where('is_active', 1)
                     ->whereNotNull('category')
                     ->distinct()
                     ->pluck('category')
                     ->toArray();
+                $topNavAllowed = ['Graphics Cards', 'Processors', 'Motherboards', 'Memory'];
+                $headerCategories = array_intersect($topNavAllowed, $allCategories);
                 $mmCategories = [];
-                foreach ($headerCategories as $cat) {
+                foreach ($allCategories as $cat) {
                     $products = \App\Models\Product::where('is_active', 1)
                         ->where('category', $cat)
                         ->orderBy('created_at', 'desc')
