@@ -207,6 +207,7 @@ Route::prefix('api/admin')->middleware(['auth', 'role:super_admin,admin'])->grou
     Route::put('/products/{id}', [\App\Http\Controllers\Admin\Api\ProductController::class, 'update']);
     Route::delete('/products/{id}', [\App\Http\Controllers\Admin\Api\ProductController::class, 'destroy']);
     Route::patch('/products/{id}/featured', [\App\Http\Controllers\Admin\Api\ProductController::class, 'toggleFeatured']); // ESTEBAN — added: featured toggle route
+    Route::post('/products/bulk-update', [\App\Http\Controllers\Admin\Api\ProductController::class, 'bulkUpdate']);
     Route::get('/promos', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'index']);
     Route::post('/promos', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'store']);
     Route::delete('/promos/{id}', [\App\Http\Controllers\Admin\Api\PromoBannerController::class, 'destroy']);

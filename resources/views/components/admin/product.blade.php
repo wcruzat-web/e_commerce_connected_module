@@ -47,6 +47,17 @@
         </select>
       </div>
 
+      <div id="bulkBar" class="hidden bg-sky-50 border border-sky-200 rounded-lg px-4 py-2.5 mb-3 flex items-center justify-between">
+        <div>
+          <span class="text-sm font-medium text-sky-800">
+            <span id="bulkCount">0</span> product(s) selected
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearBulkBtn" class="text-xs font-medium text-sky-600 hover:text-sky-700 underline">Clear</button>
+          <button id="bulkUpdateBtn" class="text-xs font-semibold bg-sky-500 hover:bg-sky-600 text-white px-4 py-1.5 rounded-lg transition">Bulk Update</button>
+        </div>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>

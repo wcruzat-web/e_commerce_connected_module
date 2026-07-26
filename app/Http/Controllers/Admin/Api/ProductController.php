@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 // ESTEBAN — adapted from original: column mapping uses 'name' (was 'product_name'), 'featured_image' (was 'product_image'), 'id' (was 'product_id')
 // ESTEBAN — added: 'storage/' prefix on image path (V2.3), badge/sale_price fields (V2.7), specs/compat (V2.6), category_id sync (V2.7), featured toggle (V2.5)
@@ -248,6 +249,68 @@ class ProductController extends \App\Http\Controllers\Controller
         return response()->json([
             'success' => true,
             'product' => $product,
+        ]);
+    }
+
+    public function bulkUpdate(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:products,id',
+            'action' => 'required|string|in:price,stock,badge',
+            'value' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Invalid data', 'errors' => $validator->errors()], 422);
+        }
+
+        $ids = $request->input('ids');
+        $action = $request->input('action');
+        $value = $request->input('value');
+        $type = $request->input('type', 'fixed');
+        $operator = $request->input('operator', 'set');
+
+        $products = Product::whereIn('id', $ids)->get();
+        $count = 0;
+
+        foreach ($products as $product) {
+            if ($action === 'price') {
+                $current = $product->price;
+                if ($type === 'percentage') {
+                    $amount = $current * ((float) $value / 100);
+                } else {
+                    $amount = (float) $value;
+                }
+                if ($operator === 'add') {
+                    $product->price = max(0, $current + $amount);
+                } elseif ($operator === 'subtract') {
+                    $product->price = max(0, $current - $amount);
+                } else {
+                    $product->price = max(0, $amount);
+                }
+            } elseif ($action === 'stock') {
+                $current = $product->stock;
+                $val = (int) $value;
+                if ($operator === 'add') {
+                    $product->stock = $current + $val;
+                } elseif ($operator === 'subtract') {
+                    $product->stock = max(0, $current - $val);
+                } else {
+                    $product->stock = max(0, $val);
+                }
+            } elseif ($action === 'badge') {
+                $product->badge = $value;
+                $product->sale_price = $value === 'Sale' ? $request->input('sale_price') : null;
+            }
+            $product->save();
+            $count++;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$count} product(s) updated successfully.",
+            'count' => $count,
         ]);
     }
 }
