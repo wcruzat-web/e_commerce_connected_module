@@ -34,7 +34,7 @@
                     </div>
                 @endforelse
 
-                <a href="{{ route('add-payment') }}"
+                <a href="{{ route('payment-methods.create') }}"
                    class="block w-full border-2 border-dashed border-sky-300 text-sky-500 rounded-lg p-4 mt-3 text-center text-sm font-semibold hover:bg-sky-50" data-i18n="dash.addPay">
                     + Add Payment Method
                 </a>

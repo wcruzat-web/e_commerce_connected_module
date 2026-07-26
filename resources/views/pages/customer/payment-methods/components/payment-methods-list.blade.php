@@ -97,7 +97,7 @@ No saved payment methods yet.
 
 @endforelse
 
-<a href="{{ route('add-payment') }}"
+<a href="{{ route('payment-methods.create') }}"
 class="block w-full border-2 border-dashed border-sky-300 text-sky-500 rounded-lg p-5 mt-4 flex items-center gap-3 hover:bg-sky-50">
 
 <span class="w-8 h-8 flex items-center justify-center rounded-full border-2 border-sky-300">
