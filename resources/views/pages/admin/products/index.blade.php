@@ -124,6 +124,81 @@
   </div>
 </div>
 
+<!-- Bulk Update Modal -->
+<div id="bulkModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-40 p-4">
+  <div class="modal-in bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-slate-900">Bulk Update</h2>
+      <button id="closeBulkModalBtn" class="text-slate-400 hover:text-slate-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="bulkForm" class="flex flex-col gap-4">
+      <div>
+        <label class="text-xs font-medium text-slate-500">Action</label>
+        <select id="bulkAction" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+          <option value="price">Price</option>
+          <option value="stock">Stock</option>
+          <option value="badge">Badge</option>
+        </select>
+      </div>
+      <div id="bulkPriceFields">
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="text-xs font-medium text-slate-500">Type</label>
+            <select id="bulkPriceType" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+              <option value="fixed">Fixed Amount (₱)</option>
+              <option value="percentage">Percentage (%)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-slate-500">Operator</label>
+            <select id="bulkPriceOperator" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+              <option value="set">Set</option>
+              <option value="add">Add</option>
+              <option value="subtract">Subtract</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-500">Value</label>
+          <input id="bulkPriceValue" type="number" step="0.01" min="0" value="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+        </div>
+      </div>
+      <div id="bulkStockFields" class="hidden">
+        <div class="mb-3">
+          <label class="text-xs font-medium text-slate-500">Operator</label>
+          <select id="bulkStockOperator" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+            <option value="set">Set</option>
+            <option value="add">Increase by</option>
+            <option value="subtract">Decrease by</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-medium text-slate-500">Value</label>
+          <input id="bulkStockValue" type="number" min="0" value="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+        </div>
+      </div>
+      <div id="bulkBadgeFields" class="hidden">
+        <label class="text-xs font-medium text-slate-500">Badge</label>
+        <div class="flex items-center gap-4 mt-2">
+          <label class="flex items-center gap-1.5 text-sm"><input type="radio" name="bulkBadge" value="" checked> None</label>
+          <label class="flex items-center gap-1.5 text-sm"><input type="radio" name="bulkBadge" value="New"> New</label>
+          <label class="flex items-center gap-1.5 text-sm"><input type="radio" name="bulkBadge" value="Sale"> Sale</label>
+        </div>
+        <div id="bulkSalePriceWrapper" class="hidden mt-3">
+          <label class="text-xs font-medium text-slate-500">Original Price (₱)</label>
+          <input id="bulkSalePrice" type="number" step="0.01" min="0" class="w-full mt-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-300">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-2">
+        <button type="button" id="cancelBulkBtn" class="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-slate-600 hover:bg-gray-50 transition">Cancel</button>
+        <button type="submit" id="saveBulkBtn" class="px-4 py-2 text-sm font-medium bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition">Apply</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <style>
   .fade-in { animation: fadeIn .15s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px);} to { opacity: 1; transform: translateY(0);} }
@@ -858,6 +933,126 @@ function populateBrandFilter() {
 }
 
 // ESTEBAN — added: dynamically populates brand filter from loaded products (was hardcoded)
+/* ---------------------------------------------------------
+   BULK UPDATE
+-------------------------------------------------------- */
+function updateBulkBar() {
+  var checked = document.querySelectorAll('.row-checkbox:checked');
+  var bar = document.getElementById('bulkBar');
+  if (checked.length > 0) {
+    document.getElementById('bulkCount').textContent = checked.length;
+    bar.classList.remove('hidden');
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+
+document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+  cb.addEventListener('change', updateBulkBar);
+});
+
+// Re-attach after table re-render
+var origRenderTable = renderTable;
+renderTable = function() {
+  origRenderTable();
+  document.querySelectorAll('.row-checkbox').forEach(function(cb) {
+    cb.addEventListener('change', updateBulkBar);
+  });
+  updateBulkBar();
+};
+
+document.getElementById('clearBulkBtn').addEventListener('click', function() {
+  document.querySelectorAll('.row-checkbox:checked').forEach(function(cb) { cb.checked = false; });
+  updateBulkBar();
+});
+
+document.getElementById('bulkUpdateBtn').addEventListener('click', function() {
+  document.getElementById('bulkModal').classList.remove('hidden');
+  document.getElementById('bulkModal').classList.add('flex');
+});
+
+document.getElementById('closeBulkModalBtn').addEventListener('click', function() {
+  document.getElementById('bulkModal').classList.add('hidden');
+  document.getElementById('bulkModal').classList.remove('flex');
+});
+document.getElementById('cancelBulkBtn').addEventListener('click', function() {
+  document.getElementById('bulkModal').classList.add('hidden');
+  document.getElementById('bulkModal').classList.remove('flex');
+});
+document.getElementById('bulkModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.add('hidden');
+    this.classList.remove('flex');
+  }
+});
+
+// Show/hide fields based on selected action
+document.getElementById('bulkAction').addEventListener('change', function() {
+  var val = this.value;
+  document.getElementById('bulkPriceFields').classList.toggle('hidden', val !== 'price');
+  document.getElementById('bulkStockFields').classList.toggle('hidden', val !== 'stock');
+  document.getElementById('bulkBadgeFields').classList.toggle('hidden', val !== 'badge');
+});
+
+document.querySelectorAll('input[name="bulkBadge"]').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    document.getElementById('bulkSalePriceWrapper').classList.toggle('hidden', this.value !== 'Sale');
+  });
+});
+
+document.getElementById('bulkForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var checked = document.querySelectorAll('.row-checkbox:checked');
+  if (checked.length === 0) { showToast('No products selected.'); return; }
+
+  var ids = Array.from(checked).map(function(cb) { return Number(cb.dataset.id); });
+  var action = document.getElementById('bulkAction').value;
+  var payload = { ids: ids, action: action };
+
+  if (action === 'price') {
+    payload.type = document.getElementById('bulkPriceType').value;
+    payload.operator = document.getElementById('bulkPriceOperator').value;
+    payload.value = parseFloat(document.getElementById('bulkPriceValue').value) || 0;
+  } else if (action === 'stock') {
+    payload.operator = document.getElementById('bulkStockOperator').value;
+    payload.value = parseInt(document.getElementById('bulkStockValue').value, 10) || 0;
+  } else if (action === 'badge') {
+    var badgeEl = document.querySelector('input[name="bulkBadge"]:checked');
+    payload.value = badgeEl ? badgeEl.value : '';
+    if (payload.value === 'Sale') {
+      payload.sale_price = parseFloat(document.getElementById('bulkSalePrice').value) || 0;
+    }
+  }
+
+  var saveBtn = document.getElementById('saveBulkBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Applying...';
+
+  try {
+    var res = await fetch(API_BASE + '/products/bulk-update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    var data = await res.json();
+    if (data.success) {
+      showToast(data.message);
+      document.getElementById('bulkModal').classList.add('hidden');
+      document.getElementById('bulkModal').classList.remove('flex');
+      document.querySelectorAll('.row-checkbox:checked').forEach(function(cb) { cb.checked = false; });
+      updateBulkBar();
+      await loadProducts();
+    } else {
+      showToast(data.message || 'Bulk update failed.');
+    }
+  } catch (err) {
+    showToast('Error applying bulk update.');
+  }
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = 'Apply';
+});
+
 /* ---------------------------------------------------------
    INIT
 -------------------------------------------------------- */
