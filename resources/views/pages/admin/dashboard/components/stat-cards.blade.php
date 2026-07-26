@@ -1,8 +1,7 @@
-{{-- CRUZAT — stat-cards: total products, revenue, orders, customers summary cards --}}{{--
-    ERP MODULE: Admin Dashboard
+{{-- CRUZAT — stat-cards: total products, revenue, orders, low stocks summary cards --}}{{--
+    MODULE: Admin Dashboard
     COMPONENT: Stat Cards
-    DESCRIPTION: 4 stat cards (Total Revenue, Orders, ERP Syncs, Low Stocks).
-    TODO: Replace static $stats with $stats from DashboardController
+    DESCRIPTION: 3 stat cards (Total Revenue, Orders, Low Stocks).
 --}}
 
 @php
@@ -24,14 +23,6 @@
             'icon_bg' => 'bg-cyan-100 text-cyan-600',
         ],
         [
-            'label' => 'Active ERP Syncs',
-            'value' => $stats['low_stock_count'] . ' alerts',
-            'trend' => 'Low stock items need attention',
-            'trend_positive' => false,
-            'icon' => 'sync',
-            'icon_bg' => 'bg-amber-100 text-amber-500',
-        ],
-        [
             'label' => 'Low Stocks Alert',
             'value' => $stats['low_stock_count'] . ' SKUs',
             'trend' => 'Items below minimum stock',
@@ -42,7 +33,7 @@
     ];
 @endphp
 
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
     @foreach ($statCards as $stat)
         <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
             <div class="flex items-start justify-between mb-3">

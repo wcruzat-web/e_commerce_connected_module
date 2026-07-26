@@ -12,7 +12,7 @@
 
 <{{ $tag }}
     @if($href) href="{{ $href }}" @endif
-    class="border-2 border-sky-400 rounded-xl px-4 py-3 flex items-center justify-between bg-white hover-lift transition {{ $href ? 'hover:shadow-md hover:border-sky-500 cursor-pointer' : '' }}">
+    class="border-2 border-sky-400 dark:border-sky-600 rounded-xl px-4 py-3 flex items-center justify-between bg-white dark:bg-gray-800 hover-lift transition {{ $href ? 'hover:shadow-md hover:border-sky-500 cursor-pointer' : '' }}">
 
     <div class="flex items-center gap-3">
 

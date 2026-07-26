@@ -56,8 +56,12 @@
         </a>
 
         <a href="{{ route('notifications') }}"
-            class="block rounded-full px-5 py-2 hover:bg-sky-500 transition" data-i18n="nav.notifications">
-            Notifications
+            class="block rounded-full px-5 py-2 hover:bg-sky-500 transition flex items-center justify-between" data-i18n="nav.notifications">
+            <span>Notifications</span>
+            @php $__notifCount = auth()->user()->notifications()->where('is_read', false)->count(); @endphp
+            @if($__notifCount > 0)
+                <span class="bg-red-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center leading-tight" id="notif-badge">{{ $__notifCount }}</span>
+            @endif
         </a>
 
         <a href="{{ route('settings') }}"

@@ -77,7 +77,11 @@ class="hidden absolute right-0 top-8 w-40 bg-white border rounded-lg shadow-lg t
 class="block w-full text-left px-4 py-2 hover:bg-gray-50">Edit</a>
 
 <form method="POST" action="{{ route('payment-methods.destroy', $method->payment_method_id) }}"
-onsubmit="return confirm('Remove this payment method?');">
+class="js-confirm"
+data-confirm-title="Remove Payment Method"
+data-confirm-message="Are you sure you want to remove this payment method?"
+data-confirm-btn="Remove"
+data-confirm-theme="danger">
 @csrf
 @method('DELETE')
 <button class="w-full text-left px-4 py-2 hover:bg-gray-50 text-red-500">Remove</button>

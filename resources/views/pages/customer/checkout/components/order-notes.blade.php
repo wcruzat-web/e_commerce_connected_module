@@ -5,8 +5,8 @@
     ROUTE: POST /checkout
 --}}
 <div>
-    <label for="notes" class="block text-xs font-medium text-gray-600 mb-1.5">Order Notes (optional)</label>
-    <textarea name="notes" id="notes" rows="2" placeholder="Any special instructions..." class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">{{ old('notes') }}</textarea>
+    <label for="notes" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Order Notes (optional)</label>
+    <textarea name="notes" id="notes" rows="2" placeholder="Any special instructions..." class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent">{{ old('notes') }}</textarea>
 </div>
 
 <button type="submit"

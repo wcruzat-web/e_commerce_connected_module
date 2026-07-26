@@ -101,7 +101,24 @@ class CartController extends Controller
         $cart = $this->cartService->getOrCreateCart($customer->customer_id);
         $summary = $this->cartService->getSummary($cart);
 
-        return response()->json($summary);
+        $data = json_decode(json_encode($summary), true);
+
+        $stocks = [];
+        $hasStockIssue = false;
+        foreach ($cart->items as $item) {
+            $stock = $item->product->stock ?? 0;
+            $ok = $item->quantity <= $stock;
+            if (!$ok) $hasStockIssue = true;
+            $stocks[$item->cart_item_id] = [
+                'current' => $stock,
+                'requested' => $item->quantity,
+                'ok' => $ok,
+            ];
+        }
+        $data['stocks'] = $stocks;
+        $data['hasStockIssue'] = $hasStockIssue;
+
+        return response()->json($data);
     }
 
     public function removeVoucher(Request $request)

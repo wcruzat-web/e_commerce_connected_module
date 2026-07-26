@@ -1,7 +1,7 @@
 <div class="flex items-center justify-between flex-wrap gap-4 mb-6 animate-fade-up">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">My Orders</h1>
-            <p class="text-gray-500 mt-1">View all your orders in one place.</p>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">My Orders</h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-1">View all your orders in one place.</p>
         </div>
         <a href="{{ route('products.index') }}"
            class="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-5 py-2.5 rounded-lg font-medium transition hover:-translate-y-0.5 hover-lift">

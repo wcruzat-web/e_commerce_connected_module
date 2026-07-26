@@ -1,10 +1,15 @@
+<style>
+    .dark #modalItemsList .text-gray-900 { color: #e5e7eb; }
+    .dark #modalItemsList .text-gray-400 { color: #9ca3af; }
+    .dark #modalItemsList .divide-gray-100 > * { border-color: #374151; }
+</style>
 <div id="orderModal" class="hidden fixed inset-0 z-50">
     <div class="absolute inset-0 bg-black/30" onclick="closeOrderModal()"></div>
-    <div class="absolute right-0 top-0 h-full w-full max-w-lg bg-white shadow-2xl overflow-y-auto max-lg:max-w-full">
+    <div class="absolute right-0 top-0 h-full w-full max-w-lg bg-white dark:bg-gray-800 shadow-2xl overflow-y-auto max-lg:max-w-full">
         <div class="p-6">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-bold text-gray-900">Order Details</h2>
-                <button type="button" onclick="closeOrderModal()" class="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">Order Details</h2>
+                <button type="button" onclick="closeOrderModal()" class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -12,73 +17,73 @@
                 </button>
             </div>
 
-            <div id="modalLoading" class="text-center py-12 text-gray-400">Loading...</div>
+            <div id="modalLoading" class="text-center py-12 text-gray-400 dark:text-gray-500">Loading...</div>
 
             <div id="modalContent" class="hidden">
                 <div class="mb-6">
-                    <p class="text-xs text-gray-400 mb-1">Recipient (Checkout Details)</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Recipient (Checkout Details)</p>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-200 shrink-0"></div>
+                        <div class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 shrink-0"></div>
                         <div>
-                            <p class="text-sm font-semibold text-gray-900" id="modalRecipientName"></p>
-                            <p class="text-xs text-gray-400" id="modalRecipientEmail"></p>
-                            <p class="text-xs text-gray-400" id="modalRecipientPhone"></p>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white" id="modalRecipientName"></p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500" id="modalRecipientEmail"></p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500" id="modalRecipientPhone"></p>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Order Number</p>
-                        <p class="text-sm font-medium text-gray-900" id="modalOrderNumber"></p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Order Number</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="modalOrderNumber"></p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Date</p>
-                        <p class="text-sm font-medium text-gray-900" id="modalOrderDate"></p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Date</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="modalOrderDate"></p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Status</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Status</p>
                         <span id="modalStatusBadge" class="status-badge text-[11px] font-medium px-2.5 py-1 rounded-full"></span>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Payment</p>
-                        <p class="text-sm font-medium text-gray-900" id="modalPaymentInfo"></p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Payment</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="modalPaymentInfo"></p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Customer Received</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Customer Received</p>
                         <span id="modalReceivedBadge" class="text-[11px] font-medium px-2.5 py-1 rounded-full"></span>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <p class="text-xs text-gray-400 mb-1">Shipping Address</p>
-                    <p class="text-sm text-gray-700" id="modalShippingAddress"></p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Shipping Address</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300" id="modalShippingAddress"></p>
                 </div>
 
                 <div class="mb-6">
-                    <p class="text-xs text-gray-400 mb-1">Notes</p>
-                    <p class="text-sm text-gray-700" id="modalNotes">—</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Notes</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300" id="modalNotes">—</p>
                 </div>
 
                 <div class="mb-6">
-                    <p class="text-xs text-gray-400 mb-2" id="modalItemsLabel">Items</p>
-                    <div class="divide-y divide-gray-100 border border-gray-200 rounded-xl" id="modalItemsList"></div>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mb-2" id="modalItemsLabel">Items</p>
+                    <div class="divide-y divide-gray-100 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-xl" id="modalItemsList"></div>
                 </div>
 
-                <div class="flex items-center justify-between border-t border-gray-200 pt-4 mb-8">
-                    <p class="text-sm font-semibold text-gray-900">Total</p>
-                    <p class="text-lg font-bold text-gray-900" id="modalTotal"></p>
+                <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4 mb-8">
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Total</p>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white" id="modalTotal"></p>
                 </div>
 
-                <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-sm font-bold text-gray-900 mb-4">Status Overview</h3>
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-4">Status Overview</h3>
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Payment</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Payment</span>
                             <span id="modalPaymentBadge" class="text-sm font-medium px-3 py-1.5 rounded-full"></span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Fulfillment</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Fulfillment</span>
                             <span id="modalFulfillmentBadge" class="text-sm font-medium px-3 py-1.5 rounded-full"></span>
                         </div>
                     </div>

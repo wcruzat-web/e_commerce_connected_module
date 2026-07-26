@@ -16,7 +16,7 @@
     <title>@yield('title', 'ShopEase')</title>
     <link rel="icon" type="image/png" href="{{ asset('shopease-logo.png') }}">
 
-    <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}';</script>
+    <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}'; if (window.__theme !== 'Dark') document.documentElement.classList.remove('dark');</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 dark:bg-gray-900">
 
     {{-- CHANGES HERE: added your CRUZAT header for cart/checkout/payment/success/tracking pages --}}
     @include('components.header.header')

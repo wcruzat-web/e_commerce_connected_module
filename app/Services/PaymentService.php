@@ -7,7 +7,10 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\CouponUsage;
 use App\Models\Order;
+use App\Models\Product;
 use App\Repositories\OrderRepository;
+use Illuminate\Support\Facades\DB;
+
 class PaymentService
 {
     public function __construct(
@@ -17,76 +20,89 @@ class PaymentService
 
     public function processPayment(Cart $cart, PaymentDataDTO $data): Order
     {
-        $summary = $this->cartService->getSummary($cart);
+        return DB::transaction(function () use ($cart, $data) {
 
-        $orderNumber = 'OID-' . str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT) . '-' . str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+            foreach ($cart->items as $item) {
+                $product = Product::where('id', $item->product_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-        $order = $this->orderRepository->create([
-            'customer_id' => $cart->customer_id,
-            'order_number' => $orderNumber,
-            'status' => 'pending',
-            'payment_status' => 'pending',
-            'payment_method' => $data->paymentMethod,
-            'paid_at' => now(),
-            'subtotal' => $summary->subtotal,
-            'discount' => $summary->discount,
-            'shipping_fee' => $summary->shippingFee,
-            'grand_total' => $summary->grandTotal,
-            'coupon_code' => $summary->couponCode,
-            'shipping_name' => $data->shippingName,
-            'shipping_email' => $data->shippingEmail,
-            'shipping_phone' => $data->shippingPhone,
-            'shipping_address' => $data->shippingAddress,
-            'notes' => $data->notes,
-        ]);
-
-        foreach ($cart->items as $item) {
-            $pic = $item->product->featured_image ?? '';
-            if ($pic && !str_starts_with($pic, 'http')) {
-                $pic = asset($pic);
+                if ($item->quantity > $product->stock) {
+                    abort(422, "Insufficient stock for \"{$product->name}\". Only {$product->stock} left.");
+                }
             }
-            $this->orderRepository->addItem($order, [
-                'product_id' => $item->product_id,
-                'product_name' => $item->product->name ?? 'Item',
-                'product_image' => $pic,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
-                'subtotal' => $item->subtotal,
+
+            $summary = $this->cartService->getSummary($cart);
+
+            $orderNumber = 'OID-' . str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT) . '-' . str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+
+            $order = $this->orderRepository->create([
+                'customer_id' => $cart->customer_id,
+                'order_number' => $orderNumber,
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'payment_method' => $data->paymentMethod,
+                'paid_at' => now(),
+                'subtotal' => $summary->subtotal,
+                'discount' => $summary->discount,
+                'shipping_fee' => $summary->shippingFee,
+                'grand_total' => $summary->grandTotal,
+                'coupon_code' => $summary->couponCode,
+                'shipping_name' => $data->shippingName,
+                'shipping_email' => $data->shippingEmail,
+                'shipping_phone' => $data->shippingPhone,
+                'shipping_address' => $data->shippingAddress,
+                'notes' => $data->notes,
             ]);
 
-            $item->product->decrement('stock', $item->quantity);
-        }
-
-        $cart->items()->delete();
-
-        if ($summary->couponCode) {
-            $coupon = Coupon::where('code', $summary->couponCode)->first();
-            if ($coupon) {
-                $coupon->increment('used_count');
-
-                CouponUsage::create([
-                    'coupon_id' => $coupon->id,
-                    'customer_id' => $cart->customer_id,
-                    'order_id' => $order->order_id,
-                    'used_at' => now(),
+            foreach ($cart->items as $item) {
+                $pic = $item->product->featured_image ?? '';
+                if ($pic && !str_starts_with($pic, 'http')) {
+                    $pic = asset($pic);
+                }
+                $this->orderRepository->addItem($order, [
+                    'product_id' => $item->product_id,
+                    'product_name' => $item->product->name ?? 'Item',
+                    'product_image' => $pic,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                    'subtotal' => $item->subtotal,
                 ]);
+
+                Product::where('id', $item->product_id)->decrement('stock', $item->quantity);
             }
-        }
 
-        $cart->update(['coupon_code' => null]);
+            $cart->items()->delete();
 
-        $trackingNumber = 'TRS-' . str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT) . '-' . str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
+            if ($summary->couponCode) {
+                $coupon = Coupon::where('code', $summary->couponCode)->first();
+                if ($coupon) {
+                    $coupon->increment('used_count');
 
-        $order->tracking()->create([
-            'tracking_number' => $trackingNumber,
-            'order_status' => 'Order Placed',
-            'courier_name' => 'ShopEase Express',
-            'shipped_from' => 'Bulacan, Philippines',
-            'estimated_delivery_date' => now()->addDays(rand(5, 10)),
-            'last_updated' => now(),
-            'sync_status' => 'Pending',
-        ]);
+                    CouponUsage::create([
+                        'coupon_id' => $coupon->id,
+                        'customer_id' => $cart->customer_id,
+                        'order_id' => $order->order_id,
+                        'used_at' => now(),
+                    ]);
+                }
+            }
 
-        return $this->orderRepository->loadItems($order);
+            $cart->update(['coupon_code' => null]);
+
+            $trackingNumber = 'TRS-' . str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT) . '-' . str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
+
+            $order->tracking()->create([
+                'tracking_number' => $trackingNumber,
+                'order_status' => 'Order Placed',
+                'courier_name' => 'ShopEase Express',
+                'shipped_from' => 'Bulacan, Philippines',
+                'estimated_delivery_date' => now()->addDays(rand(5, 10)),
+                'last_updated' => now(),
+                'sync_status' => 'Pending',
+            ]);
+
+            return $this->orderRepository->loadItems($order);
+        });
     }
 }

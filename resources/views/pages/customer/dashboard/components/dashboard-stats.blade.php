@@ -1,4 +1,4 @@
-<h3 class="font-bold text-xl mb-4" data-i18n="dash.quick">
+<h3 class="font-bold text-xl mb-4 dark:text-white" data-i18n="dash.quick">
         Quick Statistics
     </h3>
 
