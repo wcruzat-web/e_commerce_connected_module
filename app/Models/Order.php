@@ -16,7 +16,6 @@ class Order extends Model
         'order_number',
         'status',
         'subtotal',
-        'tax',
         'discount',
         'shipping_fee',
         'grand_total',

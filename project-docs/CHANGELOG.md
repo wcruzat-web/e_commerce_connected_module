@@ -137,7 +137,7 @@ Placeholder pages so navigation works end-to-end:
 - Updated views to use DTO property access (`$summary->subtotal`)
 
 ### 9:30 PM — Checkout Page with Order Creation
-- Created `orders` migration (order_id PK, customer_id FK, order_number, status, subtotal, tax, grand_total, shipping fields, timestamps)
+- Created `orders` migration (order_id PK, customer_id FK, order_number, status, subtotal, grand_total, shipping fields, timestamps)
 - Created `order_items` migration (order_item_id PK, order_id FK, product_id FK, quantity, unit_price, subtotal)
 - Created `Order`, `OrderItem` models with relationships
 - Created `App\DTOs\CheckoutDataDTO` — typed DTO for checkout form data

@@ -10,15 +10,13 @@ Route::prefix('external')->group(function () {
         return response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]);
     });
 
-    Route::middleware('external-auth:finance')->prefix('finance')->group(function () {
-        Route::post('/orders/{order}/payments', [FinanceController::class, 'store']);
-        Route::get('/orders/{order}', [FinanceController::class, 'show']);
-        Route::get('/orders', [FinanceController::class, 'index']);
-    });
+    // Public GET — browser-accessible JSON
+    Route::get('/finance/orders', [FinanceController::class, 'index']);
+    Route::get('/finance/orders/{orderNumber}', [FinanceController::class, 'show']);
+    Route::get('/sales/orders', [SalesController::class, 'index']);
+    Route::get('/sales/orders/{orderNumber}', [SalesController::class, 'show']);
 
-    Route::middleware('external-auth:sales')->prefix('sales')->group(function () {
-        Route::get('/orders/{order}', [SalesController::class, 'show']);
-        Route::get('/orders', [SalesController::class, 'index']);
-        Route::patch('/orders/{order}', [SalesController::class, 'update']);
-    });
+    // Protected mutations (require Bearer token)
+    Route::middleware('external-auth:finance')->post('/finance/orders/{orderNumber}/payments', [FinanceController::class, 'store']);
+    Route::middleware('external-auth:sales')->patch('/sales/orders/{orderNumber}', [SalesController::class, 'update']);
 });

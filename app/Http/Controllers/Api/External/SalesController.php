@@ -13,6 +13,7 @@ class SalesController extends Controller
     {
         $order = Order::with('items', 'customer', 'tracking')
             ->where('order_number', $orderNumber)
+            ->where('payment_status', 'paid')
             ->firstOrFail();
 
         return response()->json($order);

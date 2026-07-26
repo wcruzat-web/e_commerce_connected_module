@@ -65,8 +65,7 @@ Created when user completes checkout. Stores the full order with a snapshot of s
 | payment_method | string | visa, mastercard, or gcash |
 | paid_at | timestamp | Set at order creation (payment processed time) |
 | subtotal | decimal(10,2) | Sum of order_items subtotals |
-| tax | decimal(10,2) | 8% of subtotal |
-| grand_total | decimal(10,2) | subtotal + tax |
+| grand_total | decimal(10,2) | subtotal + shipping - discount |
 | shipping_name | string | Recipient name from checkout |
 | shipping_email | string | Recipient email |
 | shipping_phone | string(20) | Nullable |
@@ -202,8 +201,7 @@ A Data Transfer Object — a plain PHP class with typed `readonly` properties. R
 |---|---|---|
 | `itemsCount` | int | Total quantity of all items |
 | `subtotal` | float | Sum of all item subtotals |
-| `tax` | float | 8% of subtotal |
-| `grandTotal` | float | subtotal + tax |
+| `grandTotal` | float | subtotal + shipping - discount |
 
 Usage: `$summary->subtotal` instead of `$summary['subtotal']`.
 
@@ -406,7 +404,7 @@ Main cart page. Extends `layouts.app`. Two-column layout: left has checkout step
 **Included components:**
 - `components/checkout-stepper.blade.php` — 4-step progress bar: Cart (active/green) → Checkout → Payment → Success. Each step is "done" (green check), "active" (blue), or "upcoming" (gray) based on `$activeStep`
 - `components/cart-items-list.blade.php` — Loops `$cart->items` and renders each row: product image, brand/category tags, name, SKU, stock status badge (`In Stock` = green, `Low Stock` = yellow, `Out of Stock` = red), quantity stepper with +/- buttons and hidden input, remove button (submits DELETE form), line total. Has empty state with "Continue Shopping" button
-- `components/order-summary.blade.php` — Sidebar card: items count, subtotal, shipping (FREE), 8% tax, grand total. "Proceed to Checkout" button links to route('checkout'). Hidden when cart is empty
+- `components/order-summary.blade.php` — Sidebar card: items count, subtotal, shipping, grand total. "Proceed to Checkout" button links to route('checkout'). Hidden when cart is empty
 - `components/voucher-card.blade.php` — Input + Apply button for coupon codes. Placeholder only — not wired to backend
 - `components/cart-scripts.blade.php` — JS for quantity stepper. On +/- click: updates hidden input + display, debounces 600ms, submits PATCH form via HTMX-style form submit. Also `applyVoucher()` stub
 
@@ -429,7 +427,7 @@ Extends `layouts.app`. Two-column layout: left has checkout stepper (step 2 acti
 **Included components:**
 - `components/checkout-stepper.blade.php` — Shared from cart, step 3 (Payment) active
 - `components/payment-details.blade.php` — Payment method tabs (Visa/Mastercard/GCash) with dynamic field visibility, place order button
-- `components/order-summary.blade.php` — Items count, subtotal, tax, grand total from `$summary`
+- `components/order-summary.blade.php` — Items count, subtotal, grand total from `$summary`
 - `components/payment-scripts.blade.php` — JS for payment method switching, client-side validation, form submit, `payment_error` toast display
 
 ### Success Page
@@ -437,7 +435,7 @@ Extends `layouts.app`. Two-column layout: left has checkout stepper (step 2 acti
 
 **Included components:**
 - `components/order-confirmed.blade.php` — Order number, success icon, shipping details, order items list
-- `components/order-summary.blade.php` — Items count, subtotal, tax, grand total from `$order`
+- `components/order-summary.blade.php` — Items count, subtotal, grand total from `$order`
 
 ### Order Tracking Page
 `tracking.blade.php` (pages/customer/order-tracking/) — Extends `layouts.app`. If `$order` is set in controller, shows status banner, shipment meta, timeline, and items; otherwise shows only search form.
