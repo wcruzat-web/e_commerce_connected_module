@@ -12,7 +12,7 @@ class ProductReview extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'product_id', 'user_id', 'comment', 'rating', 'created_at',
+        'product_id', 'order_item_id', 'user_id', 'comment', 'rating', 'created_at',
     ];
 
     protected $casts = [

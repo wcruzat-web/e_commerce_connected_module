@@ -28,13 +28,13 @@
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
                         <p class="font-bold text-gray-900">₱{{ number_format($item->unit_price * $item->quantity, 2) }}</p>
-                        @if(in_array($item->product_id, $reviewedProductIds))
+                        @if(in_array($item->order_item_id, $reviewedOrderItemIds))
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-yellow-50 text-yellow-600 border border-yellow-200">
                                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                 Rated
                             </span>
                         @elseif($order->customer_received)
-                            <button type="button" onclick="openRateModal({{ $item->product_id }}, '{{ $item->product_name }}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition hover:-translate-y-0.5">
+                            <button type="button" data-order-item="{{ $item->order_item_id }}" onclick="openRateModal({{ $item->product_id }}, {{ $item->order_item_id }}, '{{ $item->product_name }}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition hover:-translate-y-0.5">
                                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                 Review
                             </button>
@@ -93,6 +93,7 @@
             <form id="rateForm" method="POST" action="{{ route('shop.review') }}">
                 @csrf
                 <input type="hidden" name="product_id" id="rateProductId">
+                <input type="hidden" name="order_item_id" id="rateOrderItemId">
                 <input type="hidden" name="rating" id="rateRating" value="0">
                 <div class="flex items-center gap-1 mb-4">
                     @for ($i = 1; $i <= 5; $i++)
@@ -120,8 +121,9 @@
             setTimeout(function() { toast.remove(); }, 300);
         }, 3000);
     }
-    function openRateModal(productId, productName) {
+    function openRateModal(productId, orderItemId, productName) {
         document.getElementById('rateProductId').value = productId;
+        document.getElementById('rateOrderItemId').value = orderItemId;
         document.getElementById('rateProductName').textContent = productName;
         document.getElementById('rateRating').value = 0;
         document.querySelectorAll('.rate-star').forEach(function(s) { s.classList.remove('text-yellow-400'); s.classList.add('text-gray-300'); });
@@ -166,14 +168,16 @@
             if (data.success) {
                 closeRateModal();
                 toastNotify('success', 'Review submitted successfully!');
-                var productId = document.getElementById('rateProductId').value;
-                document.querySelectorAll('button[onclick*="openRateModal(' + productId + '")]').forEach(function(b) {
+                var orderItemId = document.getElementById('rateOrderItemId').value;
+                document.querySelectorAll('button[data-order-item="' + orderItemId + '"]').forEach(function(b) {
                     var parent = b.parentNode;
                     var span = document.createElement('span');
                     span.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-yellow-50 text-yellow-600 border border-yellow-200';
                     span.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Rated';
                     parent.replaceChild(span, b);
                 });
+            } else {
+                toastNotify('error', data.message || 'Something went wrong. Please try again.');
             }
         })
         .catch(function() {
