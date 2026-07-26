@@ -94,16 +94,30 @@ class ShopController extends Controller
     {
         $data = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'comment' => 'required|string|max:2000',
+            'order_item_id' => 'required|exists:order_items,order_item_id',
+            'comment' => 'nullable|string|max:2000',
             'rating' => 'required|integer|min:1|max:5',
         ]);
 
+        $userId = auth()->id();
+
+        $existing = ProductReview::where('user_id', $userId)
+            ->where('order_item_id', $data['order_item_id'])
+            ->exists();
+
+        if ($existing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already reviewed this item.',
+            ], 422);
+        }
+
         $review = ProductReview::create([
             'product_id' => $data['product_id'],
-            'user_id' => auth()->id(),
+            'order_item_id' => $data['order_item_id'],
+            'user_id' => $userId,
             'comment' => $data['comment'],
             'rating' => $data['rating'],
-            'created_at' => now(),
         ]);
 
         $product = Product::find($data['product_id']);
@@ -131,7 +145,7 @@ class ShopController extends Controller
                 'initials' => strtoupper(substr(auth()->user()->first_name ?? 'A', 0, 1) . substr(auth()->user()->last_name ?? 'U', 0, 1)),
                 'comment' => $review->comment,
                 'rating' => $review->rating,
-                'createdAt' => $review->created_at->diffForHumans(),
+                'createdAt' => now()->diffForHumans(),
             ],
         ]);
     }

@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
+        Schema::table('product_reviews', function (Blueprint $table) {
+            $table->unsignedBigInteger('order_item_id')->nullable()->after('product_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
+        Schema::table('product_reviews', function (Blueprint $table) {
+            $table->dropColumn('order_item_id');
         });
     }
 };

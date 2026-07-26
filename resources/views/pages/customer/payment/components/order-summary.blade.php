@@ -1,7 +1,7 @@
 {{--
     ERP MODULE: Checkout — Payment (Payment Page)
     COMPONENT: Order Summary
-    DESCRIPTION: Sidebar card showing items count, subtotal, shipping, tax, and grand total for the payment confirmation page.
+    DESCRIPTION: Sidebar card showing items count, subtotal, shipping, and grand total for the payment confirmation page.
     DATA SOURCE: $cart, $summary from PaymentController@index
 --}}
 
@@ -39,10 +39,6 @@
         <div id="discountRow" class="flex items-center justify-between {{ (float) $summary->discount > 0 ? '' : 'hidden' }}">
             <span class="text-gray-500">Discount <span id="summaryDiscountLabel" class="text-xs text-gray-400">{{ $summary->discount > 0 ? '(' . $summary->couponLabel . ')' : '' }}</span></span>
             <span id="summaryDiscount" class="font-medium text-emerald-600">-₱{{ number_format($summary->discount, 2) }}</span>
-        </div>
-        <div class="flex items-center justify-between">
-            <span class="text-gray-500">Tax (12%)</span>
-            <span id="summaryTax" class="font-medium text-gray-900">₱{{ number_format($summary->tax, 2) }}</span>
         </div>
     </div>
 

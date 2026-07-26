@@ -13,17 +13,17 @@
 
     <div class="divide-y divide-gray-100">
         @forelse ($recentOrders as $order)
-            <div class="flex items-center justify-between py-3 {{ $loop->first ? 'pt-0' : '' }}">
-                <div class="flex items-center gap-3">
+            <div class="flex items-center justify-between gap-2 py-3 {{ $loop->first ? 'pt-0' : '' }}">
+                <div class="flex items-center gap-3 min-w-0">
                     <div class="w-9 h-9 rounded-full bg-gray-200 shrink-0"></div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-900">{{ $order['name'] }}</p>
-                        <p class="text-xs text-gray-400 truncate max-w-[200px]">{{ $order['spec'] }}</p>
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">{{ $order['name'] }}</p>
+                        <p class="text-xs text-gray-400 truncate">{{ $order['spec'] }}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <p class="text-sm font-semibold text-gray-900">₱{{ number_format($order['price'], 2) }}</p>
-                    <span class="text-[11px] font-medium px-2.5 py-1 rounded-full
+                <div class="flex items-center gap-2 shrink-0">
+                    <p class="text-sm font-semibold text-gray-900 whitespace-nowrap">₱{{ number_format($order['price'], 2) }}</p>
+                    <span class="text-[11px] font-medium px-2.5 py-1 rounded-full shrink-0
                         @if($order['status'] === 'shipped') bg-blue-100 text-blue-700
                         @elseif($order['status'] === 'processing') bg-amber-100 text-amber-600
                         @elseif($order['status'] === 'delivered') bg-green-100 text-green-700

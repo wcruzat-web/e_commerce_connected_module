@@ -28,10 +28,21 @@
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
                         <p class="font-bold text-gray-900">₱{{ number_format($item->unit_price * $item->quantity, 2) }}</p>
-                        @if(in_array($item->product_id, $reviewedProductIds))
-                            <span class="text-xs font-medium text-yellow-500">Rated</span>
+                        @if(in_array($item->order_item_id, $reviewedOrderItemIds))
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-yellow-50 text-yellow-600 border border-yellow-200">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Rated
+                            </span>
+                        @elseif($order->customer_received)
+                            <button type="button" data-order-item="{{ $item->order_item_id }}" onclick="openRateModal({{ $item->product_id }}, {{ $item->order_item_id }}, '{{ $item->product_name }}')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition hover:-translate-y-0.5">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Review
+                            </button>
                         @else
-                            <button type="button" onclick="openRateModal({{ $item->product_id }}, '{{ $item->product_name }}')" class="text-xs font-semibold text-sky-600 hover:text-sky-700 underline">Rate</button>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-gray-50 text-gray-400 border border-gray-200">
+                                <svg class="w-3 h-3 text-gray-300" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Mark as received to review
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -73,6 +84,7 @@
             <form id="rateForm" method="POST" action="{{ route('shop.review') }}">
                 @csrf
                 <input type="hidden" name="product_id" id="rateProductId">
+                <input type="hidden" name="order_item_id" id="rateOrderItemId">
                 <input type="hidden" name="rating" id="rateRating" value="0">
                 <div class="flex items-center gap-1 mb-4">
                     @for ($i = 1; $i <= 5; $i++)
@@ -86,8 +98,23 @@
     </div>
 
     <script>
-    function openRateModal(productId, productName) {
+    function toastNotify(type, message) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600', warning: 'bg-yellow-500 text-black' };
+        var toast = document.createElement('div');
+        toast.className = (colors[type] || 'bg-gray-700') + ' text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 transition-opacity duration-300';
+        toast.textContent = message;
+        container.appendChild(toast);
+        requestAnimationFrame(function() { toast.style.opacity = '1'; });
+        setTimeout(function() {
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 3000);
+    }
+    function openRateModal(productId, orderItemId, productName) {
         document.getElementById('rateProductId').value = productId;
+        document.getElementById('rateOrderItemId').value = orderItemId;
         document.getElementById('rateProductName').textContent = productName;
         document.getElementById('rateRating').value = 0;
         document.querySelectorAll('.rate-star').forEach(function(s) { s.classList.remove('text-yellow-400'); s.classList.add('text-gray-300'); });
@@ -112,7 +139,45 @@
         });
     }
     document.getElementById('rateForm').addEventListener('submit', function(e) {
+        e.preventDefault();
         var rating = document.getElementById('rateRating').value;
-        if (rating === '0') { e.preventDefault(); alert('Please select a rating.'); }
+        if (rating === '0') { toastNotify('error', 'Please select a rating.'); return; }
+
+        var form = this;
+        var formData = new FormData(form);
+        var btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                closeRateModal();
+                toastNotify('success', 'Review submitted successfully!');
+                var orderItemId = document.getElementById('rateOrderItemId').value;
+                document.querySelectorAll('button[data-order-item="' + orderItemId + '"]').forEach(function(b) {
+                    var parent = b.parentNode;
+                    var span = document.createElement('span');
+                    span.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-yellow-50 text-yellow-600 border border-yellow-200';
+                    span.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Rated';
+                    parent.replaceChild(span, b);
+                });
+            } else {
+                toastNotify('error', data.message || 'Something went wrong. Please try again.');
+            }
+        })
+        .catch(function() {
+            toastNotify('error', 'Something went wrong. Please try again.');
+        })
+        .finally(function() {
+            btn.disabled = false;
+            if (!form.classList.contains('submitted')) btn.textContent = 'Submit Review';
+            form.classList.add('submitted');
+        });
     });
     </script>

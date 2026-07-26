@@ -57,9 +57,12 @@ class OrderController extends Controller
             ->latest('order_id')
             ->paginate(7);
 
-        $reviewedProductIds = ProductReview::where('user_id', $customer->customer_id)->pluck('product_id')->toArray();
+        $reviewedOrderItemIds = ProductReview::where('user_id', $customer->customer_id)
+            ->whereNotNull('order_item_id')
+            ->pluck('order_item_id')
+            ->toArray();
 
-        return view('pages.customer.history.history', compact('orders', 'search', 'reviewedProductIds'));
+        return view('pages.customer.history.history', compact('orders', 'search', 'reviewedOrderItemIds'));
     }
 
     public function checkout(Request $request): RedirectResponse

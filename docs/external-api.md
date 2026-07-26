@@ -1,0 +1,137 @@
+# ERP External Module Integration
+
+## Architecture
+
+```
+┌──────────────────────────────┐      ┌─────────────────────────────┐
+│   Simulator UI (Admin)       │      │   Web Services (API)        │
+│   routes/admin/external/*    │      │   /api/external/*           │
+│   Auth: session + role       │      │   Auth: Bearer token        │
+│   Purpose: trigger + view    │      │   Purpose: external ERP     │
+└──────────┬───────────────────┘      └───────────┬─────────────────┘
+           │                                      │
+           │  calls with Bearer token             │
+           └──────────────────────────────────────┘
+                              │
+                              ▼
+               ┌──────────────────────────┐
+               │   WebhookService         │
+               │   → webhook_logs table   │
+               │   → DB updates           │
+               └──────────────────────────┘
+```
+
+## Routes
+
+### Web Service API (`routes/api.php`) — REST
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/external/ping` | None | Health check |
+| POST | `/api/external/finance/orders/{order}/payments` | Finance Bearer token | Confirm payment (creates payment resource) |
+| GET | `/api/external/finance/orders` | Finance Bearer token | List unpaid orders |
+| GET | `/api/external/sales/orders/{order}` | Sales Bearer token | Get order details |
+| GET | `/api/external/sales/orders` | Sales Bearer token | List paid orders |
+| PATCH | `/api/external/sales/orders/{order}` | Sales Bearer token | Update fulfillment status |
+
+### Standalone ERP UI Pages (`routes/external.php`)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/external/finance` | Finance & Accounting module page |
+| GET | `/external/finance/orders` | Finance JSON list data for polling |
+| GET | `/external/sales` | Sales & Customer Support module page |
+| GET | `/external/sales/orders` | Sales JSON list data for polling |
+| GET | `/external/order/{order_number}` | Order detail lookup (shared) |
+| GET | `/external/logs` | Webhook log entries (shared) |
+
+## Data Ownership
+
+| Module | Owns | Can modify |
+|--------|------|-----------|
+| **Finance & Accounting** | `payment_status` | `payment_status`, `finance_transaction_id` |
+| **Sales Management** | `order_status` | `status`, tracking |
+
+## Real Data Exchange Flow
+
+### 1. Finance Confirms Payment
+
+```
+Ecommerce → Finance:   Order created (via WebhookService)
+Finance → Ecommerce:   POST /api/external/finance/orders/{order}/payments
+                        { finance_transaction_id, paid_at }
+                        Header: Authorization: Bearer {FINANCE_API_KEY}
+```
+
+FinanceController updates:
+- `payment_status` → "paid"
+- `status` → "processing"
+- `finance_transaction_id` → stored
+- Fires `WebhookService::paymentConfirmed()` → logged in `webhook_logs`
+
+### 2. Sales Updates Status
+
+```
+Ecommerce → Sales:     Order + payment confirmed (via WebhookService)
+Sales → Ecommerce:     PATCH /api/external/sales/orders/{order}
+                        { status }
+                        Header: Authorization: Bearer {SALES_API_KEY}
+```
+
+SalesController validates:
+- `payment_status` must be "paid" (rejects if not)
+- `customer_received` must be false (rejects if true)
+- Updates `status` + tracking
+- Returns updated order
+
+## Key Files
+
+| File | Role |
+|------|------|
+| `routes/api.php` | REST API endpoint definitions |
+| `routes/external.php` | Simulator UI routes |
+| `app/Http/Controllers/Api/External/FinanceController.php` | Finance web service logic |
+| `app/Http/Controllers/Api/External/SalesController.php` | Sales web service logic |
+| `app/Http/Controllers/Admin/ExternalSimulatorController.php` | Simulator UI controller |
+| `app/Http/Middleware/ExternalApiAuth.php` | Bearer token validation |
+| `app/Services/External/WebhookService.php` | Webhook dispatch + logging |
+| `app/Models/WebhookLog.php` | Audit trail model |
+| `config/external-modules.php` | API keys + webhook URLs per module |
+| `resources/views/pages/admin/external-simulator/index.blade.php` | Simulator UI |
+
+## API Key Setup (.env)
+
+```
+FINANCE_API_KEY=sk-finance-dev-abc123def456
+FINANCE_WEBHOOK_URL=https://finance-system.test/api/orders
+SALES_API_KEY=sk-sales-dev-789ghi012jkl
+SALES_WEBHOOK_URL=https://sales-system.test/api/orders
+```
+
+## Testing via curl (for presentation)
+
+```bash
+# Finance lists unpaid orders
+curl http://localhost/api/external/finance/orders \
+  -H "Authorization: Bearer sk-finance-dev-abc123def456"
+
+# Finance confirms payment
+curl -X POST http://localhost/api/external/finance/orders/OID-1234-5678/payments \
+  -H "Authorization: Bearer sk-finance-dev-abc123def456" \
+  -H "Content-Type: application/json" \
+  -d '{"finance_transaction_id":"FA-TXN-001","paid_at":"2026-07-24T12:00:00Z"}'
+
+# Sales lists paid orders
+curl http://localhost/api/external/sales/orders \
+  -H "Authorization: Bearer sk-sales-dev-789ghi012jkl"
+
+# Sales fetches order details
+curl http://localhost/api/external/sales/orders/OID-1234-5678 \
+  -H "Authorization: Bearer sk-sales-dev-789ghi012jkl"
+
+# Sales updates status
+curl -X PATCH http://localhost/api/external/sales/orders/OID-1234-5678 \
+  -H "Authorization: Bearer sk-sales-dev-789ghi012jkl" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"shipped"}'
+```

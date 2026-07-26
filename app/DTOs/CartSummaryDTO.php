@@ -8,7 +8,6 @@ class CartSummaryDTO
         public readonly int   $itemsCount,
         public readonly float $subtotal,
         public readonly float $shippingFee,
-        public readonly float $tax,
         public readonly float $discount,
         public readonly float $grandTotal,
         public readonly ?string $couponCode = null,

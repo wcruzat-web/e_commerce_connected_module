@@ -2,7 +2,7 @@
     {{--
     ERP MODULE: Shopping Cart (Cart Page)
     COMPONENT: Order Summary
-    DESCRIPTION: Sidebar card showing items count, subtotal, shipping, tax, grand total, and checkout button.
+    DESCRIPTION: Sidebar card showing items count, subtotal, shipping, grand total, and checkout button.
     DATA SOURCE: $summary array from CartService@getSummary
 --}}
 
@@ -36,10 +36,6 @@
         <div id="discountRow" class="flex items-center justify-between {{ (float) $summary->discount > 0 ? '' : 'hidden' }}">
             <span class="text-gray-500">Discount <span id="summaryDiscountLabel" class="text-xs text-gray-400">{{ $summary->discount > 0 ? '(' . $summary->couponLabel . ')' : '' }}</span></span>
             <span id="summaryDiscount" class="font-medium text-emerald-600">-₱{{ number_format($summary->discount, 2) }}</span>
-        </div>
-        <div class="flex items-center justify-between">
-            <span class="text-gray-500">Tax (12%)</span>
-            <span id="summaryTax" class="font-medium text-gray-900">₱{{ number_format($summary->tax, 2) }}</span>
         </div>
     </div>
 

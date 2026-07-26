@@ -79,7 +79,6 @@ class CartService
         $items = $cart->items;
         $subtotal = $items->sum('subtotal');
         $shippingFee = $subtotal >= 3000 ? 0 : 120;
-        $tax = round($subtotal * 0.12, 2);
 
         $discount = 0;
         $couponCode = null;
@@ -125,13 +124,12 @@ class CartService
             }
         }
 
-        $grandTotal = round($subtotal + $shippingFee + $tax - $discount, 2);
+        $grandTotal = round($subtotal + $shippingFee - $discount, 2);
 
         return new CartSummaryDTO(
             itemsCount: $items->sum('quantity'),
             subtotal: $subtotal,
             shippingFee: $shippingFee,
-            tax: $tax,
             discount: $discount,
             grandTotal: $grandTotal,
             couponCode: $couponCode,

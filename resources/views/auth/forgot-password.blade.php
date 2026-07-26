@@ -13,16 +13,42 @@
                 Enter your registered email address below, and we'll send you a secure link to reset your password.
             </p>
 
-            <form method="POST" action="#" class="mt-6 text-left">
+            <form method="POST" action="{{ route('forgot') }}" class="mt-6 text-left">
                 @csrf
+
+                @if(session('success'))
+                    <div class="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-600">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+                        @foreach($errors->all() as $error)
+                            <p>{{ $error }}</p>
+                        @endforeach
+                    </div>
+                @endif
 
                 <label class="block text-xs font-semibold text-gray-700 mb-1.5">Email address</label>
                 <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter your email address"
-                    class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BBFF] focus:border-transparent">
+                    class="w-full px-4 py-2.5 text-sm rounded-lg border {{ $errors->has('email') ? 'border-red-400' : 'border-gray-300' }} text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BBFF] focus:border-transparent">
+
+                <div class="mt-4">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">New Password</label>
+                    <input type="password" name="password" placeholder="Enter new password"
+                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BBFF] focus:border-transparent">
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1.5">Confirm New Password</label>
+                    <input type="password" name="password_confirmation" placeholder="Confirm new password"
+                        class="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#00BBFF] focus:border-transparent">
+                </div>
 
                 <button type="submit"
                     class="w-full mt-5 bg-[#00BBFF] hover:bg-[#00a6e0] transition-colors text-white text-sm font-semibold py-3 rounded-lg">
-                    Send Reset Link
+                    Reset Password
                 </button>
             </form>
 
