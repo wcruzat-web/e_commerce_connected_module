@@ -34,5 +34,7 @@
 
     @include('components.toast')
 
+    @include('components.footer')
+
 </body>
 </html>

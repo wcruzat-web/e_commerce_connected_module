@@ -28,9 +28,7 @@
     @yield('content')
 </main>
 
-<footer class="bg-white border-t mt-12 py-6 text-center text-sm text-gray-500">
-    ShopEase — dummy storefront (Inventory/Sales module placeholder).
-</footer>
+@include('components.footer')
 
 @include('components.toast')
 
