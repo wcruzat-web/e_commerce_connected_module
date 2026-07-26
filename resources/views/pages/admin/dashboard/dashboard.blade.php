@@ -28,7 +28,7 @@
                     <p class="text-sm text-gray-400 mt-0.5">{{ now()->format('F Y') }} · {{ config('app.name', 'ShopEase') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button type="button" onclick="viewSyncLogs()" class="flex items-center gap-2 border border-cyan-500 text-cyan-500 text-sm font-medium px-4 py-2 rounded-lg hover:bg-cyan-50 transition-colors">
+                        <button type="button" onclick="location.reload()" class="flex items-center gap-2 border border-cyan-500 text-cyan-500 text-sm font-medium px-4 py-2 rounded-lg hover:bg-cyan-50 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="23 4 23 10 17 10"></polyline>
                             <polyline points="1 20 1 14 7 14"></polyline>

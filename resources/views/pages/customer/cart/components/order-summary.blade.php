@@ -50,6 +50,7 @@
     @if($cart->items->isNotEmpty())
         <a
             href="{{ route('checkout') }}"
+            id="checkoutBtn"
             class="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 transition-colors text-white text-sm font-semibold py-3 rounded-xl"
         >
             Proceed to Checkout

@@ -32,7 +32,7 @@
 
     <div id="cartItemsList" class="divide-y divide-gray-100 dark:divide-gray-700">
         @forelse ($cart->items as $item)
-            <div class="cart-item flex items-start gap-4 py-4 {{ $loop->first ? 'pt-0' : '' }}" data-item-id="{{ $item->cart_item_id }}" data-price="{{ $item->unit_price }}" data-max-qty="{{ $item->product->stock ?? 0 }}">
+            <div class="cart-item flex items-start gap-4 py-4 {{ $loop->first ? 'pt-0' : '' }}" data-item-id="{{ $item->cart_item_id }}" data-price="{{ $item->unit_price }}" data-stock="{{ $item->product->stock ?? 0 }}">
                 {{-- product image --}}
                 <div class="w-20 h-20 rounded-lg bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0 overflow-hidden">
                     @if($item->product->featured_image)
@@ -57,29 +57,7 @@
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">SKU: {{ $item->product->sku }}</p>
 
                     <div class="mt-2">
-                        {{-- stock status — uses product stock from [OTHER MODULE] Procurement/Product Master --}}
-                        @php $stock = $item->product->stock ?? 0; @endphp
-                        @if($stock > 5)
-                            <span class="inline-flex items-center gap-1 text-[11px] font-medium bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                In Stock
-                            </span>
-                        @elseif($stock > 0)
-                            <span class="inline-flex items-center gap-1 text-[11px] font-medium bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                                </svg>
-                                Only {{ $stock }} left
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1 text-[11px] font-medium bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-2 py-0.5 rounded-full">
-                                Out of Stock
-                            </span>
-                        @endif
+                        <span id="stockBadge-{{ $item->cart_item_id }}" class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full"></span>
                     </div>
 
                     <div class="flex items-center gap-4 mt-3">

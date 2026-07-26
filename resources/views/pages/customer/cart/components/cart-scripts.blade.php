@@ -7,7 +7,7 @@
 
         const qtyEl = row.querySelector('.qty-value');
         let qty = parseInt(qtyEl.textContent, 10) + delta;
-        const maxQty = parseInt(row.dataset.maxQty, 10);
+        const maxQty = parseInt(row.dataset.stock, 10);
         if (qty < 1) qty = 1;
         if (qty > maxQty) qty = maxQty;
         qtyEl.textContent = qty;
@@ -225,8 +225,51 @@
         setInterval(async function() {
             try {
                 const r = await fetch('{{ route("cart.summary") }}');
-                if (r.ok) updateSummary(await r.json());
+                if (r.ok) {
+                    const data = await r.json();
+                    updateSummary(data);
+                    updateStockBadges(data.stocks);
+                    toggleCheckout(data.hasStockIssue);
+                }
             } catch {}
         }, 300);
     });
+
+    function updateStockBadges(stocks) {
+        if (!stocks) return;
+        for (const [itemId, info] of Object.entries(stocks)) {
+            const badge = document.getElementById('stockBadge-' + itemId);
+            if (!badge) continue;
+            const row = document.querySelector(`.cart-item[data-item-id="${itemId}"]`);
+            if (row) row.dataset.stock = info.current;
+
+            if (info.current > info.requested) {
+                if (info.current > 5) {
+                    badge.className = 'inline-flex items-center gap-1 text-[11px] font-medium bg-green-50 text-green-600 px-2 py-0.5 rounded-full';
+                    badge.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> In Stock';
+                } else {
+                    badge.className = 'inline-flex items-center gap-1 text-[11px] font-medium bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full';
+                    badge.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Only ' + info.current + ' left';
+                }
+            } else if (info.current > 0 && info.current >= info.requested) {
+                badge.className = 'inline-flex items-center gap-1 text-[11px] font-medium bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full';
+                badge.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Only ' + info.current + ' left';
+            } else {
+                badge.className = 'inline-flex items-center gap-1 text-[11px] font-medium bg-red-50 text-red-600 px-2 py-0.5 rounded-full';
+                badge.innerHTML = 'Out of Stock';
+            }
+        }
+    }
+
+    function toggleCheckout(hasIssue) {
+        const btn = document.getElementById('checkoutBtn');
+        if (!btn) return;
+        if (hasIssue) {
+            btn.classList.add('opacity-50', 'pointer-events-none', 'cursor-not-allowed');
+            btn.title = 'Some items are out of stock';
+        } else {
+            btn.classList.remove('opacity-50', 'pointer-events-none', 'cursor-not-allowed');
+            btn.title = '';
+        }
+    }
 </script>

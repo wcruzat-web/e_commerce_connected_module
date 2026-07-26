@@ -1,8 +1,7 @@
 {{-- CRUZAT — dashboard-scripts: stat fetch, revenue chart, order/notification polling --}}{{--
-    ERP MODULE: Admin Dashboard
+    MODULE: Admin Dashboard
     COMPONENT: Dashboard JavaScript
-    DESCRIPTION: Frontend-only stubs for notifications, export, sync logs, sign out.
-    TODO: Wire to API endpoints
+    DESCRIPTION: Chart tooltips, export report.
 --}}
 
 <script>
@@ -46,11 +45,6 @@
         exportToastTimer = setTimeout(() => {
             toast.classList.add('hidden');
         }, 3500);
-    }
-
-    function viewSyncLogs() {
-        // TODO: navigate to GET /admin/erp/sync-logs
-        console.log('Viewing sync logs...');
     }
 
 </script>

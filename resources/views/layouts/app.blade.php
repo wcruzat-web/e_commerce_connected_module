@@ -32,6 +32,10 @@
 
     @yield('content')
 
+    <footer class="bg-white border-t mt-12 py-6 text-center text-xs text-gray-400">
+        ShopEase — Est. 2026 Real-Time Order Synchronization
+    </footer>
+
     @include('components.toast')
 
     @include('components.footer')
