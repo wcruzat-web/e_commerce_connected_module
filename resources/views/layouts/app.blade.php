@@ -25,7 +25,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 dark:bg-gray-900">
 
     {{-- CHANGES HERE: added your CRUZAT header for cart/checkout/payment/success/tracking pages --}}
     @include('components.header.header')

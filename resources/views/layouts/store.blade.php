@@ -19,7 +19,7 @@
 <script>window.__lang = '{{ $__lang === 'Filipino' ? 'fil' : 'en' }}'; window.__theme = '{{ $__theme }}';</script>
 @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
 
 {{-- CHANGES HERE: replaced inline store header with your CRUZAT header component --}}
 @include('components.header.header')

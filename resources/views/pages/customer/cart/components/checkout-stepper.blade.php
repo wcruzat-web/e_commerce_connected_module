@@ -57,7 +57,7 @@
                 <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold
                     @if($state === 'done') bg-green-700 text-white
                     @elseif($state === 'active') bg-blue-900 text-white
-                    @else bg-gray-200 text-gray-500
+                    @else bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-300
                     @endif">
                     @if($state === 'done')
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -67,7 +67,7 @@
                         {{ $index + 1 }}
                     @endif
                 </div>
-                <span class="text-xs mt-2 {{ $state === 'upcoming' ? 'text-gray-400' : 'text-gray-900 font-medium' }}">
+                <span class="text-xs mt-2 {{ $state === 'upcoming' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-white font-medium' }}">
                     {{ $step['label'] }}
                 </span>
             </div>

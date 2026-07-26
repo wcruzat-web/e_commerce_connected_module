@@ -27,7 +27,7 @@
 </head>
 
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-100">
 
 
 <div class="flex min-h-screen">

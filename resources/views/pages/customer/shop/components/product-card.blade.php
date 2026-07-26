@@ -1,5 +1,5 @@
 {{-- HAINZ — product-card: shop listing card with badge, sale price strikethrough, wishlist toggle (ERPV1.1, ERPV1.7) --}}
-<div class="bg-white rounded-2xl border border-gray-200/80 p-5 shadow-sm flex flex-col justify-between transition hover:shadow-md relative {{ !$product['inStock'] ? 'opacity-70 bg-gray-50/50' : '' }}">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/80 dark:border-gray-700 p-5 shadow-sm flex flex-col justify-between transition hover:shadow-md relative {{ !$product['inStock'] ? 'opacity-70 bg-gray-50/50 dark:bg-gray-800/50' : '' }}">
     <div>
         <div class="flex justify-between items-center mb-3">
             @if($product['badge'])
@@ -17,25 +17,25 @@
         </a>
 
         <p class="text-[9px] uppercase font-bold text-gray-400 tracking-wider">{{ $product['categoryMeta'] }}</p>
-        <h3 class="font-bold text-xs mt-0.5 tracking-tight text-slate-900 hover:text-blue-600 transition cursor-pointer">
+        <h3 class="font-bold text-xs mt-0.5 tracking-tight text-slate-900 dark:text-white hover:text-blue-600 transition cursor-pointer">
             <a href="{{ route('products.show', $product['id']) }}">{{ $product['name'] }}</a>
         </h3>
 
         @if(!empty($product['specs']))
             <div class="flex flex-wrap gap-1 mt-2">
                 @foreach ($product['specs'] as $spec)
-                    <span class="bg-gray-100 text-[8.5px] text-gray-500 px-1.5 py-0.5 rounded font-medium">{{ $spec }}</span>
+                    <span class="bg-gray-100 dark:bg-gray-700 text-[8.5px] text-gray-500 dark:text-gray-300 px-1.5 py-0.5 rounded font-medium">{{ $spec }}</span>
                 @endforeach
             </div>
         @endif
     </div>
 
-    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+    <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <div>
             @if($product['original_price'])
-                <span class="text-xs text-gray-400 line-through mr-1.5">₱{{ number_format($product['original_price']) }}</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500 line-through mr-1.5">₱{{ number_format($product['original_price']) }}</span>
             @endif
-            <span class="text-sm font-black text-slate-900">₱{{ number_format($product['price']) }}</span>
+            <span class="text-sm font-black text-slate-900 dark:text-white">₱{{ number_format($product['price']) }}</span>
         </div>
         <div class="flex items-center gap-2">
             <form method="POST" action="{{ route('wishlist.toggle') }}" class="js-wish-form">

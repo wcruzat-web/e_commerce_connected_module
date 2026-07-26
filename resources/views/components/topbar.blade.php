@@ -1,8 +1,8 @@
-<header class="bg-white shadow px-4 sm:px-8 py-5 flex items-center justify-between gap-4">
+<header class="bg-white dark:bg-gray-800 shadow px-4 sm:px-8 py-5 flex items-center justify-between gap-4">
 
     <div class="flex items-center gap-3 min-w-0">
         <!-- Mobile hamburger -->
-        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-md hover:bg-gray-100 shrink-0" aria-label="Toggle sidebar">
+        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 shrink-0" aria-label="Toggle sidebar">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
@@ -19,7 +19,7 @@
             <p class="text-sm font-semibold leading-tight">
                 {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
             </p>
-            <p class="text-xs text-gray-500 leading-tight truncate max-w-[180px]">
+            <p class="text-xs text-gray-500 dark:text-gray-400 leading-tight truncate max-w-[180px]">
                 {{ auth()->user()->email }}
             </p>
         </div>

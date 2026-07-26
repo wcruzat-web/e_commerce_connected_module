@@ -6,30 +6,30 @@
     DATA SOURCE: $order from route /success
 --}}
 
-<div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl p-10 shadow-sm h-fit text-center">
+<div class="lg:col-span-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-10 shadow-sm h-fit text-center">
     <div class="w-16 h-16 mx-auto rounded-full bg-cyan-500 flex items-center justify-center mb-5">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
     </div>
 
-    <h1 class="text-xl font-bold text-gray-900 mb-1">Order Confirmed!</h1>
-    <p class="text-sm text-gray-400 mb-1">Order #{{ $order->order_number }}</p>
-    <p class="text-sm text-gray-400 max-w-md mx-auto">
+    <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Order Confirmed!</h1>
+    <p class="text-sm text-gray-400 dark:text-gray-500 mb-1">Order #{{ $order->order_number }}</p>
+    <p class="text-sm text-gray-400 dark:text-gray-500 max-w-md mx-auto">
         A confirmation email has been sent to your email address. Your order will be processed within 24 hours.
     </p>
 
-    <div class="bg-gray-100 rounded-xl mt-6 mb-6 py-5 px-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left sm:text-center">
+    <div class="bg-gray-100 dark:bg-gray-700 rounded-xl mt-6 mb-6 py-5 px-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left sm:text-center">
         <div>
-            <p class="text-xs text-gray-400 mb-1">Order Total</p>
-            <p class="text-sm font-bold text-gray-900">₱{{ number_format($order->grand_total, 2) }}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Order Total</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">₱{{ number_format($order->grand_total, 2) }}</p>
         </div>
         <div>
-            <p class="text-xs text-gray-400 mb-1">Est. Delivery</p>
-            <p class="text-sm font-bold text-gray-900">{{ $order->tracking ? $order->tracking->estimated_delivery_date->format('M d, Y') : 'TBD' }}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Est. Delivery</p>
+            <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $order->tracking ? $order->tracking->estimated_delivery_date->format('M d, Y') : 'TBD' }}</p>
         </div>
         <div>
-            <p class="text-xs text-gray-400 mb-1">Tracking</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 mb-1">Tracking</p>
             <p class="text-sm font-bold text-cyan-500">{{ $order->tracking->tracking_number ?? $order->order_number }}</p>
         </div>
     </div>
@@ -44,7 +44,7 @@
             </svg>
         </button>
         <a href="{{ route('products.index') }}"
-            class="w-full sm:w-auto bg-white border border-gray-200 hover:bg-gray-50 transition-colors text-gray-700 text-sm font-semibold px-8 py-3 rounded-xl inline-block text-center">
+            class="w-full sm:w-auto bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-gray-700 dark:text-gray-200 text-sm font-semibold px-8 py-3 rounded-xl inline-block text-center">
             Continue Shopping
         </a>
     </div>
