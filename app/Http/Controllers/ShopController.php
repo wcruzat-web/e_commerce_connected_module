@@ -50,7 +50,10 @@ class ShopController extends Controller
         if (!empty($search)) {
             $query->where(function ($searchQuery) use ($search) {
                 $searchQuery->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('brand', 'like', '%' . $search . '%');
+                    ->orWhere('brand', 'like', '%' . $search . '%')
+                    ->orWhereHas('category', function ($catQuery) use ($search) {
+                        $catQuery->where('name', 'like', '%' . $search . '%');
+                    });
             });
         }
 
