@@ -22,6 +22,5 @@
 </main>
 
 @include('pages.customer.shop.components.index-scripts')
-@include('pages.customer.shop.components.index-footer')
 
 @endsection
