@@ -25,6 +25,20 @@ class NotificationController extends Controller
         return view('pages.customer.notifications.notifications', compact('notifications', 'unreadCount'));
     }
 
+    public function unreadCount(Request $request): \Illuminate\Http\JsonResponse
+    {
+        /** @var Customer $customer */
+        $customer = $request->user();
+
+        if (!$customer) {
+            return response()->json(['count' => 0]);
+        }
+
+        return response()->json([
+            'count' => $customer->notifications()->where('is_read', false)->count(),
+        ]);
+    }
+
     public function markAllRead(Request $request): RedirectResponse
     {
         /** @var Customer $customer */

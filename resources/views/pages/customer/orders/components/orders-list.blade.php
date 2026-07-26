@@ -16,17 +16,17 @@
             $isProcessing = in_array($order->status, ['pending','processing','shipped','in_transit','out_for_delivery']);
             $itemCount = $order->items->count();
         @endphp
-        <div class="order-card bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover-lift"
+        <div class="order-card bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover-lift"
              data-status="{{ $order->status }}"
              data-group="{{ $isProcessing ? 'processing' : ($order->status === 'delivered' ? 'delivered' : 'all') }}">
 
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
-                    <span class="text-sm font-semibold text-gray-900">#{{ $order->order_number ?? str_pad($order->order_id, 5, '0', STR_PAD_LEFT) }}</span>
-                    <span class="text-sm text-gray-400">{{ $order->created_at->format('M d, Y · h:i A') }}</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">#{{ $order->order_number ?? str_pad($order->order_id, 5, '0', STR_PAD_LEFT) }}</span>
+                    <span class="text-sm text-gray-400 dark:text-gray-500">{{ $order->created_at->format('M d, Y · h:i A') }}</span>
                 </div>
 
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ $badgeClass }}">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold {{ str_replace(['bg-gray-100','bg-amber-100','bg-sky-100','bg-purple-100','bg-orange-100','bg-emerald-100','bg-red-100'], ['bg-gray-100 dark:bg-gray-700','bg-amber-100 dark:bg-amber-900/40','bg-sky-100 dark:bg-sky-900/40','bg-purple-100 dark:bg-purple-900/40','bg-orange-100 dark:bg-orange-900/40','bg-emerald-100 dark:bg-emerald-900/40','bg-red-100 dark:bg-red-900/40'], $badgeClass) }}">
                     @if($order->status === 'delivered')
                         <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check-circle.svg" class="w-3.5 h-3.5" alt="">
                     @elseif($order->status === 'cancelled')
@@ -43,18 +43,18 @@
                 <div class="flex items-center gap-4">
                     @php $prodImg = $item->product?->image_url ?: $item->product_image; @endphp
                     <img src="{{ $prodImg ?: 'https://picsum.photos/seed/order'.$item->order_item_id.'/200/200' }}"
-                         alt="{{ $item->product_name }}"
-                         class="w-16 h-16 object-cover rounded-xl border border-gray-100">
+                          alt="{{ $item->product_name }}"
+                          class="w-16 h-16 object-cover rounded-xl border border-gray-100 dark:border-gray-700">
                     <div class="flex-1 min-w-0">
-                        <h3 class="font-semibold text-gray-900 truncate">{{ $item->product_name }}</h3>
-                        <p class="text-sm text-gray-500">Qty: {{ $item->quantity }} &nbsp;·&nbsp; ₱{{ number_format($item->unit_price, 2) }}</p>
+                        <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ $item->product_name }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Qty: {{ $item->quantity }} &nbsp;·&nbsp; ₱{{ number_format($item->unit_price, 2) }}</p>
                     </div>
-                    <p class="font-bold text-gray-900 shrink-0">₱{{ number_format($item->unit_price * $item->quantity, 2) }}</p>
+                    <p class="font-bold text-gray-900 dark:text-white shrink-0">₱{{ number_format($item->unit_price * $item->quantity, 2) }}</p>
                 </div>
                 @endforeach
             </div>
 
-            <div class="flex items-center justify-between flex-wrap gap-4 mt-5 pt-5 border-t border-gray-100">
+            <div class="flex items-center justify-between flex-wrap gap-4 mt-5 pt-5 border-t border-gray-100 dark:border-gray-700">
                 <div class="flex items-center gap-2 text-xs">
                     @if($order->status === 'delivered' || $order->status === 'cancelled')
                         <span class="inline-flex items-center gap-1 {{ $order->status === 'delivered' ? 'text-emerald-600 font-medium' : 'text-red-500 font-medium' }}">
@@ -66,25 +66,25 @@
                             <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check-circle.svg" class="w-4 h-4" alt="">
                             Placed
                         </span>
-                        <span class="w-10 h-px bg-gray-200"></span>
+                        <span class="w-10 h-px bg-gray-200 dark:bg-gray-600"></span>
                         <span class="inline-flex items-center gap-1 {{ in_array($order->status, ['shipped','in_transit','out_for_delivery']) ? 'text-sky-600 font-medium' : 'text-gray-400' }}">
                             <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/truck.svg"
                                  class="w-4 h-4 {{ in_array($order->status, ['shipped','in_transit','out_for_delivery']) ? '' : 'opacity-40' }}" alt="">
                             {{ in_array($order->status, ['shipped','in_transit','out_for_delivery']) ? $statusName : 'In transit' }}
                         </span>
                     @endif
-                    <span class="ml-4 text-sm text-gray-400 font-semibold">Total: ₱{{ number_format($order->grand_total, 2) }}</span>
+                    <span class="ml-4 text-sm text-gray-400 dark:text-gray-500 font-semibold">Total: ₱{{ number_format($order->grand_total, 2) }}</span>
                 </div>
 
                 <div class="flex items-center gap-2">
                     <a href="{{ route('tracking.show', $order->order_id) }}"
-                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+                       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/truck.svg" class="w-4 h-4" alt="">
                         Track
                     </a>
 
                     @if($order->customer_received)
-                        <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium bg-green-100 text-green-700 pointer-events-none cursor-default">
+                        <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 pointer-events-none cursor-default">
                             <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check-circle.svg" class="w-4 h-4" alt="">
                             Received
                         </span>
@@ -98,7 +98,7 @@
                         </button>
                     </form>
                     @else
-                        <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium bg-gray-100 text-gray-400 pointer-events-none cursor-default">
+                        <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 pointer-events-none cursor-default">
                             @if($order->status === 'cancelled')
                                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/x-circle.svg" class="w-4 h-4" alt="">
                                 Cancelled
@@ -113,11 +113,11 @@
         </div>
         @empty
         <div class="flex flex-col items-center justify-center text-center py-20 animate-fade-up">
-            <div class="w-28 h-28 rounded-full bg-sky-50 flex items-center justify-center mb-6">
+            <div class="w-28 h-28 rounded-full bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center mb-6">
                 <img src="https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/package-open.svg" class="w-14 h-14" alt="">
             </div>
-            <h3 class="text-xl font-bold text-gray-900">No orders yet</h3>
-            <p class="text-gray-500 mt-2 max-w-sm">When you buy something, it'll appear here. Start shopping to place your first order.</p>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">No orders yet</h3>
+            <p class="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">When you buy something, it'll appear here. Start shopping to place your first order.</p>
             <a href="{{ route('products.index') }}"
                class="mt-6 inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold transition hover:-translate-y-0.5">
                 Browse products

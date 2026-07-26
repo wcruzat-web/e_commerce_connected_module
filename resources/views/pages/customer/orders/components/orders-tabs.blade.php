@@ -1,4 +1,4 @@
-<div class="flex gap-8 mt-2 font-semibold text-gray-400 border-b border-gray-200 sticky top-0 bg-gray-100 z-10 py-1" id="tabs">
+<div class="flex gap-8 mt-2 font-semibold text-gray-400 dark:text-gray-500 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-gray-100 dark:bg-gray-900 z-10 py-1" id="tabs">
         <a href="?status=all"
            class="tab-btn pb-3 border-b-2 {{ ($status ?? 'all') === 'all' ? 'border-sky-500 text-sky-600' : 'border-transparent' }}">
             All

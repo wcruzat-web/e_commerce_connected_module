@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,10 @@ use Illuminate\View\View;
 
 class ChangePasswordController extends Controller
 {
+    public function __construct(
+        private NotificationService $notificationService
+    ) {}
+
     public function edit(Request $request): View
     {
         /** @var Customer $customer */
@@ -38,7 +43,12 @@ class ChangePasswordController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        return redirect()->route('profile')
-            ->with('success', 'Password changed.');
+        $this->notificationService->notifySuccess(
+            $customer,
+            'Password changed',
+            'Your account password has been saved successfully.'
+        );
+
+        return redirect()->route('profile');
     }
 }
